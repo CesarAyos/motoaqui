@@ -16,9 +16,6 @@
           <a class="nav-link medio text-white fs-5" href="servicio">Servicio</a>
         </li>
         <li class="nav-item m-2">
-          <a class="nav-link medio text-white fs-5" href="blog">Blog</a>
-        </li>
-        <li class="nav-item m-2">
           <a class="nav-link medio text-white fs-5" href="contacto">Contacto</a>
         </li>
         <li class="nav-item">

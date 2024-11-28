@@ -172,7 +172,7 @@
 
 <div class="footer">
     <img
-      src="/pexels-photo-20899107.jpeg"
+      src="/empire.jpg"
       style="height: 500px;object-fit:cover;"
       class="card-img"
       alt="..."

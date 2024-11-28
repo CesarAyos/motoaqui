@@ -22,7 +22,9 @@
       <div class="container text-center" style="">
         <div class="row">
           <div class="col" style="background: #0e0d06;">
-            <h4 class="text-start" style="color: #d09a40;background: #0e0d06;">01</h4>
+            <h4 class="text-start" style="color: #d09a40;background: #0e0d06;">
+              01
+            </h4>
             <h4 class="text-white text-start" style="background: #0e0d06;">
               Solicita tu mototaxi
             </h4>
@@ -33,7 +35,9 @@
             </p>
           </div>
           <div class="col" style="background: #0e0d06;">
-            <h4 class="text-start" style="color: #d09a40;background: #0e0d06;">02</h4>
+            <h4 class="text-start" style="color: #d09a40;background: #0e0d06;">
+              02
+            </h4>
             <h4 class="text-white text-start" style="background: #0e0d06;">
               Revisa la ruta
             </h4>
@@ -43,7 +47,9 @@
             </p>
           </div>
           <div class="col" style="background: #0e0d06;">
-            <h4 class="text-start" style="color: #d09a40;background: #0e0d06;">03</h4>
+            <h4 class="text-start" style="color: #d09a40;background: #0e0d06;">
+              03
+            </h4>
             <h4 class="text-white text-start" style="background: #0e0d06;">
               Conoce a tu conductor
             </h4>
@@ -58,7 +64,6 @@
   </div>
 </div>
 
-
 <div class="container4 mt-5">
   <div class="container text-center">
     <div class="row">
@@ -67,7 +72,7 @@
           <div class="row g-0">
             <div class="col-md-6">
               <img
-                src="/pexels-photo-11073539.jpeg"
+                src="/encomienda.jpeg"
                 class="img-fluid rounded-start"
                 style="height: 350px;width: auto;object-fit:cover;"
                 alt="..."
@@ -79,20 +84,60 @@
                   class="card-title text-white text-start pt-5"
                   style="background:#0e0d06;"
                 >
-                  Mototaxis rápidos y seguros
+                  Encomiendas
                 </h3>
                 <p
                   class="card-text text-white text-start pt-2"
                   style="background:#0e0d06;"
                 >
-                  Te ofrecemos un servicio de mototaxi que prioriza la seguridad
-                  y la puntualidad en cada viaje.
+                  Te ofrecemos un servicio de encomiendas que priorizan la
+                  seguridad y la puntualidad en cada envio.
                 </p>
-                <p class="card-text text-start" style="background:#0e0d06;">
-                  <button type="button" class="btn btn-outline-warning"
-                    >Leer Más</button
-                  >
-                </p>
+                <!-- Button trigger modal -->
+                <button
+                  type="button"
+                  class="btn btn-warning"
+                  data-bs-toggle="modal"
+                  data-bs-target="#exampleModal"
+                >
+                  Contactanos
+                </button>
+
+                <!-- Modal -->
+                <div
+                  class="modal fade"
+                  id="exampleModal"
+                  tabindex="-1"
+                  aria-labelledby="exampleModalLabel"
+                  aria-hidden="true"
+                >
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">
+                          Modal title
+                        </h1>
+                        <button
+                          type="button"
+                          class="btn-close"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
+                        ></button>
+                      </div>
+                      <div class="modal-body">...</div>
+                      <div class="modal-footer">
+                        <button
+                          type="button"
+                          class="btn btn-secondary"
+                          data-bs-dismiss="modal">Close</button
+                        >
+                        <button type="button" class="btn btn-primary"
+                          >Save changes</button
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -103,7 +148,7 @@
           <div class="row g-0">
             <div class="col-md-6">
               <img
-                src="/pexels-photo-20899107.jpeg"
+                src="/viaje.jpg"
                 class="img-fluid rounded-start"
                 style="height: 350px;object-fit:cover;"
                 alt="..."
@@ -115,20 +160,60 @@
                   class="card-title pt-5 text-white text-start"
                   style="background:#0e0d06;"
                 >
-                  Registro de conductores
+                  Viajes
                 </h3>
                 <p
                   class="card-text text-white text-start"
                   style="background:#0e0d06;"
                 >
-                  Los conductores pueden registrarse fácilmente y compartir su
-                  información personal y la de sus motos.
+                  Te ofrecemos un servicio de viajes con seguridad, comodidad y
+                  puntualidad, a cada parte del estado Tachira y el pais.
                 </p>
-                <p class="card-text text-start" style="background:#0e0d06;">
-                  <button type="button" class="btn btn-outline-warning"
-                    >Leer Más</button
-                  >
-                </p>
+                <!-- Button trigger modal -->
+                <button
+                  type="button"
+                  class="btn btn-warning"
+                  data-bs-toggle="modal"
+                  data-bs-target="#exampleModal"
+                >
+                  Contactanos
+                </button>
+
+                <!-- Modal -->
+                <div
+                  class="modal fade"
+                  id="exampleModal"
+                  tabindex="-1"
+                  aria-labelledby="exampleModalLabel"
+                  aria-hidden="true"
+                >
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">
+                          Modal title
+                        </h1>
+                        <button
+                          type="button"
+                          class="btn-close"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
+                        ></button>
+                      </div>
+                      <div class="modal-body">...</div>
+                      <div class="modal-footer">
+                        <button
+                          type="button"
+                          class="btn btn-secondary"
+                          data-bs-dismiss="modal">Close</button
+                        >
+                        <button type="button" class="btn btn-primary"
+                          >Save changes</button
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -143,7 +228,7 @@
           <div class="row g-0">
             <div class="col-md-6">
               <img
-                src="/pexels-photo-11073539.jpeg"
+                src="/escuela.jpg"
                 class="img-fluid rounded-start"
                 style="height: 350px;width: auto;object-fit:cover;"
                 alt="..."
@@ -155,20 +240,60 @@
                   class="card-title text-white text-start pt-5"
                   style="background:#0e0d06;"
                 >
-                  Disponibilidad en tiempo real
+                  Serivico de transporte escolar
                 </h3>
                 <p
                   class="card-text text-white text-start pt-2"
                   style="background:#0e0d06;"
                 >
-                  Consulta en cualquier momento qué mototaxis están disponibles
-                  cerca de tu ubicación.
+                  Nos encargamos de los mas pequeños de la casa, con seguridad,
+                  comodidad y puntualidad, nos ajustamos a tus horarios.
                 </p>
-                <p class="card-text text-start" style="background:#0e0d06;">
-                  <button type="button" class="btn btn-outline-warning"
-                    >Leer Más</button
-                  >
-                </p>
+                <!-- Button trigger modal -->
+                <button
+                  type="button"
+                  class="btn btn-warning"
+                  data-bs-toggle="modal"
+                  data-bs-target="#exampleModal"
+                >
+                  Contactanos
+                </button>
+
+                <!-- Modal -->
+                <div
+                  class="modal fade"
+                  id="exampleModal"
+                  tabindex="-1"
+                  aria-labelledby="exampleModalLabel"
+                  aria-hidden="true"
+                >
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">
+                          Modal title
+                        </h1>
+                        <button
+                          type="button"
+                          class="btn-close"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
+                        ></button>
+                      </div>
+                      <div class="modal-body">...</div>
+                      <div class="modal-footer">
+                        <button
+                          type="button"
+                          class="btn btn-secondary"
+                          data-bs-dismiss="modal">Close</button
+                        >
+                        <button type="button" class="btn btn-primary"
+                          >Save changes</button
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -179,7 +304,7 @@
           <div class="row g-0">
             <div class="col-md-6">
               <img
-                src="/pexels-photo-20899107.jpeg"
+                src="/trabajo.jpg"
                 class="img-fluid rounded-start"
                 style="height: 350px;object-fit:cover;"
                 alt="..."
@@ -191,20 +316,61 @@
                   class="card-title pt-5 text-white text-start"
                   style="background:#0e0d06;"
                 >
-                  Seguimiento de rutas
+                  Servicio de transporte laboral
                 </h3>
                 <p
                   class="card-text text-white text-start"
                   style="background:#0e0d06;"
                 >
-                  Visualiza el recorrido en tiempo real para mayor comodidad y
-                  seguridad durante tus viajes.
+                  Nos encargamos de tus viajes de tu casa a tu trabajo y
+                  viceversa, con seguridad, comodidad y puntualidad, nos
+                  ajustamos a tus horarios.
                 </p>
-                <p class="card-text text-start" style="background:#0e0d06;">
-                  <button type="button" class="btn btn-outline-warning"
-                    >Leer Más</button
-                  >
-                </p>
+                <!-- Button trigger modal -->
+                <button
+                  type="button"
+                  class="btn btn-warning"
+                  data-bs-toggle="modal"
+                  data-bs-target="#exampleModal"
+                >
+                  Contactanos
+                </button>
+
+                <!-- Modal -->
+                <div
+                  class="modal fade"
+                  id="exampleModal"
+                  tabindex="-1"
+                  aria-labelledby="exampleModalLabel"
+                  aria-hidden="true"
+                >
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">
+                          Modal title
+                        </h1>
+                        <button
+                          type="button"
+                          class="btn-close"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
+                        ></button>
+                      </div>
+                      <div class="modal-body">...</div>
+                      <div class="modal-footer">
+                        <button
+                          type="button"
+                          class="btn btn-secondary"
+                          data-bs-dismiss="modal">Close</button
+                        >
+                        <button type="button" class="btn btn-primary"
+                          >Save changes</button
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -213,9 +379,6 @@
     </div>
   </div>
 </div>
-
-
-
 
 <div class="container4">
   <div class="container text-center">
@@ -225,7 +388,7 @@
           <div class="row g-0">
             <div class="col-md-6">
               <img
-                src="/pexels-photo-11073539.jpeg"
+                src="/trabajador.jpg"
                 class="img-fluid rounded-start"
                 style="height: 350px;width: auto;object-fit:cover;"
                 alt="..."
@@ -237,20 +400,60 @@
                   class="card-title text-white text-start pt-5"
                   style="background:#0e0d06;"
                 >
-                  Mototaxis rápidos y seguros
+                  Servicio de transporte empresarial
                 </h3>
                 <p
                   class="card-text text-white text-start pt-2"
                   style="background:#0e0d06;"
                 >
-                  Te ofrecemos un servicio de mototaxi que prioriza la seguridad
-                  y la puntualidad en cada viaje.
+                  Te ofrecemos un servicio de mototaxi para tus empleados con la
+                  seguridad y la puntualidad que tu empresa necesita.
                 </p>
-                <p class="card-text text-start" style="background:#0e0d06;">
-                  <button type="button" class="btn btn-outline-warning"
-                    >Leer Más</button
-                  >
-                </p>
+                <!-- Button trigger modal -->
+                <button
+                  type="button"
+                  class="btn btn-warning"
+                  data-bs-toggle="modal"
+                  data-bs-target="#exampleModal"
+                >
+                  Contactanos
+                </button>
+
+                <!-- Modal -->
+                <div
+                  class="modal fade"
+                  id="exampleModal"
+                  tabindex="-1"
+                  aria-labelledby="exampleModalLabel"
+                  aria-hidden="true"
+                >
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">
+                          Modal title
+                        </h1>
+                        <button
+                          type="button"
+                          class="btn-close"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
+                        ></button>
+                      </div>
+                      <div class="modal-body">...</div>
+                      <div class="modal-footer">
+                        <button
+                          type="button"
+                          class="btn btn-secondary"
+                          data-bs-dismiss="modal">Close</button
+                        >
+                        <button type="button" class="btn btn-primary"
+                          >Save changes</button
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -261,7 +464,7 @@
           <div class="row g-0">
             <div class="col-md-6">
               <img
-                src="/pexels-photo-20899107.jpeg"
+                src="/person.jpg"
                 class="img-fluid rounded-start"
                 style="height: 350px;object-fit:cover;"
                 alt="..."
@@ -273,96 +476,60 @@
                   class="card-title pt-5 text-white text-start"
                   style="background:#0e0d06;"
                 >
-                  Registro de conductores
+                  Servicio personalizado
                 </h3>
                 <p
                   class="card-text text-white text-start"
                   style="background:#0e0d06;"
                 >
-                  Los conductores pueden registrarse fácilmente y compartir su
-                  información personal y la de sus motos.
+                  Crea con nosotros tu servico personalizado, tus rutas tus
+                  lugares frecuentes.
                 </p>
-                <p class="card-text text-start" style="background:#0e0d06;">
-                  <button type="button" class="btn btn-outline-warning"
-                    >Leer Más</button
-                  >
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="container text-center">
-    <div class="row">
-      <div class="col">
-        <div class="card mb-3" style="max-width: 540px;border:none;">
-          <div class="row g-0">
-            <div class="col-md-6">
-              <img
-                src="/pexels-photo-11073539.jpeg"
-                class="img-fluid rounded-start"
-                style="height: 350px;width: auto;object-fit:cover;"
-                alt="..."
-              />
-            </div>
-            <div class="col-md-6" style="background:#0e0d06;">
-              <div class="card-body" style="background:#0e0d06;">
-                <h3
-                  class="card-title text-white text-start pt-5"
-                  style="background:#0e0d06;"
+                <!-- Button trigger modal -->
+                <button
+                  type="button"
+                  class="btn btn-warning"
+                  data-bs-toggle="modal"
+                  data-bs-target="#exampleModal"
                 >
-                  Disponibilidad en tiempo real
-                </h3>
-                <p
-                  class="card-text text-white text-start pt-2"
-                  style="background:#0e0d06;"
+                  Contactanos
+                </button>
+
+                <!-- Modal -->
+                <div
+                  class="modal fade"
+                  id="exampleModal"
+                  tabindex="-1"
+                  aria-labelledby="exampleModalLabel"
+                  aria-hidden="true"
                 >
-                  Consulta en cualquier momento qué mototaxis están disponibles
-                  cerca de tu ubicación.
-                </p>
-                <p class="card-text text-start" style="background:#0e0d06;">
-                  <button type="button" class="btn btn-outline-warning"
-                    >Leer Más</button
-                  >
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card mb-3" style="max-width: 540px;border:none;">
-          <div class="row g-0">
-            <div class="col-md-6">
-              <img
-                src="/pexels-photo-20899107.jpeg"
-                class="img-fluid rounded-start"
-                style="height: 350px;object-fit:cover;"
-                alt="..."
-              />
-            </div>
-            <div class="col-md-6" style="background:#0e0d06;">
-              <div class="card-body" style="background:#0e0d06;">
-                <h3
-                  class="card-title pt-5 text-white text-start"
-                  style="background:#0e0d06;"
-                >
-                  Seguimiento de rutas
-                </h3>
-                <p
-                  class="card-text text-white text-start"
-                  style="background:#0e0d06;"
-                >
-                  Visualiza el recorrido en tiempo real para mayor comodidad y
-                  seguridad durante tus viajes.
-                </p>
-                <p class="card-text text-start" style="background:#0e0d06;">
-                  <button type="button" class="btn btn-outline-warning"
-                    >Leer Más</button
-                  >
-                </p>
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">
+                          Modal title
+                        </h1>
+                        <button
+                          type="button"
+                          class="btn-close"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
+                        ></button>
+                      </div>
+                      <div class="modal-body">...</div>
+                      <div class="modal-footer">
+                        <button
+                          type="button"
+                          class="btn btn-secondary"
+                          data-bs-dismiss="modal">Close</button
+                        >
+                        <button type="button" class="btn btn-primary"
+                          >Save changes</button
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -372,47 +539,58 @@
   </div>
 </div>
 
-
 <div class="footer">
   <img
-    src="/pexels-photo-20899107.jpeg"
+    src="/social.jpg"
     style="height: 500px;object-fit:cover;"
     class="card-img"
     alt="..."
   />
 
-  <h1 class="card-title text-white text-center pt-5">Solicita tu mototaxi ahora mismo</h1>
-  <div class="d-flex justify-content-center  pt-5 pb-5">
-    <button type="button" class="btn btn-outline-warning" style="font-size: 25px;"
-      >Pedir moto taxi ahora</button
+  <h1 class="card-title text-white text-center pt-5">
+    Solicita tu mototaxi ahora mismo
+  </h1>
+  <div class="d-flex justify-content-center pt-5 pb-5">
+    <button
+      type="button"
+      class="btn btn-outline-warning"
+      style="font-size: 25px;">Pedir moto taxi ahora</button
     >
   </div>
 </div>
 
 <div class="container8 pt-5 pb-5" style="background: #0e0d06;">
-    <div class="container text-center" >
-        <div class="row" >
-          <div class="col"  style="background: #0e0d06;">
-            <h3 class="text-white"  style="background: #0e0d06;">Sobre nosotros</h3>
-            <p class="text-white"  style="background: #0e0d06;">Motoaqui es la solución perfecta para tus necesidades de transporte en moto.</p>
-          </div>
-          <div class="col"  style="background: #0e0d06;">
-            <h3 class="text-white"  style="background: #0e0d06;">Dirección:</h3>
-            <p class="text-white"  style="background: #0e0d06;">Táchira</p>
-          </div>
-          <div class="col"  style="background: #0e0d06;">
-            <h3 class="text-white"  style="background: #0e0d06;">Contacto:</h3>
-            <p class="text-white"  style="background: #0e0d06;">04169752291
-                ayos007@gmail.com</p>
-          </div>
-          
-        </div>
+  <div class="container text-center">
+    <div class="row">
+      <div class="col" style="background: #0e0d06;">
+        <h3 class="text-white" style="background: #0e0d06;">Sobre nosotros</h3>
+        <p class="text-white" style="background: #0e0d06;">
+          Motoaqui es la solución perfecta para tus necesidades de transporte en
+          moto.
+        </p>
       </div>
+      <div class="col" style="background: #0e0d06;">
+        <h3 class="text-white" style="background: #0e0d06;">Dirección:</h3>
+        <p class="text-white" style="background: #0e0d06;">Táchira</p>
+      </div>
+      <div class="col" style="background: #0e0d06;">
+        <h3 class="text-white" style="background: #0e0d06;">Contacto:</h3>
+        <p class="text-white" style="background: #0e0d06;">
+          04169752291 ayos007@gmail.com
+        </p>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div class="container9 p-3 d-flex justify-content-center" style="background: #0e0d06;" >
-<p class="text-white" style="background: #0e0d06;border-top:solid white;border-bottom:solid white;">Derechos de autor © 2024 motoaqui</p>
+<div
+  class="container9 p-3 d-flex justify-content-center"
+  style="background: #0e0d06;"
+>
+  <p
+    class="text-white"
+    style="background: #0e0d06;border-top:solid white;border-bottom:solid white;"
+  >
+    Derechos de autor © 2024 motoaqui
+  </p>
 </div>
-
-
-

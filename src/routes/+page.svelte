@@ -18,7 +18,7 @@
       </div>
       <div class="col">
         <img
-          src="/pexels-photo-11073539.jpeg"
+          src="/pide.jpg"
           style="height: 450px;width:600px;border-radius:50px;"
           alt=""
         />
@@ -32,7 +32,7 @@
     <div class="row">
       <div class="col" style="background: #0e0d06;">
         <img
-          src="/pexels-photo-20899107.jpeg"
+          src="/pexels-photo-20899107.webp"
           style="height: 450px;width:600px;border-radius:50px;object-fit:cover;"
           alt=""
         />
@@ -107,7 +107,7 @@
           <div class="row g-0">
             <div class="col-md-6">
               <img
-                src="/pexels-photo-11073539.jpeg"
+                src="/pexels-photo-11073539.jpg"
                 class="img-fluid rounded-start"
                 style="height: 350px;width: auto;object-fit:cover;"
                 alt="..."
@@ -143,7 +143,7 @@
           <div class="row g-0">
             <div class="col-md-6">
               <img
-                src="/pexels-photo-20899107.jpeg"
+                src="/form.jpg"
                 class="img-fluid rounded-start"
                 style="height: 350px;object-fit:cover;"
                 alt="..."
@@ -183,7 +183,7 @@
           <div class="row g-0">
             <div class="col-md-6">
               <img
-                src="/pexels-photo-11073539.jpeg"
+                src="/dispo.jpg"
                 class="img-fluid rounded-start"
                 style="height: 350px;width: auto;object-fit:cover;"
                 alt="..."
@@ -219,7 +219,7 @@
           <div class="row g-0">
             <div class="col-md-6">
               <img
-                src="/pexels-photo-20899107.jpeg"
+                src="/registro.png"
                 class="img-fluid rounded-start"
                 style="height: 350px;object-fit:cover;"
                 alt="..."
@@ -324,7 +324,7 @@
 
 <div class="footer">
   <img
-    src="/pexels-photo-20899107.jpeg"
+    src="/pexels-photo-20899107.webp"
     style="height: 500px;object-fit:cover;"
     class="card-img"
     alt="..."

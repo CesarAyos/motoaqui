@@ -16,7 +16,7 @@
     <div class="row">
       <div class="col" style="background: #0e0d06;">
         <img
-          src="/pexels-photo-20899107.jpeg"
+          src="/bera.jpeg"
           style="height: 450px;width:600px;border-radius:50px;object-fit:cover;"
           alt=""
         />
@@ -76,7 +76,7 @@
         conductores a través de un registro adecuado y medidas de seguridad.
       </p>
       <img
-        src="/pexels-photo-11073539.jpeg"
+        src="/seguro.jpg"
         class="rounded"
         style="height: 250px;width:550px;"
         alt=""
@@ -91,7 +91,7 @@
         transparencia.
       </p>
       <img
-        src="/pexels-photo-20899107.jpeg"
+        src="/conexion.jpg"
         class="rounded"
         style="height: 250px;width:550px;"
         alt=""
@@ -102,7 +102,7 @@
 
 <div class="footer">
     <img
-      src="/pexels-photo-20899107.jpeg"
+      src="/ek.jpg"
       style="height: 500px;object-fit:cover;"
       class="card-img"
       alt="..."
