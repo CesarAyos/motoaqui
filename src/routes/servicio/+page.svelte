@@ -17,7 +17,7 @@
   class="container6 d-flex justify-content-center"
   style="background: #0e0d06;"
 >
-  <div class="card" style="border:none;">
+  <div class="card animate-left" style="border:none;">
     <div class="card-body p-5" style="background: #0e0d06;">
       <div class="container text-center" style="">
         <div class="row">
@@ -64,7 +64,7 @@
   </div>
 </div>
 
-<div class="container4 mt-5">
+<div class="container4 mt-5 animate-left">
   <div class="container text-center">
     <div class="row">
       <div class="col">
@@ -93,51 +93,12 @@
                   Te ofrecemos un servicio de encomiendas que priorizan la
                   seguridad y la puntualidad en cada envio.
                 </p>
-                <!-- Button trigger modal -->
-                <button
-                  type="button"
-                  class="btn btn-warning"
-                  data-bs-toggle="modal"
-                  data-bs-target="#exampleModal"
-                >
-                  Contactanos
-                </button>
 
-                <!-- Modal -->
-                <div
-                  class="modal fade"
-                  id="exampleModal"
-                  tabindex="-1"
-                  aria-labelledby="exampleModalLabel"
-                  aria-hidden="true"
-                >
-                  <div class="modal-dialog">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">
-                          Modal title
-                        </h1>
-                        <button
-                          type="button"
-                          class="btn-close"
-                          data-bs-dismiss="modal"
-                          aria-label="Close"
-                        ></button>
-                      </div>
-                      <div class="modal-body">...</div>
-                      <div class="modal-footer">
-                        <button
-                          type="button"
-                          class="btn btn-secondary"
-                          data-bs-dismiss="modal">Close</button
-                        >
-                        <button type="button" class="btn btn-primary"
-                          >Save changes</button
-                        >
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <a class="text-decoration-none" style="background: #0e0d06;" href="https://wa.me/584169752291?&text=solicito%20información%20para%20servicio%20de%20encomiendas" target="_blank">
+                <button type="button" class="btn btn-outline-warning">
+                  Contactanos
+                </button>  
+              </a>
               </div>
             </div>
           </div>
@@ -169,51 +130,12 @@
                   Te ofrecemos un servicio de viajes con seguridad, comodidad y
                   puntualidad, a cada parte del estado Tachira y el pais.
                 </p>
-                <!-- Button trigger modal -->
-                <button
-                  type="button"
-                  class="btn btn-warning"
-                  data-bs-toggle="modal"
-                  data-bs-target="#exampleModal"
-                >
-                  Contactanos
-                </button>
 
-                <!-- Modal -->
-                <div
-                  class="modal fade"
-                  id="exampleModal"
-                  tabindex="-1"
-                  aria-labelledby="exampleModalLabel"
-                  aria-hidden="true"
-                >
-                  <div class="modal-dialog">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">
-                          Modal title
-                        </h1>
-                        <button
-                          type="button"
-                          class="btn-close"
-                          data-bs-dismiss="modal"
-                          aria-label="Close"
-                        ></button>
-                      </div>
-                      <div class="modal-body">...</div>
-                      <div class="modal-footer">
-                        <button
-                          type="button"
-                          class="btn btn-secondary"
-                          data-bs-dismiss="modal">Close</button
-                        >
-                        <button type="button" class="btn btn-primary"
-                          >Save changes</button
-                        >
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                 <a class="text-decoration-none" style="background: #0e0d06;" href="https://wa.me/584169752291?&text=solicito%20información%20para%20servicio%20de%20viajes" target="_blank">
+                <button type="button" class="btn btn-outline-warning">
+                  Contactanos
+                </button>  
+              </a>
               </div>
             </div>
           </div>
@@ -221,6 +143,7 @@
       </div>
     </div>
   </div>
+
   <div class="container text-center">
     <div class="row">
       <div class="col">
@@ -249,51 +172,12 @@
                   Nos encargamos de los mas pequeños de la casa, con seguridad,
                   comodidad y puntualidad, nos ajustamos a tus horarios.
                 </p>
-                <!-- Button trigger modal -->
-                <button
-                  type="button"
-                  class="btn btn-warning"
-                  data-bs-toggle="modal"
-                  data-bs-target="#exampleModal"
-                >
-                  Contactanos
-                </button>
 
-                <!-- Modal -->
-                <div
-                  class="modal fade"
-                  id="exampleModal"
-                  tabindex="-1"
-                  aria-labelledby="exampleModalLabel"
-                  aria-hidden="true"
-                >
-                  <div class="modal-dialog">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">
-                          Modal title
-                        </h1>
-                        <button
-                          type="button"
-                          class="btn-close"
-                          data-bs-dismiss="modal"
-                          aria-label="Close"
-                        ></button>
-                      </div>
-                      <div class="modal-body">...</div>
-                      <div class="modal-footer">
-                        <button
-                          type="button"
-                          class="btn btn-secondary"
-                          data-bs-dismiss="modal">Close</button
-                        >
-                        <button type="button" class="btn btn-primary"
-                          >Save changes</button
-                        >
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                 <a class="text-decoration-none" style="background: #0e0d06;" href="https://wa.me/584169752291?&text=solicito%20información%20para%20servicio%20escolar" target="_blank">
+                <button type="button" class="btn btn-outline-warning">
+                  Contactanos
+                </button>  
+              </a>
               </div>
             </div>
           </div>
@@ -326,51 +210,13 @@
                   viceversa, con seguridad, comodidad y puntualidad, nos
                   ajustamos a tus horarios.
                 </p>
-                <!-- Button trigger modal -->
-                <button
-                  type="button"
-                  class="btn btn-warning"
-                  data-bs-toggle="modal"
-                  data-bs-target="#exampleModal"
-                >
-                  Contactanos
-                </button>
 
-                <!-- Modal -->
-                <div
-                  class="modal fade"
-                  id="exampleModal"
-                  tabindex="-1"
-                  aria-labelledby="exampleModalLabel"
-                  aria-hidden="true"
-                >
-                  <div class="modal-dialog">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">
-                          Modal title
-                        </h1>
-                        <button
-                          type="button"
-                          class="btn-close"
-                          data-bs-dismiss="modal"
-                          aria-label="Close"
-                        ></button>
-                      </div>
-                      <div class="modal-body">...</div>
-                      <div class="modal-footer">
-                        <button
-                          type="button"
-                          class="btn btn-secondary"
-                          data-bs-dismiss="modal">Close</button
-                        >
-                        <button type="button" class="btn btn-primary"
-                          >Save changes</button
-                        >
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                 <a class="text-decoration-none" style="background: #0e0d06;" href="https://wa.me/584169752291?&text=solicito%20información%20para%20servicio%20laboral" target="_blank">
+                <button type="button" class="btn btn-outline-warning">
+                  Contactanos
+                </button>  
+              </a>                          
+                
               </div>
             </div>
           </div>
@@ -409,51 +255,12 @@
                   Te ofrecemos un servicio de mototaxi para tus empleados con la
                   seguridad y la puntualidad que tu empresa necesita.
                 </p>
-                <!-- Button trigger modal -->
-                <button
-                  type="button"
-                  class="btn btn-warning"
-                  data-bs-toggle="modal"
-                  data-bs-target="#exampleModal"
-                >
-                  Contactanos
-                </button>
 
-                <!-- Modal -->
-                <div
-                  class="modal fade"
-                  id="exampleModal"
-                  tabindex="-1"
-                  aria-labelledby="exampleModalLabel"
-                  aria-hidden="true"
-                >
-                  <div class="modal-dialog">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">
-                          Modal title
-                        </h1>
-                        <button
-                          type="button"
-                          class="btn-close"
-                          data-bs-dismiss="modal"
-                          aria-label="Close"
-                        ></button>
-                      </div>
-                      <div class="modal-body">...</div>
-                      <div class="modal-footer">
-                        <button
-                          type="button"
-                          class="btn btn-secondary"
-                          data-bs-dismiss="modal">Close</button
-                        >
-                        <button type="button" class="btn btn-primary"
-                          >Save changes</button
-                        >
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                 <a class="text-decoration-none" style="background: #0e0d06;" href="https://wa.me/584169752291?&text=solicito%20información%20para%20servicio%20empresarial." target="_blank">
+                <button type="button" class="btn btn-outline-warning">
+                  Contactanos
+                </button>  
+              </a>
               </div>
             </div>
           </div>
@@ -485,51 +292,12 @@
                   Crea con nosotros tu servico personalizado, tus rutas tus
                   lugares frecuentes.
                 </p>
-                <!-- Button trigger modal -->
-                <button
-                  type="button"
-                  class="btn btn-warning"
-                  data-bs-toggle="modal"
-                  data-bs-target="#exampleModal"
-                >
-                  Contactanos
-                </button>
 
-                <!-- Modal -->
-                <div
-                  class="modal fade"
-                  id="exampleModal"
-                  tabindex="-1"
-                  aria-labelledby="exampleModalLabel"
-                  aria-hidden="true"
-                >
-                  <div class="modal-dialog">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">
-                          Modal title
-                        </h1>
-                        <button
-                          type="button"
-                          class="btn-close"
-                          data-bs-dismiss="modal"
-                          aria-label="Close"
-                        ></button>
-                      </div>
-                      <div class="modal-body">...</div>
-                      <div class="modal-footer">
-                        <button
-                          type="button"
-                          class="btn btn-secondary"
-                          data-bs-dismiss="modal">Close</button
-                        >
-                        <button type="button" class="btn btn-primary"
-                          >Save changes</button
-                        >
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                 <a class="text-decoration-none" style="background: #0e0d06;" href="https://wa.me/584169752291?&text=solicito%20información%20para%20servicio%20personalizado" target="_blank">
+                <button type="button" class="btn btn-outline-warning">
+                  Contactanos
+                </button>  
+              </a>
               </div>
             </div>
           </div>
@@ -551,11 +319,16 @@
     Solicita tu mototaxi ahora mismo
   </h1>
   <div class="d-flex justify-content-center pt-5 pb-5">
-    <button
-      type="button"
-      class="btn btn-outline-warning"
-      style="font-size: 25px;">Pedir moto taxi ahora</button
-    >
+    <a
+        class="text-decoration-none"
+        style="background: #0e0d06;"
+        href="https://wa.me/584169752291?&text=solicito%20una%20carrera."
+        target="_blank"
+      >
+        <button type="button" class="btn btn-outline-warning">
+          Pedir mototaxi ahora
+        </button>
+      </a>
   </div>
 </div>
 
@@ -594,3 +367,24 @@
     Derechos de autor © 2024 motoaqui
   </p>
 </div>
+
+
+<style>
+  /* animacion izquierda derecha */
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+
+.animate-left {
+  animation: slideInLeft 1s ease-in-out;
+}
+
+</style>

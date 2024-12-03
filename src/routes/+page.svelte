@@ -1,4 +1,4 @@
-<div class="container2 p-5">
+<div class="container2 animate-left p-5">
   <div class="container text-center">
     <div class="row">
       <div class="col">
@@ -11,9 +11,16 @@
           con total seguridad.
         </p>
         <div class="d-flex justify-content-start mt-4">
-          <button type="button" class="btn btn-outline-warning fs-4"
-            >Pedir moto taxi ahora</button
-          >
+          <a
+        class="text-decoration-none"
+        style="background: #0e0d06;"
+        href="https://wa.me/584169752291?&text=solicito%20una%20carrera."
+        target="_blank"
+      >
+        <button type="button" class="btn btn-outline-warning">
+          Pedir mototaxi ahora
+        </button>
+      </a>
         </div>
       </div>
       <div class="col">
@@ -84,7 +91,7 @@
   </div>
 </div>
 
-<div class="container3 d-flex justify-content-center">
+<div class="container3 animate-left d-flex justify-content-center">
   <div class="card" style="width: 50rem;border:none;">
     <div class="card-body">
       <h1 class="card-title pt-5 text-center text-white">
@@ -99,7 +106,7 @@
   </div>
 </div>
 
-<div class="container4">
+<div class="container4 animate-left">
   <div class="container text-center">
     <div class="row">
       <div class="col">
@@ -266,11 +273,16 @@
         destino!
       </p>
       <div style="background:#0e0d06;">
-        <button
-          type="button"
-          class="btn btn-outline-warning fs-3"
-          style="background:#0e0d06;">Pedir moto taxi ahora</button
-        >
+        <a
+        class="text-decoration-none"
+        style="background: #0e0d06;"
+        href="https://wa.me/584169752291?&text=solicito%20una%20carrera."
+        target="_blank"
+      >
+        <button type="button" class="btn btn-outline-warning">
+          Pedir mototaxi ahora
+        </button>
+      </a>
       </div>
     </div>
   </div>
@@ -332,9 +344,16 @@
 
   <h1 class="card-title text-white text-center pt-5">Solicita tu mototaxi ahora mismo</h1>
   <div class="d-flex justify-content-center  pt-5 pb-5">
-    <button type="button" class="btn btn-outline-warning" style="font-size: 25px;"
-      >Pedir moto taxi ahora</button
-    >
+    <a
+        class="text-decoration-none"
+        style="background: #0e0d06;"
+        href="https://wa.me/584169752291?&text=solicito%20una%20carrera."
+        target="_blank"
+      >
+        <button type="button" class="btn btn-outline-warning">
+          Pedir mototaxi ahora
+        </button>
+      </a>
   </div>
 </div>
 
@@ -362,3 +381,23 @@
 <div class="container9 p-3 d-flex justify-content-center" style="background: #0e0d06;" >
 <p class="text-white" style="background: #0e0d06;border-top:solid white;border-bottom:solid white;">Derechos de autor © 2024 motoaqui</p>
 </div>
+
+<style>
+  /* animacion izquierda derecha */
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+
+.animate-left {
+  animation: slideInLeft 1s ease-in-out;
+}
+
+</style>

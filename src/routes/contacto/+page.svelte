@@ -1,4 +1,4 @@
-<div>
+<div class="animate-left">
   <div class="container3 d-flex justify-content-center">
     <div class="card" style="width: 50rem;border:none;">
       <div class="card-body p-5">
@@ -16,7 +16,7 @@
   </div>
 </div>
 
-<div style="background: #0e0d06;">
+<div class="animate-left" style="background: #0e0d06;">
   <div
     class="container d-flex justify-content-center p-3"
     style="background: #0e0d06;"
@@ -180,9 +180,16 @@
   
     <h1 class="card-title text-white text-center pt-5">Solicita tu mototaxi ahora mismo</h1>
     <div class="d-flex justify-content-center  pt-5 pb-5">
-      <button type="button" class="btn btn-outline-warning" style="font-size: 25px;"
-        >Pedir moto taxi ahora</button
+      <a
+        class="text-decoration-none"
+        style="background: #0e0d06;"
+        href="https://wa.me/584169752291?&text=solicito%20una%20carrera."
+        target="_blank"
       >
+        <button type="button" class="btn btn-outline-warning">
+          Pedir mototaxi ahora
+        </button>
+      </a>
     </div>
   </div>
   
@@ -211,3 +218,22 @@
   <p class="text-white" style="background: #0e0d06;border-top:solid white;border-bottom:solid white;">Derechos de autor © 2024 motoaqui</p>
   </div>
   
+  <style>
+    /* animacion izquierda derecha */
+  @keyframes slideInLeft {
+    from {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  
+  .animate-left {
+    animation: slideInLeft 1s ease-in-out;
+  }
+  
+  </style>
