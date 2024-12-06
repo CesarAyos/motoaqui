@@ -72,8 +72,8 @@
   </div>
 </div>
 
-<div class="container p-5">
-  <div class="row">
+
+  <div class="row p-5">
     <div class="col-md-6">
       <h4 style="color:#d09a40;">Nuestra misión</h4>
       <h3 class="text-white">Nuestra misión Brindar transporte seguro</h3>
@@ -105,7 +105,6 @@
       />
     </div>
   </div>
-</div>
 
 <div class="footer">
     <img
@@ -157,6 +156,11 @@
 
 
   <style>
+    *{
+  background: #1b1b1b;
+}
+
+
     /* animacion izquierda derecha */
   @keyframes slideInLeft {
     from {

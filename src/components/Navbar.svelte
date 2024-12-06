@@ -35,25 +35,52 @@
         </li>
       </ul>
     </div>
-    <div>
-      <a
-        class="text-decoration-none"
-        style="background: #0e0d06;"
-        href="https://wa.me/584169752291?&text=solicito%20una%20carrera."
-        target="_blank"
-      >
-        <button type="button" class="btn btn-outline-warning">
-          Pedir mototaxi ahora
+    <div style="margin-right: 50px;">
+      <div class="btn-group">
+        <button
+          class="btn btn-outline-warning dropdown-toggle"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          INGRESAR
         </button>
-      </a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="loginUser">USUARIO</a></li>
+          <li><a class="dropdown-item" href="loginDrivers">CONDUCTOR</a></li>
+        </ul>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-outline-warning " type="button">
+          REGISTRARSE
+        </button>
+        <button
+          type="button"
+          class="btn  btn-outline-warning dropdown-toggle dropdown-toggle-split"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <span class="visually-hidden">REGISTRARME</span>
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="registroClient">NUEVO USUARIO</a></li>
+          <li><a class="dropdown-item" href="registroDrivers">NUEVO CONDUCTOR</a></li>
+        </ul>
+      </div>
     </div>
   </div>
 </nav>
+
+<!-- Large button groups (default and split) -->
 
 <style>
   .medio:hover {
     transition: 1s;
     border-radius: 15px;
     background: #ffd43b;
+  }
+
+  .navbar {
+    background: #1b1b1b;
   }
 </style>

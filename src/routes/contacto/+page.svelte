@@ -219,6 +219,11 @@
   </div>
   
   <style>
+
+*{
+  background: #1b1b1b;
+}
+
     /* animacion izquierda derecha */
   @keyframes slideInLeft {
     from {

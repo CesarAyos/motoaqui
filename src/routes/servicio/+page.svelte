@@ -64,7 +64,7 @@
   </div>
 </div>
 
-<div class="container4 mt-5 animate-left">
+<div class="container4 pt-5 animate-left">
   <div class="container text-center">
     <div class="row">
       <div class="col">
@@ -370,6 +370,11 @@
 
 
 <style>
+*{
+  background: #1b1b1b;
+}
+
+
   /* animacion izquierda derecha */
 @keyframes slideInLeft {
   from {
