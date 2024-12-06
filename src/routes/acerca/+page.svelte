@@ -17,6 +17,7 @@
       <div class="col" style="background: #0e0d06;">
         <img
           src="/bera.jpeg"
+          class="imgPrincipal"
           style="height: 450px;width:600px;border-radius:50px;object-fit:cover;"
           alt=""
         />
@@ -84,7 +85,7 @@
       </p>
       <img
         src="/seguro.jpg"
-        class="rounded"
+        class="rounded imgPrincipal"
         style="height: 250px;width:550px;"
         alt=""
       />
@@ -99,7 +100,7 @@
       </p>
       <img
         src="/conexion.jpg"
-        class="rounded"
+        class="rounded imgPrincipal"
         style="height: 250px;width:550px;"
         alt=""
       />
@@ -176,6 +177,12 @@
   
   .animate-left {
     animation: slideInLeft 1s ease-in-out;
+  }
+
+  @media (max-width: 900px) {
+    .imgPrincipal{
+      display: none;
+    }
   }
   
   </style>

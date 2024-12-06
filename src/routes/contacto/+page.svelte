@@ -153,7 +153,7 @@
           <textarea class="form-control" aria-label="With textarea"></textarea>
         </div>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-6 imgPrincipal">
         <iframe
           title="map"
           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d725642.1761236065!2d-72.5629480543851!3d8.012871252125255!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e65d5da199e3bc5%3A0xf863a602386ce5f5!2zVMOhY2hpcmE!5e1!3m2!1ses!2sve!4v1732292222979!5m2!1ses!2sve"
@@ -240,5 +240,12 @@
   .animate-left {
     animation: slideInLeft 1s ease-in-out;
   }
+
+  @media (max-width: 900px) {
+    .imgPrincipal{
+      display: none;
+    }
+  }
+  
   
   </style>

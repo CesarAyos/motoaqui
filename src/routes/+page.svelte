@@ -12,22 +12,23 @@
         </p>
         <div class="d-flex justify-content-start mt-4">
           <a
-        class="text-decoration-none"
-        style="background: #0e0d06;"
-        href="https://wa.me/584169752291?&text=solicito%20una%20carrera."
-        target="_blank"
-      >
-        <button type="button" class="btn btn-outline-warning">
-          Pedir mototaxi ahora
-        </button>
-      </a>
+            class="text-decoration-none"
+            style="background: #0e0d06;"
+            href="https://wa.me/584169752291?&text=solicito%20una%20carrera."
+            target="_blank"
+          >
+            <button type="button" class="btn btn-outline-warning">
+              Pedir mototaxi ahora
+            </button>
+          </a>
         </div>
       </div>
       <div class="col">
         <img
           src="/pide.jpg"
-          style="height: 450px;width:600px;border-radius:50px;"
-          alt=""
+          class="img-fluid imgPrincipal rounded-start"
+          style="height: 350px;width: auto;object-fit:cover;"
+          alt="..."
         />
       </div>
     </div>
@@ -40,8 +41,9 @@
       <div class="col" style="background: #0e0d06;">
         <img
           src="/pexels-photo-20899107.webp"
-          style="height: 450px;width:600px;border-radius:50px;object-fit:cover;"
-          alt=""
+          class="img-fluid imgPrincipal rounded-start"
+          style="height: 350px;width: auto;object-fit:cover;"
+          alt="..."
         />
       </div>
       <div class="col pb-5" style="background: #0e0d06;">
@@ -261,32 +263,6 @@
   </div>
 </div>
 
-<div class="container5" style="background: #120f06;">
-  <div class="card" style="width: 45rem;border:none;">
-    <div class="card-body p-5" style="background:#0e0d06;">
-      <h1 class="card-title text-white" style="background:#0e0d06;">
-        Únete a nuestra comunidad
-      </h1>
-      <p class="card-text text-white" style="background:#0e0d06;">
-        Regístrate hoy en Motoaqui y disfruta de un nuevo nivel de comodidad y
-        seguridad en tus viajes. ¡Estamos aquí para ayudarte a llegar a tu
-        destino!
-      </p>
-      <div style="background:#0e0d06;">
-        <a
-        class="text-decoration-none"
-        style="background: #0e0d06;"
-        href="https://wa.me/584169752291?&text=solicito%20una%20carrera."
-        target="_blank"
-      >
-        <button type="button" class="btn btn-outline-warning">
-          Pedir mototaxi ahora
-        </button>
-      </a>
-      </div>
-    </div>
-  </div>
-</div>
 
 <div
   class="container6 d-flex justify-content-center"
@@ -297,7 +273,9 @@
       <div class="container text-center" style="">
         <div class="row">
           <div class="col" style="background: #0e0d06;">
-            <h4 class="text-start" style="color: #d09a40;background: #0e0d06;">01</h4>
+            <h4 class="text-start" style="color: #d09a40;background: #0e0d06;">
+              01
+            </h4>
             <h4 class="text-white text-start" style="background: #0e0d06;">
               Solicita tu mototaxi
             </h4>
@@ -308,7 +286,9 @@
             </p>
           </div>
           <div class="col" style="background: #0e0d06;">
-            <h4 class="text-start" style="color: #d09a40;background: #0e0d06;">02</h4>
+            <h4 class="text-start" style="color: #d09a40;background: #0e0d06;">
+              02
+            </h4>
             <h4 class="text-white text-start" style="background: #0e0d06;">
               Revisa la ruta
             </h4>
@@ -318,7 +298,9 @@
             </p>
           </div>
           <div class="col" style="background: #0e0d06;">
-            <h4 class="text-start" style="color: #d09a40;background: #0e0d06;">03</h4>
+            <h4 class="text-start" style="color: #d09a40;background: #0e0d06;">
+              03
+            </h4>
             <h4 class="text-white text-start" style="background: #0e0d06;">
               Conoce a tu conductor
             </h4>
@@ -333,7 +315,6 @@
   </div>
 </div>
 
-
 <div class="footer">
   <img
     src="/pexels-photo-20899107.webp"
@@ -342,68 +323,83 @@
     alt="..."
   />
 
-  <h1 class="card-title text-white text-center pt-5">Solicita tu mototaxi ahora mismo</h1>
-  <div class="d-flex justify-content-center  pt-5 pb-5">
+  <h1 class="card-title text-white text-center pt-5">
+    Solicita tu mototaxi ahora mismo
+  </h1>
+  <div class="d-flex justify-content-center pt-5 pb-5">
     <a
-        class="text-decoration-none"
-        style="background: #0e0d06;"
-        href="https://wa.me/584169752291?&text=solicito%20una%20carrera."
-        target="_blank"
-      >
-        <button type="button" class="btn btn-outline-warning">
-          Pedir mototaxi ahora
-        </button>
-      </a>
+      class="text-decoration-none"
+      style="background: #0e0d06;"
+      href="https://wa.me/584169752291?&text=solicito%20una%20carrera."
+      target="_blank"
+    >
+      <button type="button" class="btn btn-outline-warning">
+        Pedir mototaxi ahora
+      </button>
+    </a>
   </div>
 </div>
 
 <div class="container8 pt-5 pb-5" style="background: #0e0d06;">
-    <div class="container text-center" >
-        <div class="row" >
-          <div class="col"  style="background: #0e0d06;">
-            <h3 class="text-white"  style="background: #0e0d06;">Sobre nosotros</h3>
-            <p class="text-white"  style="background: #0e0d06;">Motoaqui es la solución perfecta para tus necesidades de transporte en moto.</p>
-          </div>
-          <div class="col"  style="background: #0e0d06;">
-            <h3 class="text-white"  style="background: #0e0d06;">Dirección:</h3>
-            <p class="text-white"  style="background: #0e0d06;">Táchira</p>
-          </div>
-          <div class="col"  style="background: #0e0d06;">
-            <h3 class="text-white"  style="background: #0e0d06;">Contacto:</h3>
-            <p class="text-white"  style="background: #0e0d06;">04169752291
-                ayos007@gmail.com</p>
-          </div>
-          
-        </div>
+  <div class="container text-center">
+    <div class="row">
+      <div class="col" style="background: #0e0d06;">
+        <h3 class="text-white" style="background: #0e0d06;">Sobre nosotros</h3>
+        <p class="text-white" style="background: #0e0d06;">
+          Motoaqui es la solución perfecta para tus necesidades de transporte en
+          moto.
+        </p>
       </div>
+      <div class="col" style="background: #0e0d06;">
+        <h3 class="text-white" style="background: #0e0d06;">Dirección:</h3>
+        <p class="text-white" style="background: #0e0d06;">Táchira</p>
+      </div>
+      <div class="col" style="background: #0e0d06;">
+        <h3 class="text-white" style="background: #0e0d06;">Contacto:</h3>
+        <p class="text-white" style="background: #0e0d06;">
+          04169752291 ayos007@gmail.com
+        </p>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div class="container9 p-3 d-flex justify-content-center" style="background: #0e0d06;" >
-<p class="text-white" style="background: #0e0d06;border-top:solid white;border-bottom:solid white;">Derechos de autor © 2024 motoaqui</p>
+<div
+  class="container9 p-3 d-flex justify-content-center"
+  style="background: #0e0d06;"
+>
+  <p
+    class="text-white"
+    style="background: #0e0d06;border-top:solid white;border-bottom:solid white;"
+  >
+    Derechos de autor © 2024 motoaqui
+  </p>
 </div>
 
 <style>
-
-*{
-  background: #1b1b1b;
-}
-
+  * {
+    background: #1b1b1b;
+  }
 
   /* animacion izquierda derecha */
-@keyframes slideInLeft {
-  from {
-    transform: translateX(-100%);
-    opacity: 0;
+  @keyframes slideInLeft {
+    from {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
   }
-  to {
-    transform: translateX(0);
-    opacity: 1;
+
+  .animate-left {
+    animation: slideInLeft 1s ease-in-out;
   }
-}
 
-
-.animate-left {
-  animation: slideInLeft 1s ease-in-out;
-}
-
+  @media (max-width: 900px) {
+    .imgPrincipal{
+      display: none;
+    }
+  }
 </style>
