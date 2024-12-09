@@ -245,6 +245,8 @@ const signUpUser = async () => {
       <option class="text-white">Grupo "AB-"</option>
       <option class="text-white">Grupo "AB+"</option>
       <option class="text-white">Grupo "AB-"</option>
+      <option class="text-white">Grupo "O-"</option>
+      <option class="text-white">Grupo "O+"</option>
       <option class="text-white">No se</option>
     </select>
   </div>
