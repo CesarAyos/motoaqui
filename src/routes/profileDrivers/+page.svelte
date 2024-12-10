@@ -83,31 +83,25 @@
 
     // Configurar la suscripción en tiempo real para las carreras
     const carrerasSubscription = supabase
-      .from("carreras")
-      .on("*", (payload) => {
+      .channel('carreras_changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'carreras' }, payload => {
         const newCarrera = payload.new;
-        const oldCarrera = payload.old;
-
         if (newCarrera.estado === null || newCarrera.estado !== "completada") {
-          const index = carreras.findIndex((c) => c.id === newCarrera.id);
+          // Verificar si la carrera ya existe en la lista
+          const index = carreras.findIndex(c => c.id === newCarrera.id);
           if (index === -1) {
-            carreras = [...carreras, newCarrera]; // Añadir nueva carrera
+            carreras = [...carreras, newCarrera]; // Añadir nueva carrera a la lista
           } else {
             carreras[index] = newCarrera; // Actualizar carrera existente
             carreras = [...carreras]; // Forzar la reactividad
           }
-        } else {
-          // Eliminar carreras completadas
-          carreras = carreras.filter((c) => c.id !== newCarrera.id);
         }
-
-        console.log("Carreras actualizadas:", carreras); // Para depuración
       })
       .subscribe();
 
     // Limpiar la suscripción al desmontar el componente
     onDestroy(() => {
-      supabase.removeSubscription(carrerasSubscription);
+      supabase.removeChannel(carrerasSubscription);
     });
   });
 
@@ -165,9 +159,7 @@
         // Notificar al usuario de la carrera
         await notificarUsuario();
         // Actualizar la lista de carreras localmente
-        const index = carreras.findIndex(
-          (c) => c.id === carreraSeleccionada.id
-        );
+        const index = carreras.findIndex((c) => c.id === carreraSeleccionada.id);
         carreras[index].estado = "asignada";
         carreras = [...carreras]; // Forzar la reactividad
       }
@@ -244,6 +236,7 @@
     window.location.href = "/loginUser";
   };
 </script>
+
 
 <section class="bg-dark">
   <div class="container pt-4 bg-dark">
@@ -323,3 +316,5 @@
     background-color: #28a745 !important; /* Verde */
   }
 </style>
+
+
