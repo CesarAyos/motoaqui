@@ -1,6 +1,6 @@
 <script>
   import { supabase } from "../../components/supabase.js";
-  import { onMount, onDestroy } from "svelte";
+  import { onMount } from "svelte"; // Eliminamos onDestroy
   import "leaflet/dist/leaflet.css";
 
   let map;
@@ -80,29 +80,6 @@
 
       L.control.scale().addTo(map);
     }
-
-    // Configurar la suscripción en tiempo real para las carreras
-    const carrerasSubscription = supabase
-      .channel('carreras_changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'carreras' }, payload => {
-        const newCarrera = payload.new;
-        if (newCarrera.estado === null || newCarrera.estado !== "completada") {
-          // Verificar si la carrera ya existe en la lista
-          const index = carreras.findIndex(c => c.id === newCarrera.id);
-          if (index === -1) {
-            carreras = [...carreras, newCarrera]; // Añadir nueva carrera a la lista
-          } else {
-            carreras[index] = newCarrera; // Actualizar carrera existente
-            carreras = [...carreras]; // Forzar la reactividad
-          }
-        }
-      })
-      .subscribe();
-
-    // Limpiar la suscripción al desmontar el componente
-    onDestroy(() => {
-      supabase.removeChannel(carrerasSubscription);
-    });
   });
 
   function mostrarRuta() {
@@ -159,7 +136,9 @@
         // Notificar al usuario de la carrera
         await notificarUsuario();
         // Actualizar la lista de carreras localmente
-        const index = carreras.findIndex((c) => c.id === carreraSeleccionada.id);
+        const index = carreras.findIndex(
+          (c) => c.id === carreraSeleccionada.id
+        );
         carreras[index].estado = "asignada";
         carreras = [...carreras]; // Forzar la reactividad
       }
@@ -168,33 +147,80 @@
     }
   }
 
+  async function cancelarCarrera() {
+    if (carreraSeleccionada) {
+      // Eliminar la carrera de la base de datos
+      const { error } = await supabase
+        .from("carreras")
+        .delete()
+        .eq("id", carreraSeleccionada.id);
+
+      if (error) {
+        console.error("Error cancelando carrera:", error.message);
+      } else {
+        console.log("Carrera cancelada correctamente");
+        // Eliminar la carrera de la lista localmente
+        carreras = carreras.filter((c) => c.id !== carreraSeleccionada.id);
+        carreraSeleccionada = null;
+        if (routeLayer) {
+          map.removeLayer(routeLayer);
+        }
+        if (originMarker) {
+          map.removeLayer(originMarker);
+          originMarker = null;
+        }
+        if (destinationMarker) {
+          map.removeLayer(destinationMarker);
+          destinationMarker = null;
+        }
+      }
+    } else {
+      alert("No hay ninguna carrera seleccionada para cancelar.");
+    }
+  }
+
   async function notificarUsuario() {
+  if (!carreraSeleccionada) {
+    console.error("No hay carrera seleccionada.");
+    return;
+  }
+
+  // Obtener el número de teléfono del cliente que solicitó la carrera
   const { data: clientData, error: clientError } = await supabase
     .from("motoaquiClient")
     .select("telefono")
-    .limit(1) // Cambiado de .single() a .limit(1)
-    .single(); // Si quieres asegurar que sólo haya un registro, puedes seguir usando .single() después de aplicar un filtro adecuado.
+    .eq("id", carreraSeleccionada.usuario_id) // Asegúrate de que este campo coincide con tu estructura de base de datos
+    .single();
 
   if (clientError) {
     console.error("Error fetching user's phone number:", clientError.message);
     return;
   }
 
-  // Asegúrate de que clientData no sea null o undefined
   if (!clientData) {
     console.error("No se encontró el número de teléfono del cliente.");
     return;
   }
 
+  // Encontrar al conductor seleccionado
   const conductor = conductores.find((c) => c.id === conductorSeleccionado);
+  if (!conductor) {
+    console.error("Conductor no encontrado.");
+    return;
+  }
+
+  // Crear el mensaje de WhatsApp
   const mensaje = `Tu carrera ha sido asignada al conductor/a ${conductor.primernombre} ${conductor.primerapellido}.
   Número de Teléfono: ${conductor.telefono}.
   Modelo de la moto: ${conductor.modelo}.
   Placa de la moto: ${conductor.placa}.
   Color de la moto: ${conductor.color}.
   Control del conductor: ${conductor.control}.`;
+
+  // Crear la URL para abrir WhatsApp
   const url = `https://wa.me/${clientData.telefono}?text=${encodeURIComponent(mensaje)}`;
 
+  // Abrir la URL en una nueva pestaña
   window.open(url, "_blank");
 }
 
@@ -244,7 +270,6 @@
     window.location.href = "/loginUser";
   };
 </script>
-
 
 <section class="bg-dark">
   <div class="container pt-4 bg-dark">
@@ -296,6 +321,11 @@
           >Asignar Conductor</button
         >
 
+        <!-- Botón para cancelar la carrera -->
+        <button class="btn btn-danger" on:click={cancelarCarrera}
+          >Cancelar Carrera</button
+        >
+
         <h3 class="mt-4 text-white">Actualizar Estado de Carrera</h3>
         <button
           class="btn btn-warning"
@@ -324,6 +354,3 @@
     background-color: #28a745 !important; /* Verde */
   }
 </style>
-
-
-
