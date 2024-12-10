@@ -169,27 +169,35 @@
   }
 
   async function notificarUsuario() {
-    const { data: clientData, error: clientError } = await supabase
-      .from("motoaquiClient")
-      .select("telefono")
-      .single();
+  const { data: clientData, error: clientError } = await supabase
+    .from("motoaquiClient")
+    .select("telefono")
+    .limit(1) // Cambiado de .single() a .limit(1)
+    .single(); // Si quieres asegurar que sólo haya un registro, puedes seguir usando .single() después de aplicar un filtro adecuado.
 
-    if (clientError) {
-      console.error("Error fetching user's phone number:", clientError.message);
-      return;
-    }
-
-    const conductor = conductores.find((c) => c.id === conductorSeleccionado);
-    const mensaje = `Tu carrera ha sido asignada al conductor/a ${conductor.primernombre} ${conductor.primerapellido}. 
-    Número de Teléfono: ${conductor.telefono}. 
-    Modelo de la moto: ${conductor.modelo}. 
-    Placa de la moto: ${conductor.placa}. 
-    Color de la moto: ${conductor.color}.
-    Control del conductor: ${conductor.control}.`;
-    const url = `https://wa.me/${clientData.telefono}?text=${encodeURIComponent(mensaje)}`;
-
-    window.open(url, "_blank");
+  if (clientError) {
+    console.error("Error fetching user's phone number:", clientError.message);
+    return;
   }
+
+  // Asegúrate de que clientData no sea null o undefined
+  if (!clientData) {
+    console.error("No se encontró el número de teléfono del cliente.");
+    return;
+  }
+
+  const conductor = conductores.find((c) => c.id === conductorSeleccionado);
+  const mensaje = `Tu carrera ha sido asignada al conductor/a ${conductor.primernombre} ${conductor.primerapellido}.
+  Número de Teléfono: ${conductor.telefono}.
+  Modelo de la moto: ${conductor.modelo}.
+  Placa de la moto: ${conductor.placa}.
+  Color de la moto: ${conductor.color}.
+  Control del conductor: ${conductor.control}.`;
+  const url = `https://wa.me/${clientData.telefono}?text=${encodeURIComponent(mensaje)}`;
+
+  window.open(url, "_blank");
+}
+
 
   function seleccionarCarrera(carrera) {
     carreraSeleccionada = carrera;
