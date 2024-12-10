@@ -116,15 +116,15 @@
     />
   
     <h1 class="card-title text-white text-center pt-5">Solicita tu mototaxi ahora mismo</h1>
-    <div class="d-flex justify-content-center  pt-5 pb-5">
+    <div class="d-flex justify-content-center pt-5 pb-5">
       <a
         class="text-decoration-none"
         style="background: #0e0d06;"
-        href="https://wa.me/584169752291?&text=solicito%20una%20carrera."
-        target="_blank"
+        href="#"
+  
       >
         <button type="button" class="btn btn-outline-warning">
-          Pedir mototaxi ahora
+          Registrate
         </button>
       </a>
     </div>

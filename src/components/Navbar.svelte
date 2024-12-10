@@ -51,20 +51,24 @@
         </ul>
       </div>
       <div class="btn-group">
-        <button class="btn btn-outline-warning " type="button">
+        <button class="btn btn-outline-warning" type="button">
           REGISTRARSE
         </button>
         <button
           type="button"
-          class="btn  btn-outline-warning dropdown-toggle dropdown-toggle-split"
+          class="btn btn-outline-warning dropdown-toggle dropdown-toggle-split"
           data-bs-toggle="dropdown"
           aria-expanded="false"
         >
           <span class="visually-hidden">REGISTRARME</span>
         </button>
         <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="registroClient">NUEVO USUARIO</a></li>
-          <li><a class="dropdown-item" href="registroDrivers">NUEVO CONDUCTOR</a></li>
+          <li>
+            <a class="dropdown-item" href="registroClient">NUEVO USUARIO</a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="registroDrivers">NUEVO CONDUCTOR</a>
+          </li>
         </ul>
       </div>
     </div>

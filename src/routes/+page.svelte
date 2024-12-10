@@ -14,11 +14,10 @@
           <a
             class="text-decoration-none"
             style="background: #0e0d06;"
-            href="https://wa.me/584169752291?&text=solicito%20una%20carrera."
-            target="_blank"
+            href="#"
           >
             <button type="button" class="btn btn-outline-warning">
-              Pedir mototaxi ahora
+              Registrate
             </button>
           </a>
         </div>
@@ -80,14 +79,7 @@
             </div>
           </div>
         </div>
-        <div
-          class="d-flex justify-content-start mt-4"
-          style="background: #0e0d06;"
-        >
-          <button type="button" class="btn btn-outline-warning fs-4"
-            >Leer más</button
-          >
-        </div>
+        
       </div>
     </div>
   </div>
@@ -137,11 +129,7 @@
                   Te ofrecemos un servicio de mototaxi que prioriza la seguridad
                   y la puntualidad en cada viaje.
                 </p>
-                <p class="card-text text-start" style="background:#0e0d06;">
-                  <button type="button" class="btn btn-outline-warning"
-                    >Leer Más</button
-                  >
-                </p>
+                
               </div>
             </div>
           </div>
@@ -173,11 +161,7 @@
                   Los conductores pueden registrarse fácilmente y compartir su
                   información personal y la de sus motos.
                 </p>
-                <p class="card-text text-start" style="background:#0e0d06;">
-                  <button type="button" class="btn btn-outline-warning"
-                    >Leer Más</button
-                  >
-                </p>
+                
               </div>
             </div>
           </div>
@@ -213,11 +197,7 @@
                   Consulta en cualquier momento qué mototaxis están disponibles
                   cerca de tu ubicación.
                 </p>
-                <p class="card-text text-start" style="background:#0e0d06;">
-                  <button type="button" class="btn btn-outline-warning"
-                    >Leer Más</button
-                  >
-                </p>
+                
               </div>
             </div>
           </div>
@@ -249,11 +229,7 @@
                   Visualiza el recorrido en tiempo real para mayor comodidad y
                   seguridad durante tus viajes.
                 </p>
-                <p class="card-text text-start" style="background:#0e0d06;">
-                  <button type="button" class="btn btn-outline-warning"
-                    >Leer Más</button
-                  >
-                </p>
+                
               </div>
             </div>
           </div>
@@ -330,11 +306,11 @@
     <a
       class="text-decoration-none"
       style="background: #0e0d06;"
-      href="https://wa.me/584169752291?&text=solicito%20una%20carrera."
-      target="_blank"
+      href="#"
+
     >
       <button type="button" class="btn btn-outline-warning">
-        Pedir mototaxi ahora
+        Registrate
       </button>
     </a>
   </div>
