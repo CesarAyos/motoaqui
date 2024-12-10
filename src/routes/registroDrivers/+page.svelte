@@ -18,6 +18,7 @@
     modelo: "",
     placa: "",
     color: "",
+    control: "",
   };
 
   const onSubmit = async () => {
@@ -43,6 +44,7 @@
       modelo: "",
       placa: "",
       color: "",
+      control: "",
     };
   };
 
@@ -77,6 +79,7 @@
           modelo: driver.modelo,
           placa: driver.placa,
           color: driver.color,
+          control: driver.control,
         },
       ]);
 
@@ -155,7 +158,7 @@
       >Contraseña debe tener 6 caracteres</label
     >
     <input
-      type="text"
+      type="password"
       class="form-control"
       id="contraseña"
       bind:value={driver.contraseña}
@@ -267,6 +270,8 @@
       <option class="text-white">Grupo "AB-"</option>
       <option class="text-white">Grupo "AB+"</option>
       <option class="text-white">Grupo "AB-"</option>
+      <option class="text-white">Grupo "O-"</option>
+      <option class="text-white">Grupo "O+"</option>
       <option class="text-white">No se</option>
     </select>
   </div>
@@ -323,6 +328,20 @@
       required
     />
   </div>
+  <div class="col-md-3">
+    <label for="validationDefault02" class="form-label text-white"
+      >control de la moto</label
+    >
+    <input
+      type="text"
+      class="form-control"
+      id="validationDefault02"
+      bind:value={driver.control}
+      placeholder="Año de la moto"
+      required
+    />
+  </div>
+  
 
   <!-- <h5 class="text-center pt-5 text-white">Imagen de perfil</h5>
   <div class="d-flex justify-content-center">
