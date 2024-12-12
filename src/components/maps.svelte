@@ -18,7 +18,7 @@
   let userFirstName = "";
   let userLastName = "";
   let notificationMessage = "";
-  let driverInfo = null;
+  $: notification = $notificationStore;
   let showModal = false; // Asegúrate de inicializar este valor
   $: showModal;
 
@@ -96,19 +96,23 @@
 
   function handleNotification(event) {
     const { mensaje } = event.detail;
-    alert(mensaje);
+    notificationStore.set(mensaje);
+    console.log("Notificación recibida:", mensaje);
   }
 
   async function enviarWhatsApp() {
     if (originMarker && destinationMarker) {
-        const origin = originMarker.getLatLng();
-        const destination = destinationMarker.getLatLng();
-        const originLink = `https://www.openstreetmap.org/?mlat=${origin.lat}&mlon=${origin.lng}#map=18/${origin.lat}/${origin.lng}`;
-        const destinationLink = `https://www.openstreetmap.org/?mlat=${destination.lat}&mlon=${destination.lng}#map=18/${destination.lat}/${destination.lng}`;
+      const origin = originMarker.getLatLng();
+      const destination = destinationMarker.getLatLng();
+      const originLink = `https://www.openstreetmap.org/?mlat=${origin.lat}&mlon=${origin.lng}#map=18/${origin.lat}/${origin.lng}`;
+      const destinationLink = `https://www.openstreetmap.org/?mlat=${destination.lat}&mlon=${destination.lng}#map=18/${destination.lat}/${destination.lng}`;
 
-        const mensaje = `Hola soy ${userFirstName} ${userLastName}. Voy a cancelar en ${formData.moneda}.\n${formData.llevarVueltos ? `Llevar vueltos: ${formData.cantidadVueltos}.\n` : ""}Búscame en: ${formData.tiempo}.\nPor favor búscame aquí: [${originLink}].\nPor favor llévame aquí: [${destinationLink}].`;
+      const mensaje = `Hola soy ${userFirstName} ${userLastName}. Voy a cancelar en ${formData.moneda}.\n${formData.llevarVueltos ? `Llevar vueltos: ${formData.cantidadVueltos}.\n` : ""}Búscame en: ${formData.tiempo}.\nPor favor búscame aquí: [${originLink}].\nPor favor llévame aquí: [${destinationLink}].`;
 
-        const { data, error } = await supabase.from("carreras").insert([{
+      const { data, error } = await supabase
+        .from("carreras")
+        .insert([
+          {
             origen_lat: origin.lat,
             origen_lng: origin.lng,
             destino_lat: destination.lat,
@@ -119,21 +123,23 @@
             tiempo: formData.tiempo,
             fecha: new Date().toISOString(),
             usuario_nombre: `${userFirstName} ${userLastName}`,
-        }]).single();
+          },
+        ])
+        .single();
 
-        if (error) {
-            alert("Error inserting data. Please try again.");
-            console.error("Error:", error.message);
-        } else {
-            const url = `https://wa.me/584169752291?text=${encodeURIComponent(mensaje)}`;
-            window.open(url, "_blank");
-            resetForm();
-            showModal = true; // Mostrar el modal después de enviar
-        }
+      if (error) {
+        alert("Error inserting data. Please try again.");
+        console.error("Error:", error.message);
+      } else {
+        const url = `https://wa.me/584169752291?text=${encodeURIComponent(mensaje)}`;
+        window.open(url, "_blank");
+        resetForm();
+        showModal = true; // Mostrar el modal después de enviar
+      }
     } else {
-        alert("Por favor selecciona tanto el origen como el destino en el mapa.");
+      alert("Por favor selecciona tanto el origen como el destino en el mapa.");
     }
-}
+  }
 
   function resetForm() {
     formData = {
@@ -167,7 +173,7 @@
     on:keydown={(e) => e.key === "Escape" && (showModal = false)}
   >
     <div class="modal-content">
-      <img src="/voy.png" alt="Conductor en camino" />
+      <img src="/voy.png" style="height:50px ;width:50px" alt="Conductor en camino" />
       <h2>En unos minutos llegará tu conductor</h2>
       <button
         type="button"
@@ -189,6 +195,11 @@
           Hola {userFirstName}
           {userLastName}, ¿a dónde iremos hoy?
         </h3>
+        {#if notification}
+          <div class="notification">
+            <p>{notification}</p>
+          </div>
+        {/if}
 
         <form on:submit|preventDefault={enviarWhatsApp}>
           <label class="text-white">
