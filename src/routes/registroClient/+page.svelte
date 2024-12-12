@@ -143,7 +143,7 @@ const signUpUser = async () => {
       >Contraseña debe tener 6 caracteres</label
     >
     <input
-      type="text"
+      type="password"
       class="form-control"
       id="contraseña"
       bind:value={client.contraseña}
@@ -156,7 +156,7 @@ const signUpUser = async () => {
       >Numero telefonico</label
     >
     <input
-      type="number"
+      type="tel"
       class="form-control"
       id="validationDefault02"
       bind:value={client.telefono}

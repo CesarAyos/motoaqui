@@ -171,7 +171,7 @@
       >Numero telefonico</label
     >
     <input
-      type="number"
+      type="tel"
       class="form-control"
       id="validationDefault02"
       bind:value={driver.telefono}
