@@ -1,8 +1,7 @@
 <script>
   import { supabase } from "../components/supabase.js";
-  import { onMount,} from "svelte"; // Eliminamos onDestroy
+  import { onMount } from "svelte"; // Eliminamos onDestroy
   import "leaflet/dist/leaflet.css";
-  
 
   let map;
   let originMarker;
@@ -181,32 +180,31 @@
   }
 
   function notificarUsuario() {
-    if (!carreraSeleccionada) {
-      console.error("No hay carrera seleccionada.");
-      return;
-    }
+  if (!carreraSeleccionada) {
+    console.error("No hay carrera seleccionada.");
+    return;
+  }
 
-    const conductor = conductores.find((c) => c.id === conductorSeleccionado);
-    if (!conductor) {
-      console.error("Conductor no encontrado.");
-      return;
-    }
+  const conductor = conductores.find((c) => c.id === conductorSeleccionado);
+  if (!conductor) {
+    console.error("Conductor no encontrado.");
+    return;
+  }
 
-    const mensaje = `Tu carrera ha sido asignada al conductor/a ${conductor.primernombre} ${conductor.primerapellido}.
+  const mensaje = `Tu carrera ha sido asignada al conductor/a ${conductor.primernombre} ${conductor.primerapellido}.
   Número de Teléfono: ${conductor.telefono}.
   Modelo de la moto: ${conductor.modelo}.
   Placa de la moto: ${conductor.placa}.
   Color de la moto: ${conductor.color}.
   Control del conductor: ${conductor.control}.`;
 
-    // Emitir el evento personalizado
-    const event = new CustomEvent("notificacion", {
-      detail: { mensaje },
-    });
-    dispatchEvent(event); // Emitir el evento
+  // Guardar el mensaje en localStorage
+  localStorage.setItem("notificacion", mensaje);
 
-    alert(mensaje); // Esta es una forma básica de mostrar el mensaje
-  }
+  alert(mensaje); // Esta es una forma básica de mostrar el mensaje
+}
+
+
 
   function seleccionarCarrera(carrera) {
     carreraSeleccionada = carrera;
@@ -214,6 +212,20 @@
     userLastName = carrera.usuario_nombre.split(" ")[1];
     mostrarRuta();
   }
+
+  function actualizarMapa() {
+  // Realiza cambios en el DOM
+  originMarker.setLatLng([lat, lng]);
+  destinationMarker.setLatLng([lat, lng]);
+
+  // Usa requestAnimationFrame para medir propiedades
+  requestAnimationFrame(() => {
+    const originBounds = originMarker.getBounds();
+    const destinationBounds = destinationMarker.getBounds();
+    // Realiza más mediciones si es necesario
+  });
+}
+
 
   async function actualizarEstadoCarrera(estado) {
     if (estado === "completada") {
@@ -248,12 +260,26 @@
     }
   }
 
+  async function recargarCarreras() {
+  const { data: carrerasData, error: carrerasError } = await supabase
+    .from("carreras")
+    .select("*")
+    .or("estado.is.null,estado.neq.completada"); // Incluir carreras cuyo estado es null o no es completada
+
+  if (carrerasError) {
+    console.error("Error fetching carreras:", carrerasError.message);
+  } else {
+    carreras = carrerasData;
+    console.log("Carreras recargadas:", carreras); // Añadir esta línea para depuración
+  }
+}
+
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     window.location.href = "/loginUser";
   };
 </script>
-
 <section class="bg-dark">
   <div class="container pt-4 bg-dark">
     <h1 class="text-center text-white">Asignar Conductores a Carreras</h1>
@@ -289,6 +315,11 @@
             </li>
           {/each}
         </ul>
+        
+        <!-- Botón para recargar carreras -->
+        <button class="btn btn-info" on:click={recargarCarreras}
+          >Recargar Carreras</button
+        >
 
         <h3 class="text-white">Seleccionar Conductor</h3>
         <select class="form-select mb-3" bind:value={conductorSeleccionado}>
@@ -308,7 +339,7 @@
         <button class="btn btn-danger" on:click={cancelarCarrera}
           >Cancelar Carrera</button
         >
-
+        
         <h3 class="mt-4 text-white">Actualizar Estado de Carrera</h3>
         <button
           class="btn btn-warning"

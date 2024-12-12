@@ -7,6 +7,7 @@
   let map;
   let originMarker;
   let destinationMarker;
+
   let formData = {
     moneda: "",
     llevarVueltos: false,
@@ -17,18 +18,23 @@
   let user = "";
   let userFirstName = "";
   let userLastName = "";
-  let notificationMessage = "";
+
   $: notification = $notificationStore;
-  let showModal = false; // Asegúrate de inicializar este valor
-  $: showModal;
+  let showModal = false;
+  let showNotificationModal = false;
 
   onMount(async () => {
     if (typeof window === "undefined") return;
 
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+    // Recuperar la notificación almacenada en localStorage
+    const storedNotification = localStorage.getItem("notificacion");
+    if (storedNotification) {
+      notificationStore.set(storedNotification);
+      localStorage.removeItem("notificacion");
+    }
 
+    // Obtener la sesión del usuario
+    const { data: { session } } = await supabase.auth.getSession();
     if (!session || !session.user) {
       window.location.href = "/loginUser";
       return;
@@ -36,6 +42,7 @@
 
     user = session.user;
 
+    // Obtener datos del usuario
     const { data, error } = await supabase
       .from("motoaquiClient")
       .select("primernombre, primerapellido")
@@ -51,12 +58,11 @@
     userFirstName = data.primernombre;
     userLastName = data.primerapellido;
 
+    // Inicialización del mapa
     const L = (await import("leaflet")).default;
-
     map = L.map("map").setView([8.03687, -72.2603], 14);
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 18,
     }).addTo(map);
     L.control.scale().addTo(map);
@@ -67,7 +73,6 @@
     });
 
     map.on("click", (e) => handleMapClick(e.latlng, taxiIcon));
-
     window.addEventListener("notificacion", handleNotification);
   });
 
@@ -79,14 +84,10 @@
 
   function handleMapClick(latlng, taxiIcon) {
     if (!originMarker) {
-      originMarker = L.marker([latlng.lat, latlng.lng], {
-        icon: taxiIcon,
-      }).addTo(map);
+      originMarker = L.marker([latlng.lat, latlng.lng], { icon: taxiIcon }).addTo(map);
       originMarker.bindPopup("¿Me puedes buscar aquí?").openPopup();
     } else if (!destinationMarker) {
-      destinationMarker = L.marker([latlng.lat, latlng.lng], {
-        icon: taxiIcon,
-      }).addTo(map);
+      destinationMarker = L.marker([latlng.lat, latlng.lng], { icon: taxiIcon }).addTo(map);
       destinationMarker.bindPopup("Llévame aquí").openPopup();
     } else {
       destinationMarker.setLatLng([latlng.lat, latlng.lng]);
@@ -106,7 +107,6 @@
       const destination = destinationMarker.getLatLng();
       const originLink = `https://www.openstreetmap.org/?mlat=${origin.lat}&mlon=${origin.lng}#map=18/${origin.lat}/${origin.lng}`;
       const destinationLink = `https://www.openstreetmap.org/?mlat=${destination.lat}&mlon=${destination.lng}#map=18/${destination.lat}/${destination.lng}`;
-
       const mensaje = `Hola soy ${userFirstName} ${userLastName}. Voy a cancelar en ${formData.moneda}.\n${formData.llevarVueltos ? `Llevar vueltos: ${formData.cantidadVueltos}.\n` : ""}Búscame en: ${formData.tiempo}.\nPor favor búscame aquí: [${originLink}].\nPor favor llévame aquí: [${destinationLink}].`;
 
       const { data, error } = await supabase
@@ -148,7 +148,6 @@
       cantidadVueltos: "",
       tiempo: "",
     };
-
     if (originMarker) {
       map.removeLayer(originMarker);
       originMarker = null;
@@ -165,26 +164,28 @@
   };
 </script>
 
-{#if showModal}
-  <div
-    class="modal-overlay"
-    on:click={() => (showModal = false)}
-    tabindex="0"
-    on:keydown={(e) => e.key === "Escape" && (showModal = false)}
-  >
-    <div class="modal-content">
-      <img src="/voy.png" style="height:50px ;width:50px" alt="Conductor en camino" />
-      <h2>En unos minutos llegará tu conductor</h2>
-      <button
-        type="button"
-        class="btn btn-primary"
-        on:click={() => (showModal = false)}>Cerrar</button
-      >
-    </div>
+
+{#if $notificationStore}
+<!-- Nuevo Modal de Notificaciones -->
+<div class="notification-modal-overlay" on:click={() => (showNotificationModal = false)} tabindex="0" on:keydown={(e) => e.key === "Escape" && (showNotificationModal = false)}>
+  <div class="notification-modal-content">
+    <h2 class="text-danger">Notificación</h2>
+    <p class="text-danger fs-4 m-2"><em>{$notificationStore}</em></p>
   </div>
+</div>
 {/if}
 
-<main class="bg-dark">
+{#if showModal}
+<div class="modal-overlay" on:click={() => (showModal = false)} tabindex="0" on:keydown={(e) => e.key === "Escape" && (showModal = false)}>
+  <div class="modal-content">
+    <img src="/voy.png" style="height:50px;width:50px" alt="Conductor en camino" />
+    <h2>En unos minutos llegará tu conductor</h2>
+    <button type="button" class="btn btn-primary" on:click={() => (showModal = false)}>Cerrar</button>
+  </div>
+</div>
+{/if}
+
+<main class="bg-dark pt-5">
   <div class="container">
     <div class="row">
       <div class="col map">
@@ -192,25 +193,13 @@
       </div>
       <div class="card dform col bg-dark">
         <h3 class="text-white border-bottom border-danger">
-          Hola {userFirstName}
-          {userLastName}, ¿a dónde iremos hoy?
+          Hola {userFirstName} {userLastName}, ¿a dónde iremos hoy?
         </h3>
-        {#if notification}
-          <div class="notification">
-            <p>{notification}</p>
-          </div>
-        {/if}
 
         <form on:submit|preventDefault={enviarWhatsApp}>
           <label class="text-white">
-            <p class="fs-2 border-bottom border-danger">
-              ¿En qué moneda vas a cancelar?
-            </p>
-            <select
-              class="btn btn-outline-warning"
-              bind:value={formData.moneda}
-              required
-            >
+            <p class="fs-2 border-bottom border-danger">¿En qué moneda vas a cancelar?</p>
+            <select class="btn btn-outline-warning" bind:value={formData.moneda} required>
               <option value="" disabled selected>Selecciona una opción</option>
               <option value="pesos">Pesos</option>
               <option value="dólares">Dólares</option>
@@ -218,44 +207,23 @@
           </label>
 
           <label class="text-white">
-            <p class="fs-3 border-bottom border-danger">
-              ¿Debemos llevar vueltos?
-            </p>
-            <input
-              type="radio"
-              bind:group={formData.llevarVueltos}
-              value={true}
-            />
-            Sí
-            <input
-              type="radio"
-              bind:group={formData.llevarVueltos}
-              value={false}
-            /> No
+            <p class="fs-3 border-bottom border-danger">¿Debemos llevar vueltos?</p>
+            <input type="radio" bind:group={formData.llevarVueltos} value={true} /> Sí
+            <input type="radio" bind:group={formData.llevarVueltos} value={false} /> No
           </label>
 
           {#if formData.llevarVueltos}
             <label class="text-white">
               Valor del billete que tengo:
-              <input
-                type="number"
-                bind:value={formData.cantidadVueltos}
-                min="0"
-              />
+              <input type="number" bind:value={formData.cantidadVueltos} min="0" />
             </label>
           {:else}
             <p class="text-white fs-3 border-bottom border-danger">Perfecto</p>
           {/if}
 
           <label class="text-white">
-            <p class="fs-3 border-bottom border-danger">
-              ¿En cuánto tiempo te buscamos?:
-            </p>
-            <select
-              class="btn btn-outline-warning"
-              bind:value={formData.tiempo}
-              required
-            >
+            <p class="fs-3 border-bottom border-danger">¿En cuánto tiempo te buscamos?:</p>
+            <select class="btn btn-outline-warning" bind:value={formData.tiempo} required>
               <option value="" disabled selected>Selecciona una opción</option>
               <option value="Ahora mismo">Ahora mismo</option>
               <option value="En 5 minutos">En 5 minutos</option>
@@ -268,14 +236,8 @@
           </label>
 
           <div class="d-flex justify-content-end">
-            <button class="btn btn-outline-warning m-2" type="submit"
-              >Pedir Carrera</button
-            >
-            <button
-              class="btn btn-danger m-2"
-              type="button"
-              on:click={handleLogout}>Cerrar Sesión</button
-            >
+            <button class="btn btn-outline-warning m-2" type="submit">Pedir Carrera</button>
+            <button class="btn btn-danger m-2" type="button" on:click={handleLogout}>Cerrar Sesión</button>
           </div>
         </form>
       </div>

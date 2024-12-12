@@ -373,4 +373,10 @@
   * {
     background: #0e0d06;
   }
+  input, select {
+    color: white;
+  }
+  input::placeholder {
+    color: white; 
+  }
 </style>
