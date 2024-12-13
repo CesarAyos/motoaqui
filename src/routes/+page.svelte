@@ -227,7 +227,7 @@
                   style="background:#0e0d06;"
                 >
                   Visualiza el recorrido en tiempo real para mayor comodidad y
-                  seguridad durante tus viajes.
+                  seguridad durante tus viajes y destinos.
                 </p>
                 
               </div>
