@@ -3,6 +3,8 @@
   import "leaflet/dist/leaflet.css";
   import { supabase } from "./supabase.js";
   import { notificationStore } from "../components/notificationStore.js";
+  import CarrerasAsignadas from "./carrerasAsignadas.svelte";
+  
 
   let map;
   let originMarker;
@@ -34,8 +36,8 @@
     }
 
     // Obtener la sesión del usuario
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session || !session.user) {
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !session || !session.user) {
       window.location.href = "/loginUser";
       return;
     }
@@ -49,9 +51,9 @@
       .eq("correo", user.email)
       .single();
 
-    if (error) {
+    if (error || !data) {
       alert("Error fetching user data. Please try again later.");
-      console.error("Error:", error.message);
+      console.error("Error:", error ? error.message : "User data not found");
       return;
     }
 
@@ -73,13 +75,6 @@
     });
 
     map.on("click", (e) => handleMapClick(e.latlng, taxiIcon));
-    window.addEventListener("notificacion", handleNotification);
-  });
-
-  onDestroy(() => {
-    if (typeof window !== "undefined") {
-      window.removeEventListener("notificacion", handleNotification);
-    }
   });
 
   function handleMapClick(latlng, taxiIcon) {
@@ -95,51 +90,44 @@
     }
   }
 
-  function handleNotification(event) {
-    const { mensaje } = event.detail;
-    notificationStore.set(mensaje);
-    console.log("Notificación recibida:", mensaje);
-  }
-
   async function enviarWhatsApp() {
-    if (originMarker && destinationMarker) {
-      const origin = originMarker.getLatLng();
-      const destination = destinationMarker.getLatLng();
-      const originLink = `https://www.openstreetmap.org/?mlat=${origin.lat}&mlon=${origin.lng}#map=18/${origin.lat}/${origin.lng}`;
-      const destinationLink = `https://www.openstreetmap.org/?mlat=${destination.lat}&mlon=${destination.lng}#map=18/${destination.lat}/${destination.lng}`;
-      const mensaje = `Hola soy ${userFirstName} ${userLastName}. Voy a cancelar en ${formData.moneda}.\n${formData.llevarVueltos ? `Llevar vueltos: ${formData.cantidadVueltos}.\n` : ""}Búscame en: ${formData.tiempo}.\nPor favor búscame aquí: [${originLink}].\nPor favor llévame aquí: [${destinationLink}].`;
+    if (!originMarker || !destinationMarker) {
+      return alert("Por favor selecciona tanto el origen como el destino en el mapa.");
+    }
 
-      const { data, error } = await supabase
-        .from("carreras")
-        .insert([
-          {
-            origen_lat: origin.lat,
-            origen_lng: origin.lng,
-            destino_lat: destination.lat,
-            destino_lng: destination.lng,
-            moneda: formData.moneda,
-            llevar_vueltos: formData.llevarVueltos,
-            cantidad_vueltos: formData.cantidadVueltos,
-            tiempo: formData.tiempo,
-            fecha: new Date().toISOString(),
-            usuario_nombre: `${userFirstName} ${userLastName}`,
-          },
-        ])
-        .single();
+    const origin = originMarker.getLatLng();
+    const destination = destinationMarker.getLatLng();
+    const originLink = `https://www.openstreetmap.org/?mlat=${origin.lat}&mlon=${origin.lng}#map=18/${origin.lat}/${origin.lng}`;
+    const destinationLink = `https://www.openstreetmap.org/?mlat=${destination.lat}&mlon=${destination.lng}#map=18/${destination.lat}/${destination.lng}`;
+    const mensaje = `Hola soy ${userFirstName} ${userLastName}. Voy a cancelar en ${formData.moneda}.\n${formData.llevarVueltos ? `Llevar vueltos: ${formData.cantidadVueltos}.\n` : ""}Búscame en: ${formData.tiempo}.\nPor favor búscame aquí: [${originLink}].\nPor favor llévame aquí: [${destinationLink}].`;
 
-      if (error) {
-        alert("Error inserting data. Please try again.");
-        console.error("Error:", error.message);
-      } else {
-        const url = `https://wa.me/584169752291?text=${encodeURIComponent(mensaje)}`;
-        window.open(url, "_blank");
-        resetForm();
-        showModal = true; // Mostrar el modal después de enviar
-      }
+    const { data, error } = await supabase
+      .from("carreras")
+      .insert([{
+        origen_lat: origin.lat,
+        origen_lng: origin.lng,
+        destino_lat: destination.lat,
+        destino_lng: destination.lng,
+        moneda: formData.moneda,
+        llevar_vueltos: formData.llevarVueltos,
+        cantidad_vueltos: formData.cantidadVueltos,
+        tiempo: formData.tiempo,
+        fecha: new Date().toISOString(),
+        usuario_nombre: `${userFirstName} ${userLastName}`,
+      }])
+      .single();
+
+    if (error) {
+      alert("Error inserting data. Please try again.");
+      console.error("Error:", error.message);
     } else {
-      alert("Por favor selecciona tanto el origen como el destino en el mapa.");
+      const url = `https://wa.me/584169752291?text=${encodeURIComponent(mensaje)}`;
+      window.open(url, "_blank");
+      resetForm();
+      showModal = true; // Mostrar el modal después de enviar
     }
   }
+
 
   function resetForm() {
     formData = {
@@ -164,26 +152,6 @@
   };
 </script>
 
-
-{#if $notificationStore}
-<!-- Nuevo Modal de Notificaciones -->
-<div class="notification-modal-overlay" on:click={() => (showNotificationModal = false)} tabindex="0" on:keydown={(e) => e.key === "Escape" && (showNotificationModal = false)}>
-  <div class="notification-modal-content">
-    <h2 class="text-danger">Notificación</h2>
-    <p class="text-danger fs-4 m-2"><em>{$notificationStore}</em></p>
-  </div>
-</div>
-{/if}
-
-{#if showModal}
-<div class="modal-overlay" on:click={() => (showModal = false)} tabindex="0" on:keydown={(e) => e.key === "Escape" && (showModal = false)}>
-  <div class="modal-content">
-    <img src="/voy.png" style="height:50px;width:50px" alt="Conductor en camino" />
-    <h2>En unos minutos llegará tu conductor</h2>
-    <button type="button" class="btn btn-primary" on:click={() => (showModal = false)}>Cerrar</button>
-  </div>
-</div>
-{/if}
 
 <main class="bg-dark pt-5">
   <div class="container">
@@ -240,10 +208,26 @@
             <button class="btn btn-danger m-2" type="button" on:click={handleLogout}>Cerrar Sesión</button>
           </div>
         </form>
+        <button class="btn btn-outline-warning" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+          Chequear Carrera
+        </button>
       </div>
     </div>
   </div>
 </main>
+
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasExampleLabel">{userFirstName} {userLastName}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div>
+      <CarrerasAsignadas/>
+    </div>
+    
+  </div>
+</div>
 
 <style>
   #map {

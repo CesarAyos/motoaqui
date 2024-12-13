@@ -1,6 +1,6 @@
 <script>
+  import { onMount } from "svelte";
   import { supabase } from "../components/supabase.js";
-  import { onMount } from "svelte"; // Eliminamos onDestroy
   import "leaflet/dist/leaflet.css";
 
   let map;
@@ -15,44 +15,45 @@
   let userFirstName = "";
   let userLastName = "";
 
-  let user = "";
-  let userName = "";
+  let user = null; // Asegúrate de que user se inicializa correctamente
 
   onMount(async () => {
     const {
       data: { session },
     } = await supabase.auth.getSession();
     if (!session || !session.user) {
-      window.location.href = "/login";
+      window.location.href = "/loginUser";
+      return;
+    }
+
+    user = session.user; // Asegúrate de asignar user correctamente aquí
+    console.log("User Email en onMount:", user.email); // Verificar el correo del usuario
+
+    const { data, error } = await supabase
+      .from("motoaquiDrivers")
+      .select("primernombre, primerapellido")
+      .eq("correo", user.email)
+      .single();
+
+    if (error) {
+      console.error("Error fetching user data:", error.message);
+      userFirstName = user.email; // fallback to email if error occurs
     } else {
-      user = session.user;
-
-      const { data, error } = await supabase
-        .from("motoaquiDrivers")
-        .select("primernombre, primerapellido")
-        .eq("correo", user.email)
-        .single();
-
-      if (error) {
-        console.error("Error fetching user data:", error.message);
-        userName = user.email; // fallback to email if error occurs
-      } else {
-        userName = data.primernombre;
-        user = data.primerapellido;
-      }
+      userFirstName = data.primernombre;
+      userLastName = data.primerapellido;
     }
 
     // Obtener todas las carreras que no están completadas
     const { data: carrerasData, error: carrerasError } = await supabase
       .from("carreras")
       .select("*")
-      .or("estado.is.null,estado.neq.completada"); // Incluir carreras cuyo estado es null o no es completada
+      .or("estado.is.null,estado.neq.completada");
 
     if (carrerasError) {
       console.error("Error fetching carreras:", carrerasError.message);
     } else {
       carreras = carrerasData;
-      console.log("Carreras no completadas:", carreras); // Añadir esta línea para depuración
+      console.log("Carreras no completadas:", carreras);
     }
 
     // Obtener todos los conductores
@@ -148,63 +149,91 @@
   }
 
   async function cancelarCarrera() {
-    if (carreraSeleccionada) {
-      // Eliminar la carrera de la base de datos
-      const { error } = await supabase
-        .from("carreras")
-        .delete()
-        .eq("id", carreraSeleccionada.id);
+  if (carreraSeleccionada) {
+    // Eliminar las referencias en carrerasAsignadas
+    const { error: errorAsignadas } = await supabase
+      .from("carrerasAsignadas")
+      .delete()
+      .eq("id_carrera", carreraSeleccionada.id);
 
-      if (error) {
-        console.error("Error cancelando carrera:", error.message);
-      } else {
-        console.log("Carrera cancelada correctamente");
-        // Eliminar la carrera de la lista localmente
-        carreras = carreras.filter((c) => c.id !== carreraSeleccionada.id);
-        carreraSeleccionada = null;
-        if (routeLayer) {
-          map.removeLayer(routeLayer);
-        }
-        if (originMarker) {
-          map.removeLayer(originMarker);
-          originMarker = null;
-        }
-        if (destinationMarker) {
-          map.removeLayer(destinationMarker);
-          destinationMarker = null;
-        }
-      }
-    } else {
-      alert("No hay ninguna carrera seleccionada para cancelar.");
+    if (errorAsignadas) {
+      console.error("Error eliminando referencias en carrerasAsignadas:", errorAsignadas.message);
+      return;
     }
+
+    // Eliminar la carrera de la base de datos
+    const { error } = await supabase
+      .from("carreras")
+      .delete()
+      .eq("id", carreraSeleccionada.id);
+
+    if (error) {
+      console.error("Error cancelando carrera:", error.message);
+    } else {
+      console.log("Carrera cancelada correctamente");
+      // Eliminar la carrera de la lista localmente
+      carreras = carreras.filter((c) => c.id !== carreraSeleccionada.id);
+      carreraSeleccionada = null;
+      if (routeLayer) {
+        map.removeLayer(routeLayer);
+      }
+      if (originMarker) {
+        map.removeLayer(originMarker);
+        originMarker = null;
+      }
+      if (destinationMarker) {
+        map.removeLayer(destinationMarker);
+        destinationMarker = null;
+      }
+    }
+  } else {
+    alert("No hay ninguna carrera seleccionada para cancelar.");
   }
-
-  function notificarUsuario() {
-  if (!carreraSeleccionada) {
-    console.error("No hay carrera seleccionada.");
-    return;
-  }
-
-  const conductor = conductores.find((c) => c.id === conductorSeleccionado);
-  if (!conductor) {
-    console.error("Conductor no encontrado.");
-    return;
-  }
-
-  const mensaje = `Tu carrera ha sido asignada al conductor/a ${conductor.primernombre} ${conductor.primerapellido}.
-  Número de Teléfono: ${conductor.telefono}.
-  Modelo de la moto: ${conductor.modelo}.
-  Placa de la moto: ${conductor.placa}.
-  Color de la moto: ${conductor.color}.
-  Control del conductor: ${conductor.control}.`;
-
-  // Guardar el mensaje en localStorage
-  localStorage.setItem("notificacion", mensaje);
-
-  alert(mensaje); // Esta es una forma básica de mostrar el mensaje
 }
 
 
+  async function notificarUsuario() {
+    if (!carreraSeleccionada) {
+      console.error("No hay carrera seleccionada.");
+      return;
+    }
+
+    const conductor = conductores.find((c) => c.id === conductorSeleccionado);
+    if (!conductor) {
+      console.error("Conductor no encontrado.");
+      return;
+    }
+
+    const mensaje = `Tu carrera ha sido asignada al conductor/a ${conductor.primernombre} ${conductor.primerapellido}.
+Número de Teléfono: ${conductor.telefono}.
+Modelo de la moto: ${conductor.modelo}.
+Placa de la moto: ${conductor.placa}.
+Color de la moto: ${conductor.color}.
+Control del conductor: ${conductor.control}.`;
+
+    console.log("Correo del cliente en notificarUsuario:", user.email); // Verificar el correo
+
+    const { data, error } = await supabase.from("carrerasAsignadas").insert([
+      {
+        id_carrera: carreraSeleccionada.id,
+        id_conductor: conductorSeleccionado,
+        correo_cliente: user.email, // Asegúrate de que el correo se está insertando
+        nombre_conductor: conductor.primernombre,
+        apellido_conductor: conductor.primerapellido,
+        telefono_conductor: conductor.telefono,
+        modelo_moto: conductor.modelo,
+        placa_moto: conductor.placa,
+        color_moto: conductor.color,
+        control_conductor: conductor.control,
+      },
+    ]);
+
+    if (error) {
+      console.error("Error al insertar datos:", error.message, error.details);
+    } else {
+      console.log("Datos insertados correctamente en carrerasAsignadas:", data);
+    }
+  }
 
   function seleccionarCarrera(carrera) {
     carreraSeleccionada = carrera;
@@ -214,18 +243,17 @@
   }
 
   function actualizarMapa() {
-  // Realiza cambios en el DOM
-  originMarker.setLatLng([lat, lng]);
-  destinationMarker.setLatLng([lat, lng]);
+    // Realiza cambios en el DOM
+    originMarker.setLatLng([lat, lng]);
+    destinationMarker.setLatLng([lat, lng]);
 
-  // Usa requestAnimationFrame para medir propiedades
-  requestAnimationFrame(() => {
-    const originBounds = originMarker.getBounds();
-    const destinationBounds = destinationMarker.getBounds();
-    // Realiza más mediciones si es necesario
-  });
-}
-
+    // Usa requestAnimationFrame para medir propiedades
+    requestAnimationFrame(() => {
+      const originBounds = originMarker.getBounds();
+      const destinationBounds = destinationMarker.getBounds();
+      // Realiza más mediciones si es necesario
+    });
+  }
 
   async function actualizarEstadoCarrera(estado) {
     if (estado === "completada") {
@@ -261,25 +289,25 @@
   }
 
   async function recargarCarreras() {
-  const { data: carrerasData, error: carrerasError } = await supabase
-    .from("carreras")
-    .select("*")
-    .or("estado.is.null,estado.neq.completada"); // Incluir carreras cuyo estado es null o no es completada
+    const { data: carrerasData, error: carrerasError } = await supabase
+      .from("carreras")
+      .select("*")
+      .or("estado.is.null,estado.neq.completada"); // Incluir carreras cuyo estado es null o no es completada
 
-  if (carrerasError) {
-    console.error("Error fetching carreras:", carrerasError.message);
-  } else {
-    carreras = carrerasData;
-    console.log("Carreras recargadas:", carreras); // Añadir esta línea para depuración
+    if (carrerasError) {
+      console.error("Error fetching carreras:", carrerasError.message);
+    } else {
+      carreras = carrerasData;
+      console.log("Carreras recargadas:", carreras); // Añadir esta línea para depuración
+    }
   }
-}
-
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     window.location.href = "/loginUser";
   };
 </script>
+
 <section class="bg-dark">
   <div class="container pt-4 bg-dark">
     <h1 class="text-center text-white">Asignar Conductores a Carreras</h1>
@@ -315,7 +343,7 @@
             </li>
           {/each}
         </ul>
-        
+
         <!-- Botón para recargar carreras -->
         <button class="btn btn-info" on:click={recargarCarreras}
           >Recargar Carreras</button
@@ -339,7 +367,7 @@
         <button class="btn btn-danger" on:click={cancelarCarrera}
           >Cancelar Carrera</button
         >
-        
+
         <h3 class="mt-4 text-white">Actualizar Estado de Carrera</h3>
         <button
           class="btn btn-warning"

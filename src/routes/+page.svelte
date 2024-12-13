@@ -1,3 +1,14 @@
+<script>
+  svelte
+   // +page.server.js or +page.js
+   export async function load({ fetch }) {
+       const response = await fetch('/api/data');
+       const data = await response.json();
+       return { props: { data } };
+   }
+</script>
+
+
 <div class="container2 animate-left p-5">
   <div class="container text-center">
     <div class="row">
