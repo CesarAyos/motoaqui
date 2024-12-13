@@ -149,48 +149,50 @@
   }
 
   async function cancelarCarrera() {
-  if (carreraSeleccionada) {
-    // Eliminar las referencias en carrerasAsignadas
-    const { error: errorAsignadas } = await supabase
-      .from("carrerasAsignadas")
-      .delete()
-      .eq("id_carrera", carreraSeleccionada.id);
+    if (carreraSeleccionada) {
+      // Eliminar las referencias en carrerasAsignadas
+      const { error: errorAsignadas } = await supabase
+        .from("carrerasAsignadas")
+        .delete()
+        .eq("id_carrera", carreraSeleccionada.id);
 
-    if (errorAsignadas) {
-      console.error("Error eliminando referencias en carrerasAsignadas:", errorAsignadas.message);
-      return;
-    }
+      if (errorAsignadas) {
+        console.error(
+          "Error eliminando referencias en carrerasAsignadas:",
+          errorAsignadas.message
+        );
+        return;
+      }
 
-    // Eliminar la carrera de la base de datos
-    const { error } = await supabase
-      .from("carreras")
-      .delete()
-      .eq("id", carreraSeleccionada.id);
+      // Eliminar la carrera de la base de datos
+      const { error } = await supabase
+        .from("carreras")
+        .delete()
+        .eq("id", carreraSeleccionada.id);
 
-    if (error) {
-      console.error("Error cancelando carrera:", error.message);
+      if (error) {
+        console.error("Error cancelando carrera:", error.message);
+      } else {
+        console.log("Carrera cancelada correctamente");
+        // Eliminar la carrera de la lista localmente
+        carreras = carreras.filter((c) => c.id !== carreraSeleccionada.id);
+        carreraSeleccionada = null;
+        if (routeLayer) {
+          map.removeLayer(routeLayer);
+        }
+        if (originMarker) {
+          map.removeLayer(originMarker);
+          originMarker = null;
+        }
+        if (destinationMarker) {
+          map.removeLayer(destinationMarker);
+          destinationMarker = null;
+        }
+      }
     } else {
-      console.log("Carrera cancelada correctamente");
-      // Eliminar la carrera de la lista localmente
-      carreras = carreras.filter((c) => c.id !== carreraSeleccionada.id);
-      carreraSeleccionada = null;
-      if (routeLayer) {
-        map.removeLayer(routeLayer);
-      }
-      if (originMarker) {
-        map.removeLayer(originMarker);
-        originMarker = null;
-      }
-      if (destinationMarker) {
-        map.removeLayer(destinationMarker);
-        destinationMarker = null;
-      }
+      alert("No hay ninguna carrera seleccionada para cancelar.");
     }
-  } else {
-    alert("No hay ninguna carrera seleccionada para cancelar.");
   }
-}
-
 
   async function notificarUsuario() {
     if (!carreraSeleccionada) {
