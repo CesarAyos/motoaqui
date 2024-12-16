@@ -72,7 +72,7 @@ const signUpUser = async () => {
       console.log("Datos insertados correctamente:", data);
     }
 
-    alert("Se enviara un correo de verificación");
+    alert("Bienvenido a la familia motoaqui");
 
   } catch (error) {
     console.error("Error general:", error.message);
