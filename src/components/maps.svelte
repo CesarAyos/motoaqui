@@ -23,6 +23,7 @@ let userLastName = "";
 $: notification = $notificationStore;
 let showModal = false;
 let showNotificationModal = false;
+let carrerasAsignadas = []; // Propiedad reactiva para carreras asignadas
 
 onMount(async () => {
   if (typeof window === "undefined") return;
@@ -67,6 +68,8 @@ onMount(async () => {
   });
 
   map.on("click", (e) => handleMapClick(e.latlng, taxiIcon));
+
+  await cargarCarrerasAsignadas(); // Cargar carreras asignadas al montar el componente
 });
 
 function handleMapClick(latlng, taxiIcon) {
@@ -81,6 +84,8 @@ function handleMapClick(latlng, taxiIcon) {
     destinationMarker.bindPopup("Mejor llévame aquí").openPopup();
   }
 }
+
+
 
 async function enviarWhatsApp() {
   if (!originMarker || !destinationMarker) {
@@ -117,8 +122,24 @@ async function enviarWhatsApp() {
     window.open(url, "_blank");
     resetForm();
     showModal = true; // Mostrar el modal después de enviar
+    await cargarCarrerasAsignadas(); // Actualizar las carreras asignadas después de enviar
   }
 }
+
+
+async function cargarCarrerasAsignadas() {
+  const { data, error } = await supabase
+    .from("carrerasAsignadas")
+    .select("*")
+    .eq('correo_cliente', user.email);
+
+  if (error) {
+    console.error("Error fetching carreras asignadas:", error.message);
+  } else {
+    carrerasAsignadas = data;
+  }
+}
+
 
 function resetForm() {
   formData = {
@@ -278,3 +299,8 @@ const handleLogout = async () => {
     }
   }
 </style>
+
+
+
+
+
