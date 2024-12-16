@@ -127,11 +127,17 @@ async function enviarWhatsApp() {
 }
 
 
+
 async function cargarCarrerasAsignadas() {
+  console.log("Correo del cliente:", user.email); // Verificar el correo del cliente
+  
   const { data, error } = await supabase
     .from("carrerasAsignadas")
     .select("*")
     .eq('correo_cliente', user.email);
+
+  console.log("Data:", data); // Verificar los datos devueltos
+  console.log("Error:", error); // Verificar errores devueltos
 
   if (error) {
     console.error("Error fetching carreras asignadas:", error.message);
@@ -139,6 +145,8 @@ async function cargarCarrerasAsignadas() {
     carrerasAsignadas = data;
   }
 }
+
+
 
 
 function resetForm() {
