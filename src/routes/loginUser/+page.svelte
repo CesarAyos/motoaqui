@@ -28,8 +28,6 @@
   });
 </script>
 
-
-
 <section class="vh-100">
   <div class="container login py-5 h-100">
     <div class="row d-flex align-items-center justify-content-center h-100">
@@ -51,7 +49,7 @@
               bind:value={email}
               class="form-control form-control-lg"
             />
-            <label class="form-label text-white" for="form1Example13">Correo electronico</label>
+            <label class="form-label text-white" for="form1Example13">Correo electrónico</label>
           </div>
 
           <!-- Password input -->
@@ -79,17 +77,23 @@
                 Recordar
               </label>
             </div>
-            <a href="#!">olvidaste tu contraseña??</a>
+            <a href="#!">¿Olvidaste tu contraseña?</a>
           </div>
 
           <div class="d-flex justify-content-end">
-          <button
-            type="submit"
-            data-mdb-button-init
-            data-mdb-ripple-init
-            class="btn btn-outline-warning">ingresar</button
-          >
-        </div>
+            <button
+              type="submit"
+              data-mdb-button-init
+              data-mdb-ripple-init
+              class="btn btn-outline-warning">Ingresar</button>
+          </div>
+
+          <!-- Mostrar mensaje de error -->
+          {#if errorMessage}
+            <div class="alert alert-danger mt-4" role="alert">
+              {errorMessage}
+            </div>
+          {/if}
         </form>
       </div>
     </div>
@@ -97,8 +101,17 @@
 </section>
 
 <style>
-   *{
-  background: #1b1b1b;
-}
+  .container.login {
+    background: #1b1b1b;
+  }
 
+  .form-label {
+    color: #fff !important;
+  }
+
+  .alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+  }
 </style>

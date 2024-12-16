@@ -42,7 +42,7 @@
         <h3 class="text-center p-2 text-white">Que tengas un día productivo</h3>
         <form on:submit|preventDefault={handleLogin}>
           <!-- Email input -->
-          <div data-mdb-input-init class="form-outline mb-4">
+          <div class="form-outline mb-4">
             <input
               type="email"
               id="form1Example13"
@@ -53,7 +53,7 @@
           </div>
 
           <!-- Password input -->
-          <div data-mdb-input-init class="form-outline mb-4">
+          <div class="form-outline mb-4">
             <input
               type="password"
               id="form1Example23"
@@ -83,8 +83,6 @@
           <div class="d-flex justify-content-end">
             <button
               type="submit"
-              data-mdb-button-init
-              data-mdb-ripple-init
               class="btn btn-outline-warning"
             >Ingresar</button>
           </div>

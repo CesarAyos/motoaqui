@@ -1,87 +1,88 @@
 <script>
   import { onMount } from "svelte";
-  import { supabase } from "../components/supabase.js";
-  import "leaflet/dist/leaflet.css";
+import { supabase } from "../components/supabase.js";
+import "leaflet/dist/leaflet.css";
 
-  let map;
-  let originMarker;
-  let destinationMarker;
-  let routeLayer;
+let map;
+let originMarker;
+let destinationMarker;
+let routeLayer;
 
-  let carreras = [];
-  let conductores = [];
-  let conductorSeleccionado = "";
-  let carreraSeleccionada = null;
-  let userFirstName = "";
-  let userLastName = "";
+let carreras = [];
+let conductores = [];
+let conductorSeleccionado = "";
+let carreraSeleccionada = null;
+let userFirstName = "";
+let userLastName = "";
 
-  let user = null; // Asegúrate de que user se inicializa correctamente
+let user = null; // Asegúrate de que user se inicializa correctamente
 
   onMount(async () => {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    if (!session || !session.user) {
-      window.location.href = "/loginUser";
-      return;
-    }
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session || !session.user) {
+    window.location.href = "/loginUser";
+    return;
+  }
 
-    user = session.user; // Asegúrate de asignar user correctamente aquí
-    console.log("User Email en onMount:", user.email); // Verificar el correo del usuario
+  user = session.user; // Asegúrate de asignar user correctamente aquí
+  console.log("User Email en onMount:", user.email); // Verificar el correo del usuario
 
-    const { data, error } = await supabase
-      .from("motoaquiDrivers")
-      .select("primernombre, primerapellido")
-      .eq("correo", user.email)
-      .single();
+  const { data, error } = await supabase
+    .from("motoaquiDrivers")
+    .select("primernombre, primerapellido")
+    .eq("correo", user.email)
+    .single();
 
-    if (error) {
-      console.error("Error fetching user data:", error.message);
-      userFirstName = user.email; // fallback to email if error occurs
-    } else {
-      userFirstName = data.primernombre;
-      userLastName = data.primerapellido;
-    }
+  if (error) {
+    console.error("Error fetching user data:", error.message);
+    userFirstName = user.email; // fallback to email if error occurs
+  } else {
+    userFirstName = data.primernombre;
+    userLastName = data.primerapellido;
+  }
 
-    // Obtener todas las carreras que no están completadas
-    const { data: carrerasData, error: carrerasError } = await supabase
-      .from("carreras")
-      .select("*")
-      .or("estado.is.null,estado.neq.completada");
+  // Obtener todas las carreras que no están completadas
+  const { data: carrerasData, error: carrerasError } = await supabase
+    .from("carreras")
+    .select("*")
+    .or("estado.is.null,estado.neq.completada");
 
-    if (carrerasError) {
-      console.error("Error fetching carreras:", carrerasError.message);
-    } else {
-      carreras = carrerasData;
-      console.log("Carreras no completadas:", carreras);
-    }
+  if (carrerasError) {
+    console.error("Error fetching carreras:", carrerasError.message);
+  } else {
+    carreras = carrerasData;
+    console.log("Carreras no completadas:", carreras);
+  }
 
-    // Obtener todos los conductores
-    const { data: conductoresData, error: conductoresError } = await supabase
-      .from("motoaquiDrivers")
-      .select("*");
+  // Obtener todos los conductores
+  const { data: conductoresData, error: conductoresError } = await supabase
+    .from("motoaquiDrivers")
+    .select("*");
 
-    if (conductoresError) {
-      console.error("Error fetching conductores:", conductoresError.message);
-    } else {
-      conductores = conductoresData;
-    }
+  if (conductoresError) {
+    console.error("Error fetching conductores:", conductoresError.message);
+  } else {
+    conductores = conductoresData;
+  }
 
-    // Inicializar el mapa
-    if (typeof window !== "undefined") {
-      const L = (await import("leaflet")).default;
+  // Inicializar el mapa
+  if (typeof window !== "undefined") {
+    const L = (await import("leaflet")).default;
 
-      map = L.map("map").setView([8.03687, -72.2603], 14);
+    map = L.map("map").setView([8.03687, -72.2603], 14);
 
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 18,
-      }).addTo(map);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      maxZoom: 18,
+    }).addTo(map);
 
-      L.control.scale().addTo(map);
-    }
-  });
+    L.control.scale().addTo(map);
+  }
+});
+
 
   function mostrarRuta() {
     if (routeLayer) {
@@ -398,3 +399,8 @@ Control del conductor: ${conductor.control}.`;
     background-color: #28a745 !important; /* Verde */
   }
 </style>
+
+
+
+
+

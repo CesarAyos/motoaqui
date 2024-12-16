@@ -1,155 +1,147 @@
 <script>
-  import { onMount, onDestroy } from "svelte";
-  import "leaflet/dist/leaflet.css";
-  import { supabase } from "./supabase.js";
-  import { notificationStore } from "../components/notificationStore.js";
-  import CarrerasAsignadas from "./carrerasAsignadas.svelte";
-  
+import { onMount, onDestroy } from "svelte";
+import "leaflet/dist/leaflet.css";
+import { supabase } from "../components/supabase.js"; // Ruta corregida
+import { notificationStore } from "../components/notificationStore.js";
+import CarrerasAsignadas from "../components/carrerasAsignadas.svelte"; // Ruta corregida
 
-  let map;
-  let originMarker;
-  let destinationMarker;
+let map;
+let originMarker;
+let destinationMarker;
 
-  let formData = {
+let formData = {
+  moneda: "",
+  llevarVueltos: false,
+  cantidadVueltos: "",
+  tiempo: "",
+};
+
+let user = "";
+let userFirstName = "";
+let userLastName = "";
+
+$: notification = $notificationStore;
+let showModal = false;
+let showNotificationModal = false;
+
+onMount(async () => {
+  if (typeof window === "undefined") return;
+
+  // Obtener la sesión del usuario
+  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+  if (sessionError || !session || !session.user) {
+    window.location.href = "/loginUser";
+    return;
+  }
+
+  user = session.user;
+
+  // Obtener datos del usuario
+  const { data, error } = await supabase
+    .from("motoaquiClient")
+    .select("primernombre, primerapellido")
+    .eq("correo", user.email)
+    .single();
+
+  if (error || !data) {
+    alert("Error fetching user data. Please try again later.");
+    console.error("Error:", error ? error.message : "User data not found");
+    return;
+  }
+
+  userFirstName = data.primernombre;
+  userLastName = data.primerapellido;
+
+  // Inicialización del mapa
+  const L = (await import("leaflet")).default;
+  map = L.map("map").setView([8.03687, -72.2603], 14);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 18,
+  }).addTo(map);
+  L.control.scale().addTo(map);
+
+  let taxiIcon = L.icon({
+    iconUrl: "/moto.png",
+    iconSize: [20, 20],
+  });
+
+  map.on("click", (e) => handleMapClick(e.latlng, taxiIcon));
+});
+
+function handleMapClick(latlng, taxiIcon) {
+  if (!originMarker) {
+    originMarker = L.marker([latlng.lat, latlng.lng], { icon: taxiIcon }).addTo(map);
+    originMarker.bindPopup("¿Me puedes buscar aquí?").openPopup();
+  } else if (!destinationMarker) {
+    destinationMarker = L.marker([latlng.lat, latlng.lng], { icon: taxiIcon }).addTo(map);
+    destinationMarker.bindPopup("Llévame aquí").openPopup();
+  } else {
+    destinationMarker.setLatLng([latlng.lat, latlng.lng]);
+    destinationMarker.bindPopup("Mejor llévame aquí").openPopup();
+  }
+}
+
+async function enviarWhatsApp() {
+  if (!originMarker || !destinationMarker) {
+    return alert("Por favor selecciona tanto el origen como el destino en el mapa.");
+  }
+
+  const origin = originMarker.getLatLng();
+  const destination = destinationMarker.getLatLng();
+  const originLink = `https://www.openstreetmap.org/?mlat=${origin.lat}&mlon=${origin.lng}#map=18/${origin.lat}/${origin.lng}`;
+  const destinationLink = `https://www.openstreetmap.org/?mlat=${destination.lat}&mlon=${destination.lng}#map=18/${destination.lat}/${destination.lng}`;
+  const mensaje = `Hola soy ${userFirstName} ${userLastName}. Voy a cancelar en ${formData.moneda}.\n${formData.llevarVueltos ? `Llevar vueltos: ${formData.cantidadVueltos}.\n` : ""}Búscame en: ${formData.tiempo}.\nPor favor búscame aquí: [${originLink}].\nPor favor llévame aquí: [${destinationLink}].`;
+
+  const { data, error } = await supabase
+    .from("carreras")
+    .insert([{
+      origen_lat: origin.lat,
+      origen_lng: origin.lng,
+      destino_lat: destination.lat,
+      destino_lng: destination.lng,
+      moneda: formData.moneda,
+      llevar_vueltos: formData.llevarVueltos,
+      cantidad_vueltos: formData.cantidadVueltos,
+      tiempo: formData.tiempo,
+      fecha: new Date().toISOString(),
+      usuario_nombre: `${userFirstName} ${userLastName}`,
+    }])
+    .single();
+
+  if (error) {
+    alert("Error inserting data. Please try again.");
+    console.error("Error:", error.message);
+  } else {
+    const url = `https://wa.me/584169752291?text=${encodeURIComponent(mensaje)}`;
+    window.open(url, "_blank");
+    resetForm();
+    showModal = true; // Mostrar el modal después de enviar
+  }
+}
+
+function resetForm() {
+  formData = {
     moneda: "",
     llevarVueltos: false,
     cantidadVueltos: "",
     tiempo: "",
   };
-
-  let user = "";
-  let userFirstName = "";
-  let userLastName = "";
-
-  $: notification = $notificationStore;
-  let showModal = false;
-  let showNotificationModal = false;
-
-  onMount(async () => {
-    if (typeof window === "undefined") return;
-
-    // Recuperar la notificación almacenada en localStorage
-    const storedNotification = localStorage.getItem("notificacion");
-    if (storedNotification) {
-      notificationStore.set(storedNotification);
-      localStorage.removeItem("notificacion");
-    }
-
-    // Obtener la sesión del usuario
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    if (sessionError || !session || !session.user) {
-      window.location.href = "/loginUser";
-      return;
-    }
-
-    user = session.user;
-
-    // Obtener datos del usuario
-    const { data, error } = await supabase
-      .from("motoaquiClient")
-      .select("primernombre, primerapellido")
-      .eq("correo", user.email)
-      .single();
-
-    if (error || !data) {
-      alert("Error fetching user data. Please try again later.");
-      console.error("Error:", error ? error.message : "User data not found");
-      return;
-    }
-
-    userFirstName = data.primernombre;
-    userLastName = data.primerapellido;
-
-    // Inicialización del mapa
-    const L = (await import("leaflet")).default;
-    map = L.map("map").setView([8.03687, -72.2603], 14);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      maxZoom: 18,
-    }).addTo(map);
-    L.control.scale().addTo(map);
-
-    let taxiIcon = L.icon({
-      iconUrl: "/moto.png",
-      iconSize: [20, 20],
-    });
-
-    map.on("click", (e) => handleMapClick(e.latlng, taxiIcon));
-  });
-
-  function handleMapClick(latlng, taxiIcon) {
-    if (!originMarker) {
-      originMarker = L.marker([latlng.lat, latlng.lng], { icon: taxiIcon }).addTo(map);
-      originMarker.bindPopup("¿Me puedes buscar aquí?").openPopup();
-    } else if (!destinationMarker) {
-      destinationMarker = L.marker([latlng.lat, latlng.lng], { icon: taxiIcon }).addTo(map);
-      destinationMarker.bindPopup("Llévame aquí").openPopup();
-    } else {
-      destinationMarker.setLatLng([latlng.lat, latlng.lng]);
-      destinationMarker.bindPopup("Mejor llévame aquí").openPopup();
-    }
+  if (originMarker) {
+    map.removeLayer(originMarker);
+    originMarker = null;
   }
-
-  async function enviarWhatsApp() {
-    if (!originMarker || !destinationMarker) {
-      return alert("Por favor selecciona tanto el origen como el destino en el mapa.");
-    }
-
-    const origin = originMarker.getLatLng();
-    const destination = destinationMarker.getLatLng();
-    const originLink = `https://www.openstreetmap.org/?mlat=${origin.lat}&mlon=${origin.lng}#map=18/${origin.lat}/${origin.lng}`;
-    const destinationLink = `https://www.openstreetmap.org/?mlat=${destination.lat}&mlon=${destination.lng}#map=18/${destination.lat}/${destination.lng}`;
-    const mensaje = `Hola soy ${userFirstName} ${userLastName}. Voy a cancelar en ${formData.moneda}.\n${formData.llevarVueltos ? `Llevar vueltos: ${formData.cantidadVueltos}.\n` : ""}Búscame en: ${formData.tiempo}.\nPor favor búscame aquí: [${originLink}].\nPor favor llévame aquí: [${destinationLink}].`;
-
-    const { data, error } = await supabase
-      .from("carreras")
-      .insert([{
-        origen_lat: origin.lat,
-        origen_lng: origin.lng,
-        destino_lat: destination.lat,
-        destino_lng: destination.lng,
-        moneda: formData.moneda,
-        llevar_vueltos: formData.llevarVueltos,
-        cantidad_vueltos: formData.cantidadVueltos,
-        tiempo: formData.tiempo,
-        fecha: new Date().toISOString(),
-        usuario_nombre: `${userFirstName} ${userLastName}`,
-      }])
-      .single();
-
-    if (error) {
-      alert("Error inserting data. Please try again.");
-      console.error("Error:", error.message);
-    } else {
-      const url = `https://wa.me/584169752291?text=${encodeURIComponent(mensaje)}`;
-      window.open(url, "_blank");
-      resetForm();
-      showModal = true; // Mostrar el modal después de enviar
-    }
+  if (destinationMarker) {
+    map.removeLayer(destinationMarker);
+    destinationMarker = null;
   }
+}
 
+const handleLogout = async () => {
+  await supabase.auth.signOut();
+  window.location.href = "/loginUser";
+};
 
-  function resetForm() {
-    formData = {
-      moneda: "",
-      llevarVueltos: false,
-      cantidadVueltos: "",
-      tiempo: "",
-    };
-    if (originMarker) {
-      map.removeLayer(originMarker);
-      originMarker = null;
-    }
-    if (destinationMarker) {
-      map.removeLayer(destinationMarker);
-      destinationMarker = null;
-    }
-  }
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    window.location.href = "/loginUser";
-  };
 </script>
 
 
