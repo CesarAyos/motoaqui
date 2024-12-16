@@ -28,7 +28,7 @@
   });
 </script>
 
-<section class="vh-100">
+<section class="vh-100" style="background: #1b1b1b;">
   <div class="container login py-5 h-100">
     <div class="row d-flex align-items-center justify-content-center h-100">
       <div class="col-md-8 col-lg-7 col-xl-6">
