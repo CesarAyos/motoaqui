@@ -2,7 +2,6 @@
   import { onMount, onDestroy } from "svelte";
   import "leaflet/dist/leaflet.css";
   import { supabase } from "../components/supabase.js"; // Ruta corregida
-  import { notificationStore } from "../components/notificationStore.js";
   import CarrerasAsignadas from "../components/carrerasAsignadas.svelte"; // Ruta corregida
 
   let map;
@@ -19,11 +18,7 @@
   let user = "";
   let userFirstName = "";
   let userLastName = "";
-
-  $: notification = $notificationStore;
-  let showModal = false;
-  let showNotificationModal = false;
-  let carrerasAsignadas = []; // Propiedad reactiva para carreras asignadas
+  
 
   onMount(async () => {
     if (typeof window === "undefined") return;
@@ -79,7 +74,6 @@
 
     map.on("click", (e) => handleMapClick(e.latlng, taxiIcon));
 
-    await cargarCarrerasAsignadas(); // Cargar carreras asignadas al montar el componente
   });
 
   function handleMapClick(latlng, taxiIcon) {
@@ -113,22 +107,23 @@
     const mensaje = `Hola soy ${userFirstName} ${userLastName}. Voy a cancelar en ${formData.moneda}.\n${formData.llevarVueltos ? `Llevar vueltos: ${formData.cantidadVueltos}.\n` : ""}Búscame en: ${formData.tiempo}.\nPor favor búscame aquí: [${originLink}].\nPor favor llévame aquí: [${destinationLink}].`;
 
     const { data, error } = await supabase
-      .from("carreras")
-      .insert([
-        {
-          origen_lat: origin.lat,
-          origen_lng: origin.lng,
-          destino_lat: destination.lat,
-          destino_lng: destination.lng,
-          moneda: formData.moneda,
-          llevar_vueltos: formData.llevarVueltos,
-          cantidad_vueltos: formData.cantidadVueltos,
-          tiempo: formData.tiempo,
-          fecha: new Date().toISOString(),
-          usuario_nombre: `${userFirstName} ${userLastName}`,
-        },
-      ])
-      .single();
+  .from("carreras")
+  .insert([
+    {
+      origen_lat: origin.lat,
+      origen_lng: origin.lng,
+      destino_lat: destination.lat,
+      destino_lng: destination.lng,
+      moneda: formData.moneda,
+      llevar_vueltos: formData.llevarVueltos,
+      cantidad_vueltos: formData.cantidadVueltos,
+      tiempo: formData.tiempo,
+      fecha: new Date().toISOString(),
+      usuario_nombre: `${userFirstName} ${userLastName}`, // Asegúrate de que esto se inserta correctamente
+    },
+  ])
+  .single();
+
 
     if (error) {
       alert("Error inserting data. Please try again.");
@@ -137,32 +132,11 @@
       const url = `https://wa.me/584169752291?text=${encodeURIComponent(mensaje)}`;
       window.open(url, "_blank");
       resetForm();
-      showModal = true; // Mostrar el modal después de enviar
-      await cargarCarrerasAsignadas(); // Actualizar las carreras asignadas después de enviar
+      
     }
   }
 
-  // Obtener carreras asignadas
-  async function cargarCarrerasAsignadas() {
-    console.log("Correo del cliente:", user.email); // Verificar el correo del cliente
-
-    const { data: carrerasData, error: carrerasError } = await supabase
-      .from("carrerasAsignadas")
-      .select("*")
-      .eq("correo_cliente", user.email);
-
-    console.log("Data:", carrerasData); // Verificar los datos devueltos
-    console.log("Error:", carrerasError); // Verificar errores devueltos
-
-    if (carrerasError) {
-      console.error(
-        "Error fetching carreras asignadas:",
-        carrerasError.message
-      );
-    } else {
-      carrerasAsignadas = carrerasData;
-    }
-  }
+  
 
   function resetForm() {
     formData = {
@@ -320,30 +294,7 @@
     width: 100%;
     height: 600px;
   }
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
-  .modal-content {
-    background: #343a40; /* Fondo oscuro */
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    width: 70%; /* 70% de ancho */
-  }
-  img {
-    max-width: 100%;
-    height: auto;
-  }
+  
   form {
     margin-top: 20px;
   }
