@@ -1,7 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import { supabase } from "../components/supabase.js";
-  import protegerRuta from "./protegerRuta.js";
+  import protegerRuta from "../components/protegerRuta.js";
   
   
 
