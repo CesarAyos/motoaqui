@@ -61,17 +61,24 @@
 </script>
 
 <main>
+  <div class="text-center text-white pt-2 pb-2 bg-dark fs-2">Carreras aceptadas</div>
   <div class="card" style="background: #1b1b1b;">
     <div class="card-header d-flex justify-content-between text-white">
-      Carreras aceptadas
       <button
-        class="btn btn-outline-warning"
+        class="btn btn-outline-warning m-2"
         on:click={recargarCarrerasAsignadas}>Recargar</button
       >
+      <a href="/profileUser"
+        ><button class="btn btn-success m-2" type="button"
+          >Pedir Nueva Carrera</button
+        ></a
+      >
+
+      <button class="btn btn-danger m-2" type="button" on:click={handleLogout}
+        >Cerrar Sesión</button
+      >
     </div>
-    <button class="btn btn-danger m-2" type="button" on:click={handleLogout}
-      >Cerrar Sesión</button
-    >
+
     <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
       <div class="col">
         <div class=" card-body">
@@ -104,7 +111,7 @@
                 </div>
               {/each}
             {:else}
-              <p>No hay carreras asignadas.</p>
+              <p class="text-white">No hay carreras asignadas.</p>
             {/if}
           </blockquote>
         </div>

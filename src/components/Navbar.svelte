@@ -32,44 +32,8 @@
         </li>
       </ul>
     </div>
-    <div style="margin-right: 50px;">
-      <div class="btn-group">
-        <button
-          class="btn btn-outline-warning dropdown-toggle"
-          type="button"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
-          INGRESAR
-        </button>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="loginUser">USUARIO</a></li>
-          <li><a class="dropdown-item" href="loginDrivers">CONDUCTOR</a></li>
-          <li><a class="dropdown-item" href="operador">OPERADOR</a></li>
-        </ul>
-      </div>
-      <div class="btn-group">
-        <button class="btn btn-outline-warning" type="button">
-          REGISTRARSE
-        </button>
-        <button
-          type="button"
-          class="btn btn-outline-warning dropdown-toggle dropdown-toggle-split"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
-          <span class="visually-hidden">REGISTRARME</span>
-        </button>
-        <ul class="dropdown-menu">
-          <li>
-            <a class="dropdown-item" href="registroClient">NUEVO USUARIO</a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="registroDrivers">NUEVO CONDUCTOR</a>
-          </li>
-        </ul>
-      </div>
-    </div>
+    <a href="/loginUser"><button type="button" class="btn btn-outline-warning m-1">USUARIO</button></a>
+    <a href="/registroDrivers"><button type="button" class="btn btn-outline-warning m-1">REGISTRARME</button></a>
   </div>
 </nav>
 

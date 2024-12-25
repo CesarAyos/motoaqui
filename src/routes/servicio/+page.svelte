@@ -7,62 +7,12 @@
       <p class="card-text text-white text-center pt-3">
         Ofrecemos mototaxis confiables que te llevan a tu destino de forma
         rápida y segura, con la opción de visualizar el mapa y la información
-        del conductor en tiempo real.
+        del conductor.
       </p>
     </div>
   </div>
 </div>
 
-<div
-  class="container6 d-flex justify-content-center"
-  style="background: #0e0d06;"
->
-  <div class="card animate-left" style="border:none;">
-    <div class="card-body p-5" style="background: #0e0d06;">
-      <div class="container text-center" style="">
-        <div class="row">
-          <div class="col" style="background: #0e0d06;">
-            <h4 class="text-start" style="color: #d09a40;background: #0e0d06;">
-              01
-            </h4>
-            <h4 class="text-white text-start" style="background: #0e0d06;">
-              Solicita tu mototaxi
-            </h4>
-            <p class="text-start text-white" style="background: #0e0d06;">
-              Accede a nuestra plataforma y solicita un mototaxi de manera
-              sencilla. Introduce tu destino y elige la moto más adecuada para
-              ti.
-            </p>
-          </div>
-          <div class="col" style="background: #0e0d06;">
-            <h4 class="text-start" style="color: #d09a40;background: #0e0d06;">
-              02
-            </h4>
-            <h4 class="text-white text-start" style="background: #0e0d06;">
-              Revisa la ruta
-            </h4>
-            <p class="text-start text-white" style="background: #0e0d06;">
-              Una vez que tu solicitud sea aceptada, podrás ver la ruta en el
-              mapa. Mantente informado sobre el progreso de tu mototaxi.
-            </p>
-          </div>
-          <div class="col" style="background: #0e0d06;">
-            <h4 class="text-start" style="color: #d09a40;background: #0e0d06;">
-              03
-            </h4>
-            <h4 class="text-white text-start" style="background: #0e0d06;">
-              Conoce a tu conductor
-            </h4>
-            <p class="text-start text-white" style="background: #0e0d06;">
-              Antes de iniciar el viaje, podrás acceder a la información del
-              conductor asignado, garantizando así tu seguridad y tranquilidad.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <div class="container4 pt-5 animate-left">
   <div class="container text-center">
@@ -322,7 +272,7 @@
     <a
       class="text-decoration-none"
       style="background: #0e0d06;"
-      href="#"
+      href="/servicio"
 
     >
       <button type="button" class="btn btn-outline-warning">

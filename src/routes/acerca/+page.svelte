@@ -120,7 +120,7 @@
       <a
         class="text-decoration-none"
         style="background: #0e0d06;"
-        href="#"
+        href="/acerca"
   
       >
         <button type="button" class="btn btn-outline-warning">

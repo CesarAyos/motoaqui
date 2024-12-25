@@ -6,16 +6,11 @@
           TU MOTO TAXI A UN CLICK
         </p>
         <p class="text-white text-start">
-          Encuentra y solicita tu mototaxi fácilmente. Visualiza la ruta en el
-          mapa, revisa motos disponibles y conoce a tu conductor antes de partir
-          con total seguridad.
+          Solicita tu mototaxi fácilmente. Selecciona la ruta en el mapa, conoce
+          a tu conductor antes de partir con total seguridad.
         </p>
         <div class="d-flex justify-content-start mt-4">
-          <a
-            class="text-decoration-none"
-            style="background: #0e0d06;"
-            href="#"
-          >
+          <a class="text-decoration-none" style="background: #0e0d06;" href="/">
             <button type="button" class="btn btn-outline-warning">
               Registrate
             </button>
@@ -53,33 +48,32 @@
           Conoce Motoaqui
         </p>
         <p class="text-white text-start" style="background: #0e0d06;">
-          Motoaqui es una plataforma innovadora que conecta a usuarios con
-          conductores de mototaxi, garantizando un servicio seguro y eficiente
-          para todos nuestros clientes.
+          Motoaqui es una plataforma que conecta a usuarios con conductores de
+          mototaxi, garantizando un servicio seguro y eficiente para todos
+          nuestros clientes.
         </p>
         <div class="container text-end">
           <div class="row">
             <div class="col" style="background: #0e0d06;">
-              <p class="text-white fs-4" style="background: #0e0d06;">20+</p>
+              <p class="text-white fs-4" style="background: #0e0d06;">4</p>
               <p class="text-white" style="background: #0e0d06;">
                 Años de experiencia
               </p>
             </div>
             <div class="col" style="background: #0e0d06;">
-              <p class="text-white fs-4" style="background: #0e0d06;">15+</p>
+              <p class="text-white fs-4" style="background: #0e0d06;">22</p>
               <p class="text-white" style="background: #0e0d06;">
                 Miembros del equipo
               </p>
             </div>
             <div class="col" style="background: #0e0d06;">
-              <p class="text-white fs-4" style="background: #0e0d06;">10+</p>
+              <p class="text-white fs-4" style="background: #0e0d06;">+10</p>
               <p class="text-white" style="background: #0e0d06;">
-                Premios ganados
+                Premios entregados a nuestros clientes
               </p>
             </div>
           </div>
         </div>
-        
       </div>
     </div>
   </div>
@@ -92,9 +86,9 @@
         Nuestros servicios de mototaxi
       </h1>
       <p class="card-text text-white text-center pt-3">
-        Ofrecemos solicitud de mototaxis, seguimiento de rutas en tiempo real y
-        un sistema de registro para garantizar seguridad y comodidad a nuestros
-        usuarios y conductores.
+        Ofrecemos solicitud de mototaxis, asignacion de ruta por nuestros
+        clientes y un sistema de registro para garantizar seguridad y comodidad
+        a nuestros usuarios y conductores.
       </p>
     </div>
   </div>
@@ -129,7 +123,6 @@
                   Te ofrecemos un servicio de mototaxi que prioriza la seguridad
                   y la puntualidad en cada viaje.
                 </p>
-                
               </div>
             </div>
           </div>
@@ -161,7 +154,6 @@
                   Los conductores pueden registrarse fácilmente y compartir su
                   información personal y la de sus motos.
                 </p>
-                
               </div>
             </div>
           </div>
@@ -188,16 +180,15 @@
                   class="card-title text-white text-start pt-5"
                   style="background:#0e0d06;"
                 >
-                  Disponibilidad en tiempo real
+                  Disponibilidad
                 </h3>
                 <p
                   class="card-text text-white text-start pt-2"
                   style="background:#0e0d06;"
                 >
-                  Consulta en cualquier momento qué mototaxis están disponibles
-                  cerca de tu ubicación.
+                  Siempre tendras un mototaxi disponible para ti, solo debes
+                  pedirlo
                 </p>
-                
               </div>
             </div>
           </div>
@@ -220,16 +211,15 @@
                   class="card-title pt-5 text-white text-start"
                   style="background:#0e0d06;"
                 >
-                  Seguimiento de rutas
+                  Sencillo asignador de rutas
                 </h3>
                 <p
                   class="card-text text-white text-start"
                   style="background:#0e0d06;"
                 >
-                  Visualiza el recorrido en tiempo real para mayor comodidad y
-                  seguridad durante tus viajes y destinos.
+                  Con solo un click o presionar en el mapa, podras asignar la
+                  ruta
                 </p>
-                
               </div>
             </div>
           </div>
@@ -238,7 +228,6 @@
     </div>
   </div>
 </div>
-
 
 <div
   class="container6 d-flex justify-content-center"
@@ -257,8 +246,7 @@
             </h4>
             <p class="text-start text-white" style="background: #0e0d06;">
               Accede a nuestra plataforma y solicita un mototaxi de manera
-              sencilla. Introduce tu destino y elige la moto más adecuada para
-              ti.
+              sencilla. Introduce donde te buscamos y a donde te dirigimos.
             </p>
           </div>
           <div class="col" style="background: #0e0d06;">
@@ -269,8 +257,9 @@
               Revisa la ruta
             </h4>
             <p class="text-start text-white" style="background: #0e0d06;">
-              Una vez que tu solicitud sea aceptada, podrás ver la ruta en el
-              mapa. Mantente informado sobre el progreso de tu mototaxi.
+              Podras perzonalizar el lugar en donde te podremos buscar, en
+              cuanto tiempo, en que moneda cancelaras, y indicar si debemos
+              llevar vueltos segun el billete que dispones.
             </p>
           </div>
           <div class="col" style="background: #0e0d06;">
@@ -303,12 +292,7 @@
     Solicita tu mototaxi ahora mismo
   </h1>
   <div class="d-flex justify-content-center pt-5 pb-5">
-    <a
-      class="text-decoration-none"
-      style="background: #0e0d06;"
-      href="#"
-
-    >
+    <a class="text-decoration-none" style="background: #0e0d06;" href="/">
       <button type="button" class="btn btn-outline-warning">
         Registrate
       </button>
@@ -374,7 +358,7 @@
   }
 
   @media (max-width: 900px) {
-    .imgPrincipal{
+    .imgPrincipal {
       display: none;
     }
   }
