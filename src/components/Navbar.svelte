@@ -33,7 +33,7 @@
       </ul>
     </div>
     <a href="/loginUser"><button type="button" class="btn btn-outline-warning m-1">USUARIO</button></a>
-    <a href="/registroDrivers"><button type="button" class="btn btn-outline-warning m-1">REGISTRARME</button></a>
+    <a href="/registroClient"><button type="button" class="btn btn-outline-warning m-1">REGISTRARME</button></a>
   </div>
 </nav>
 
