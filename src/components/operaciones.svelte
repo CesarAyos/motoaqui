@@ -347,49 +347,52 @@
         >
       </div>
       <!-- Button trigger modal -->
+<button
+type="button"
+class="btn btn-primary"
+data-bs-toggle="modal"
+data-bs-target="#exampleModal"
+>
+Registrar nuevo conductor
+</button>
+
+<!-- Modal -->
+<div
+class="modal fade"
+id="exampleModal"
+tabindex="-1"
+aria-labelledby="exampleModalLabel"
+aria-hidden="true"
+>
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h1 class="modal-title fs-5" id="exampleModalLabel">
+        Registro de Conductor
+      </h1>
       <button
         type="button"
-        class="btn btn-primary"
-        data-bs-toggle="modal"
-        data-bs-target="#exampleModal"
+        class="btn-close"
+        data-bs-dismiss="modal"
+        aria-label="Close"
+      ></button>
+    </div>
+    <div class="modal-body">
+      <RegistroDriver />
+    </div>
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        data-bs-dismiss="modal"
       >
-        Registrar nuevo conductor
+        Close
       </button>
+    </div>
+  </div>
+</div>
+</div>
 
-      <!-- Modal -->
-      <div
-        class="modal fade"
-        id="exampleModal"
-        tabindex="-1"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
-      >
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="exampleModalLabel">
-                Registro de Conductor
-              </h1>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div class="modal-body">
-              <RegistroDriver />
-            </div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-bs-dismiss="modal">Close</button
-              >
-            </div>
-          </div>
-        </div>
-      </div>
       <button class="btn btn-danger m-2" on:click={handleLogout}
         >Cerrar Sesión</button
       >
