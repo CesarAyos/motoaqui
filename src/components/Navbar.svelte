@@ -13,13 +13,9 @@
       <i class="fa-solid fa-bars" style="color: #FFD43B;"></i>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
+      <ul class="navbar-nav me-auto">
         <li class="nav-item m-2">
-          <a
-            class="nav-link active medio text-white fs-5"
-            aria-current="page"
-            href="/">Inicio</a
-          >
+          <a class="nav-link active medio text-white fs-5" aria-current="page" href="/">Inicio</a>
         </li>
         <li class="nav-item m-2">
           <a class="nav-link medio text-white fs-5" href="acerca">Acerca De</a>
@@ -27,28 +23,25 @@
         <li class="nav-item m-2">
           <a class="nav-link medio text-white fs-5" href="servicio">Servicio</a>
         </li>
-        <li class="nav-item d-none">
-          <a class="nav-link disabled" aria-disabled="true">none</a>
-        </li>
       </ul>
-    </div>
-    <div class="btn-group dropstart m-2" >
-      <button type="button" class="btn btn btn-outline-warning dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-        USUARIOS
-      </button>
-      <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="loginUser">Iniciar sesión</a></li>
-        <li><a class="dropdown-item" href="registroClient">Registrase</a></li>
-      </ul>
-    </div>
-    <div class="btn-group dropstart m-2">
-      <button type="button" class="btn btn-outline-warning dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-        OPERADORES
-      </button>
-      <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="/operador">Operador</a></li>
-        <li><a class="dropdown-item" href="loginDrivers">Conductor</a></li>
-      </ul>
+      <div class="btn-group dropstart m-2" >
+        <button type="button" class="btn btn btn-outline-warning dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-display="static">
+          USUARIOS
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item" href="loginUser">Iniciar sesión</a></li>
+          <li><a class="dropdown-item" href="registroClient">Registrarse</a></li>
+        </ul>
+      </div>
+      <div class="btn-group dropstart m-2">
+        <button type="button" class="btn btn-outline-warning dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-display="static">
+          OPERADORES
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item" href="/operador">Operador</a></li>
+          <li><a class="dropdown-item" href="loginDrivers">Conductor</a></li>
+        </ul>
+      </div>
     </div>
   </div>
 </nav>
@@ -63,5 +56,16 @@
 
   .navbar {
     background: #1b1b1b;
+  }
+
+  .btn-group .dropdown-menu {
+    position: absolute;
+  }
+
+  @media (max-width: 768px) {
+    .btn-group.dropstart .dropdown-menu {
+      position: static;
+      float: none;
+    }
   }
 </style>
