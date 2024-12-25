@@ -32,12 +32,28 @@
         </li>
       </ul>
     </div>
-    <a href="/loginUser"><button type="button" class="btn btn-outline-warning m-1">USUARIO</button></a>
-    <a href="/registroClient"><button type="button" class="btn btn-outline-warning m-1">REGISTRARME</button></a>
+    <div class="btn-group dropstart m-2" >
+      <button type="button" class="btn btn btn-outline-warning dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        USUARIOS
+      </button>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="loginUser">Iniciar sesión</a></li>
+        <li><a class="dropdown-item" href="registroClient">Registrase</a></li>
+      </ul>
+    </div>
+    <div class="btn-group dropstart m-2">
+      <button type="button" class="btn btn-outline-warning dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        OPERADORES
+      </button>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="/operador">Operador</a></li>
+        <li><a class="dropdown-item" href="loginDrivers">Conductor</a></li>
+        <li><a class="dropdown-item" href="registroDrivers">Registro</a></li>
+      </ul>
+    </div>
   </div>
 </nav>
 
-<!-- Large button groups (default and split) -->
 
 <style>
   .medio:hover {
