@@ -48,6 +48,7 @@
         <ul class="dropdown-menu">
           <li><a class="dropdown-item" href="loginUser">USUARIO</a></li>
           <li><a class="dropdown-item" href="loginDrivers">CONDUCTOR</a></li>
+          <li><a class="dropdown-item" href="operador">OPERADOR</a></li>
         </ul>
       </div>
       <div class="btn-group">

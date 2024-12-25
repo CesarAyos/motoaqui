@@ -16,14 +16,14 @@
       errorMessage = "Error al iniciar sesión: " + error.message;
     } else {
       // Redirigir al perfil después de iniciar sesión
-      window.location.href = "/carrerasDrivers";
+      window.location.href = "/profileDrivers";
     }
   };
 
   onMount(async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (session && session.user) {
-      window.location.href = "/carrerasDrivers";
+      window.location.href = "/profileDrivers";
     }
   });
 </script>

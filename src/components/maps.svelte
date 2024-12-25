@@ -120,7 +120,7 @@
       tiempo: formData.tiempo,
       fecha: new Date().toISOString(),
       usuario_nombre: `${userFirstName} ${userLastName}`, // Asegúrate de que esto se inserta correctamente
-    },
+    },  
   ])
   .single();
 
