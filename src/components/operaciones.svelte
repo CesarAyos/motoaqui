@@ -132,41 +132,34 @@
   }
 
   async function asignarConductor() {
-    if (carreraSeleccionada && conductorSeleccionado) {
-        // Obtener la sesión y usuario actual
-        const { data: { session } } = await supabase.auth.getSession();
-        const user = session.user;
+  if (carreraSeleccionada && conductorSeleccionado) {
+    // Obtener la sesión y usuario actual
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session.user;
 
-        // Verificar que el nombre y apellido del usuario están disponibles
-        const userFirstName = user.user_metadata?.first_name || "Nombre";
-        const userLastName = user.user_metadata?.last_name || "Apellido";
+    const { error } = await supabase
+      .from("carreras")
+      .update({
+        conductor_id: conductorSeleccionado,
+        estado: "asignada",
+        usuario_nombre: `${userFirstName} ${userLastName}`
+      })
+      .eq("id", carreraSeleccionada.id);
 
-        const { error } = await supabase
-            .from("carreras")
-            .update({
-                conductor_id: conductorSeleccionado,
-                estado: "asignada",
-                usuario_nombre: `${userFirstName} ${userLastName}`
-            })
-            .eq("id", carreraSeleccionada.id);
-
-        if (error) {
-            console.error("Error updating carrera:", error.message);
-        } else {
-            console.log("Conductor asignado exitosamente");
-            // Actualizar la lista de carreras localmente
-            const index = carreras.findIndex((c) => c.id === carreraSeleccionada.id);
-            if (index !== -1) {
-                carreras[index].estado = "asignada";
-                carreras[index].usuario_nombre = `${userFirstName} ${userLastName}`;
-                carreras = [...carreras]; // Forzar la reactividad
-            }
-        }
+    if (error) {
+      console.error("Error updating carrera:", error.message);
     } else {
-        alert("Selecciona una carrera y un conductor.");
+      console.log("Conductor asignado exitosamente");
+      // Actualizar la lista de carreras localmente
+      const index = carreras.findIndex((c) => c.id === carreraSeleccionada.id);
+      carreras[index].estado = "asignada";
+      carreras[index].usuario_nombre = `${userFirstName} ${userLastName}`;
+      carreras = [...carreras]; // Forzar la reactividad
     }
+  } else {
+    alert("Selecciona una carrera y un conductor.");
+  }
 }
-
 
 
   async function cancelarCarrera() {

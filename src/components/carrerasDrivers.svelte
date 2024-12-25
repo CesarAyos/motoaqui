@@ -161,6 +161,11 @@
       });
     }
   });
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    window.location.href = "/loginUser";
+  };
 </script>
 
 
@@ -171,6 +176,9 @@
     <div class="card-header d-flex justify-content-between align-items-center">
       Carreras Asignadas
       <button class="btn btn-outline-primary" on:click={cargarCarreras}>Recargar Carreras</button>
+      <button class="btn btn-danger m-2" on:click={handleLogout}
+        >Cerrar Sesión</button
+      >
     </div>
     <ul class="list-group list-group-flush">
       {#each carreras as carrera}
@@ -220,10 +228,6 @@
 
   .card-text {
     margin-bottom: 0.5rem;
-  }
-
-  .text-muted {
-    color: #6c757d !important;
   }
 
   .btn {
