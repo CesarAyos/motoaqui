@@ -48,7 +48,6 @@
       <ul class="dropdown-menu">
         <li><a class="dropdown-item" href="/operador">Operador</a></li>
         <li><a class="dropdown-item" href="loginDrivers">Conductor</a></li>
-        <li><a class="dropdown-item" href="registroDrivers">Registro</a></li>
       </ul>
     </div>
   </div>
