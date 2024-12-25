@@ -3,8 +3,7 @@
   import { supabase } from "../components/supabase.js";
   import "leaflet/dist/leaflet.css";
   import { protegerRuta } from "./protegerRuta.js";
-  
-  
+
   let map;
   let originMarker;
   let destinationMarker;
@@ -16,11 +15,53 @@
 
   let originIcon, destinationIcon;
 
+  // Solo ejecuta este código en el cliente
+  if (typeof window !== 'undefined') {
+    onMount(async () => {
+      const L = await import('leaflet');
+      await import('leaflet-routing-machine');
+
+      await cargarCarreras();
+      await protegerRuta();
+
+      const mapContainer = document.getElementById('map');
+      if (mapContainer) {
+        map = L.map("map").setView([8.03687, -72.2603], 14);
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          maxZoom: 18,
+        }).addTo(map);
+
+        L.control.scale().addTo(map);
+
+        // Definir iconos personalizados
+        originIcon = L.icon({
+          iconUrl: '/moto.png', // Ruta a la imagen del origen
+          iconSize: [38, 38], // Tamaño del icono
+          iconAnchor: [22, 38], // Punto del icono que corresponde a la ubicación del marcador
+          popupAnchor: [-3, -38] // Punto desde el cual se abrirá el popup relativo al icono
+        });
+
+        destinationIcon = L.icon({
+          iconUrl: '/moto.png', // Ruta a la imagen del destino
+          iconSize: [38, 38], // Tamaño del icono
+          iconAnchor: [22, 38], // Punto del icono que corresponde a la ubicación del marcador
+          popupAnchor: [-3, -38] // Punto desde el cual se abrirá el popup relativo al icono
+        });
+      }
+    });
+  }
+
   // Función para cargar las carreras asignadas al usuario
   const cargarCarreras = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session || !session.user) {
-      window.location.href = "/loginUser";
+      if (typeof window !== 'undefined') {
+        window.location.href = "/loginUser";
+      }
       return;
     }
 
@@ -36,7 +77,6 @@
     }
   };
 
-  // Función para mostrar la ruta en el mapa
   const mostrarRuta = async (carrera) => {
     carreraSeleccionada = carrera;
     usuarioNombre = carrera.usuario_nombre;
@@ -53,11 +93,11 @@
       conductorNombre = `${conductorData.primernombre} ${conductorData.primerapellido}`;
     }
 
-    const origin = [carrera.origen_lat, carrera.origen_lng];
-    const destination = [carrera.destino_lat, carrera.destino_lng];
+    const origin = L.latLng(carrera.origen_lat, carrera.origen_lng);
+    const destination = L.latLng(carrera.destino_lat, carrera.destino_lng);
 
     if (routeLayer) {
-      map.removeLayer(routeLayer);
+      map.removeControl(routeLayer);
     }
 
     if (!originMarker) {
@@ -78,7 +118,15 @@
       destinationMarker.setLatLng(destination);
     }
 
-    routeLayer = L.polyline([origin, destination], { color: "blue" }).addTo(map);
+    routeLayer = L.Routing.control({
+      waypoints: [origin, destination],
+      router: L.Routing.osrmv1({
+        serviceUrl: `https://router.project-osrm.org/route/v1`
+      }),
+      lineOptions: {
+        styles: [{ color: "blue", weight: 4 }]
+      }
+    }).addTo(map);
     map.fitBounds(routeLayer.getBounds());
   };
 
@@ -131,46 +179,13 @@
     }
   };
 
-  onMount(async () => {
-    await cargarCarreras();
-    await protegerRuta();
-
-    const mapContainer = document.getElementById('map');
-    if (mapContainer) {
-      const L = (await import("leaflet")).default;
-
-      map = L.map("map").setView([8.03687, -72.2603], 14);
-
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 18,
-      }).addTo(map);
-
-      L.control.scale().addTo(map);
-
-      // Definir iconos personalizados
-      originIcon = L.icon({
-        iconUrl: '/moto.png', // Ruta a la imagen del origen
-        iconSize: [38, 38], // Tamaño del icono
-        iconAnchor: [22, 38], // Punto del icono que corresponde a la ubicación del marcador
-        popupAnchor: [-3, -38] // Punto desde el cual se abrirá el popup relativo al icono
-      });
-
-      destinationIcon = L.icon({
-        iconUrl: '/moto.png', // Ruta a la imagen del destino
-        iconSize: [38, 38], // Tamaño del icono
-        iconAnchor: [22, 38], // Punto del icono que corresponde a la ubicación del marcador
-        popupAnchor: [-3, -38] // Punto desde el cual se abrirá el popup relativo al icono
-      });
-    }
-  });
-
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    window.location.href = "/loginUser";
+    if (typeof window !== 'undefined') {
+      await supabase.auth.signOut();
+      window.location.href = "/loginUser";
+    }
   };
 </script>
-
 
 <div>
   <div id="map" style="height: 400px;"></div>
@@ -178,41 +193,55 @@
   <div class="card mt-3">
     <div class="card-header d-flex justify-content-between align-items-center">
       Carreras Asignadas
-      <button class="btn btn-outline-primary" on:click={cargarCarreras}>Recargar Carreras</button>
+      <button class="btn btn-outline-primary" on:click={cargarCarreras}
+        >Recargar Carreras</button
+      >
       <button class="btn btn-danger m-2" on:click={handleLogout}
         >Cerrar Sesión</button
       >
     </div>
     <ul class="list-group list-group-flush">
       {#each carreras as carrera}
-        <li class="list-group-item d-flex justify-content-between align-items-center" on:click={() => mostrarRuta(carrera)}>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <button 
+          type="button"
+          class="btn btn-link"
+          on:click={() => mostrarRuta(carrera)}
+          on:keydown={(e) => e.key === 'Enter' && mostrarRuta(carrera)}
+          style="text-decoration: none; color: inherit;">
           Carrera ID: {carrera.id}
           <span class="badge badge-primary badge-pill">{carrera.estado}</span>
-        </li>
+        </button>
+      </li>
+      
       {/each}
     </ul>
   </div>
 
   {#if carreraSeleccionada}
     <div class="card mt-3">
-      <div class="card-header">
-        Detalles de la Carrera
-      </div>
+      <div class="card-header">Detalles de la Carrera</div>
       <div class="card-body">
         <h5 class="card-title">Carrera ID: {carreraSeleccionada.id}</h5>
         <p class="card-text">Nombre del Conductor: {conductorNombre}</p>
         <p class="card-text">Nombre del Usuario: {usuarioNombre}</p>
-        <button class="btn btn-outline-success mt-3" on:click={aceptarCarrera} disabled={carreraSeleccionada.estado === "aceptada"}>
+        <button
+          class="btn btn-outline-success mt-3"
+          on:click={aceptarCarrera}
+          disabled={carreraSeleccionada.estado === "aceptada"}
+        >
           Carrera Aceptada
         </button>
-        <button class="btn btn-outline-primary mt-3" on:click={carreraRealizada}>
+        <button
+          class="btn btn-outline-primary mt-3"
+          on:click={carreraRealizada}
+        >
           Carrera Realizada
         </button>
       </div>
     </div>
   {/if}
 </div>
-
 
 <style>
   .card {

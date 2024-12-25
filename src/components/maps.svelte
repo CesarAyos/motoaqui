@@ -134,7 +134,7 @@
       const url = `https://wa.me/584169752291?text=${encodeURIComponent(mensaje)}`;
       window.open(url, "_blank");
       resetForm();
-      window.location.href = "/carreras"; // Redirigir a la página carreras
+      window.location.href = "/carrerasUsers"; // Redirigir a la página carreras
     }
   }
 
