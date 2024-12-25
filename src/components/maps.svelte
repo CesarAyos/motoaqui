@@ -242,6 +242,9 @@
           </label>
 
           <div class="d-flex justify-content-end">
+           <a href="/carreras"> <button class="btn btn-outline-warning m-2" type="button"
+              >chequear carreras</button
+            ></a>
             <button class="btn btn-outline-warning m-2" type="submit"
               >Pedir Carrera</button
             >

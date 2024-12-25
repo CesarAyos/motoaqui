@@ -27,9 +27,6 @@
         <li class="nav-item m-2">
           <a class="nav-link medio text-white fs-5" href="servicio">Servicio</a>
         </li>
-        <li class="nav-item m-2">
-          <a class="nav-link medio text-white fs-5" href="contacto">Contacto</a>
-        </li>
         <li class="nav-item d-none">
           <a class="nav-link disabled" aria-disabled="true">none</a>
         </li>
