@@ -4,7 +4,6 @@
   import { supabase } from "../components/supabase.js"; // Ruta corregida
   import { protegerRuta } from "./protegerRuta.js";
 
-
   let map;
   let originMarker;
   let destinationMarker;
@@ -19,11 +18,10 @@
   let user = "";
   let userFirstName = "";
   let userLastName = "";
-  
 
   onMount(async () => {
     if (typeof window === "undefined") return;
-    await protegerRuta(); 
+    await protegerRuta();
 
     // Obtener la sesión del usuario
     const {
@@ -45,16 +43,20 @@
       .single();
 
     if (error) {
-      alert("Error fetching user data. Please try again later.");
+      alert("Esta no es tu seccion, verifique y vuelva a ingresar.");
       console.error("Error:", error.message);
+      window.location.href = "/"; // Redirigir a la página de inicio
       return;
     }
 
     if (!data) {
       alert("User data not found.");
       console.error("User data not found");
+      window.location.href = "/"; // Redirigir a la página de inicio
       return;
     }
+
+    // Código adicional para manejar los datos del usuario
 
     userFirstName = data.primernombre;
     userLastName = data.primerapellido;
@@ -75,7 +77,6 @@
     });
 
     map.on("click", (e) => handleMapClick(e.latlng, taxiIcon));
-
   });
 
   function handleMapClick(latlng, taxiIcon) {
@@ -96,49 +97,46 @@
   }
 
   async function enviarWhatsApp() {
-  if (!originMarker || !destinationMarker) {
-    return alert(
-      "Por favor selecciona tanto el origen como el destino en el mapa."
-    );
+    if (!originMarker || !destinationMarker) {
+      return alert(
+        "Por favor selecciona tanto el origen como el destino en el mapa."
+      );
+    }
+
+    const origin = originMarker.getLatLng();
+    const destination = destinationMarker.getLatLng();
+    const originLink = `https://www.openstreetmap.org/?mlat=${origin.lat}&mlon=${origin.lng}#map=18/${origin.lat}/${origin.lng}`;
+    const destinationLink = `https://www.openstreetmap.org/?mlat=${destination.lat}&mlon=${destination.lng}#map=18/${destination.lat}/${destination.lng}`;
+    const mensaje = `Hola soy ${userFirstName} ${userLastName}. Voy a cancelar en ${formData.moneda}.\n${formData.llevarVueltos ? `Llevar vueltos: ${formData.cantidadVueltos}.\n` : ""}Búscame en: ${formData.tiempo}.\nPor favor búscame aquí: [${originLink}].\nPor favor llévame aquí: [${destinationLink}].`;
+
+    const { data, error } = await supabase
+      .from("carreras")
+      .insert([
+        {
+          origen_lat: origin.lat,
+          origen_lng: origin.lng,
+          destino_lat: destination.lat,
+          destino_lng: destination.lng,
+          moneda: formData.moneda,
+          llevar_vueltos: formData.llevarVueltos,
+          cantidad_vueltos: formData.cantidadVueltos,
+          tiempo: formData.tiempo,
+          fecha: new Date().toISOString(),
+          usuario_nombre: `${userFirstName} ${userLastName}`, // Asegúrate de que esto se inserta correctamente
+        },
+      ])
+      .single();
+
+    if (error) {
+      alert("Error inserting data. Please try again.");
+      console.error("Error:", error.message);
+    } else {
+      const url = `https://wa.me/584169752291?text=${encodeURIComponent(mensaje)}`;
+      window.open(url, "_blank");
+      resetForm();
+      window.location.href = "/carreras"; // Redirigir a la página carreras
+    }
   }
-
-  const origin = originMarker.getLatLng();
-  const destination = destinationMarker.getLatLng();
-  const originLink = `https://www.openstreetmap.org/?mlat=${origin.lat}&mlon=${origin.lng}#map=18/${origin.lat}/${origin.lng}`;
-  const destinationLink = `https://www.openstreetmap.org/?mlat=${destination.lat}&mlon=${destination.lng}#map=18/${destination.lat}/${destination.lng}`;
-  const mensaje = `Hola soy ${userFirstName} ${userLastName}. Voy a cancelar en ${formData.moneda}.\n${formData.llevarVueltos ? `Llevar vueltos: ${formData.cantidadVueltos}.\n` : ""}Búscame en: ${formData.tiempo}.\nPor favor búscame aquí: [${originLink}].\nPor favor llévame aquí: [${destinationLink}].`;
-
-  const { data, error } = await supabase
-    .from("carreras")
-    .insert([
-      {
-        origen_lat: origin.lat,
-        origen_lng: origin.lng,
-        destino_lat: destination.lat,
-        destino_lng: destination.lng,
-        moneda: formData.moneda,
-        llevar_vueltos: formData.llevarVueltos,
-        cantidad_vueltos: formData.cantidadVueltos,
-        tiempo: formData.tiempo,
-        fecha: new Date().toISOString(),
-        usuario_nombre: `${userFirstName} ${userLastName}`, // Asegúrate de que esto se inserta correctamente
-      },
-    ])
-    .single();
-
-  if (error) {
-    alert("Error inserting data. Please try again.");
-    console.error("Error:", error.message);
-  } else {
-    const url = `https://wa.me/584169752291?text=${encodeURIComponent(mensaje)}`;
-    window.open(url, "_blank");
-    resetForm();
-    window.location.href = "/carreras"; // Redirigir a la página carreras
-  }
-}
-
-
-  
 
   function resetForm() {
     formData = {
@@ -242,9 +240,11 @@
           </label>
 
           <div class="d-flex justify-content-end">
-           <a class="text-decoration-none" href="/carrerasUsers"> <button class="btn btn-outline-warning m-2" type="button"
-              >chequear carreras</button
-            ></a>
+            <a class="text-decoration-none" href="/carrerasUsers">
+              <button class="btn btn-outline-warning m-2" type="button"
+                >chequear carreras</button
+              ></a
+            >
             <button class="btn btn-outline-warning m-2" type="submit"
               >Pedir Carrera</button
             >
@@ -260,14 +260,12 @@
   </div>
 </main>
 
-
-
 <style>
   #map {
     width: 100%;
     height: 600px;
   }
-  
+
   form {
     margin-top: 20px;
   }
