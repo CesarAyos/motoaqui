@@ -2,6 +2,8 @@
   import { onMount } from "svelte";
   import { supabase } from "../components/supabase.js";
   import "leaflet/dist/leaflet.css";
+  import { protegerRuta } from "./protegerRuta.js";
+  
   
   let map;
   let originMarker;
@@ -131,6 +133,7 @@
 
   onMount(async () => {
     await cargarCarreras();
+    await protegerRuta();
 
     const mapContainer = document.getElementById('map');
     if (mapContainer) {

@@ -2,7 +2,8 @@
   import { onMount, onDestroy } from "svelte";
   import "leaflet/dist/leaflet.css";
   import { supabase } from "../components/supabase.js"; // Ruta corregida
-  import CarrerasAsignadas from "../components/carrerasAsignadas.svelte"; // Ruta corregida
+  import { protegerRuta } from "./protegerRuta.js";
+
 
   let map;
   let originMarker;
@@ -22,6 +23,7 @@
 
   onMount(async () => {
     if (typeof window === "undefined") return;
+    await protegerRuta(); 
 
     // Obtener la sesión del usuario
     const {
@@ -94,47 +96,47 @@
   }
 
   async function enviarWhatsApp() {
-    if (!originMarker || !destinationMarker) {
-      return alert(
-        "Por favor selecciona tanto el origen como el destino en el mapa."
-      );
-    }
-
-    const origin = originMarker.getLatLng();
-    const destination = destinationMarker.getLatLng();
-    const originLink = `https://www.openstreetmap.org/?mlat=${origin.lat}&mlon=${origin.lng}#map=18/${origin.lat}/${origin.lng}`;
-    const destinationLink = `https://www.openstreetmap.org/?mlat=${destination.lat}&mlon=${destination.lng}#map=18/${destination.lat}/${destination.lng}`;
-    const mensaje = `Hola soy ${userFirstName} ${userLastName}. Voy a cancelar en ${formData.moneda}.\n${formData.llevarVueltos ? `Llevar vueltos: ${formData.cantidadVueltos}.\n` : ""}Búscame en: ${formData.tiempo}.\nPor favor búscame aquí: [${originLink}].\nPor favor llévame aquí: [${destinationLink}].`;
-
-    const { data, error } = await supabase
-  .from("carreras")
-  .insert([
-    {
-      origen_lat: origin.lat,
-      origen_lng: origin.lng,
-      destino_lat: destination.lat,
-      destino_lng: destination.lng,
-      moneda: formData.moneda,
-      llevar_vueltos: formData.llevarVueltos,
-      cantidad_vueltos: formData.cantidadVueltos,
-      tiempo: formData.tiempo,
-      fecha: new Date().toISOString(),
-      usuario_nombre: `${userFirstName} ${userLastName}`, // Asegúrate de que esto se inserta correctamente
-    },  
-  ])
-  .single();
-
-
-    if (error) {
-      alert("Error inserting data. Please try again.");
-      console.error("Error:", error.message);
-    } else {
-      const url = `https://wa.me/584169752291?text=${encodeURIComponent(mensaje)}`;
-      window.open(url, "_blank");
-      resetForm();
-      
-    }
+  if (!originMarker || !destinationMarker) {
+    return alert(
+      "Por favor selecciona tanto el origen como el destino en el mapa."
+    );
   }
+
+  const origin = originMarker.getLatLng();
+  const destination = destinationMarker.getLatLng();
+  const originLink = `https://www.openstreetmap.org/?mlat=${origin.lat}&mlon=${origin.lng}#map=18/${origin.lat}/${origin.lng}`;
+  const destinationLink = `https://www.openstreetmap.org/?mlat=${destination.lat}&mlon=${destination.lng}#map=18/${destination.lat}/${destination.lng}`;
+  const mensaje = `Hola soy ${userFirstName} ${userLastName}. Voy a cancelar en ${formData.moneda}.\n${formData.llevarVueltos ? `Llevar vueltos: ${formData.cantidadVueltos}.\n` : ""}Búscame en: ${formData.tiempo}.\nPor favor búscame aquí: [${originLink}].\nPor favor llévame aquí: [${destinationLink}].`;
+
+  const { data, error } = await supabase
+    .from("carreras")
+    .insert([
+      {
+        origen_lat: origin.lat,
+        origen_lng: origin.lng,
+        destino_lat: destination.lat,
+        destino_lng: destination.lng,
+        moneda: formData.moneda,
+        llevar_vueltos: formData.llevarVueltos,
+        cantidad_vueltos: formData.cantidadVueltos,
+        tiempo: formData.tiempo,
+        fecha: new Date().toISOString(),
+        usuario_nombre: `${userFirstName} ${userLastName}`, // Asegúrate de que esto se inserta correctamente
+      },
+    ])
+    .single();
+
+  if (error) {
+    alert("Error inserting data. Please try again.");
+    console.error("Error:", error.message);
+  } else {
+    const url = `https://wa.me/584169752291?text=${encodeURIComponent(mensaje)}`;
+    window.open(url, "_blank");
+    resetForm();
+    window.location.href = "/carreras"; // Redirigir a la página carreras
+  }
+}
+
 
   
 
@@ -250,44 +252,12 @@
             >
           </div>
         </form>
-        <button
-          class="btn btn-outline-warning"
-          type="button"
-          data-bs-toggle="offcanvas"
-          data-bs-target="#offcanvasExample"
-          aria-controls="offcanvasExample"
-        >
-          Chequear Carrera
-        </button>
       </div>
     </div>
   </div>
 </main>
 
-<div
-  class="offcanvas offcanvas-start"
-  tabindex="-1"
-  id="offcanvasExample"
-  aria-labelledby="offcanvasExampleLabel"
->
-  <div class="offcanvas-header">
-    <h5 class="offcanvas-title" id="offcanvasExampleLabel">
-      {userFirstName}
-      {userLastName}
-    </h5>
-    <button
-      type="button"
-      class="btn-close"
-      data-bs-dismiss="offcanvas"
-      aria-label="Close"
-    ></button>
-  </div>
-  <div class="offcanvas-body">
-    <div>
-      <CarrerasAsignadas />
-    </div>
-  </div>
-</div>
+
 
 <style>
   #map {
