@@ -257,6 +257,39 @@
   </div>
 </div>
 
+<div
+  class="container6 d-flex justify-content-center"
+  style="background: #0e0d06;"
+>
+  <div class="card" style="border:none;">
+    <div class="card-body p-5" style="background: #0e0d06;">
+      <div class="container text-center" style="">
+        <div class="row">
+          <div class="col" style="background: #0e0d06;">
+            <img src="/app.png" 
+            class="img-fluid rounded-start"
+            style="height: 25rem;width: 30rem"
+            alt="app">
+          </div>
+          <div class="col" style="background: #0e0d06;">
+            <p class="text-start fs-1" style="color: #d09a40;background: #0e0d06;">
+              Descarga nuestra app
+            </p>
+            <p class="text-white fs-2 text-start" style="background: #0e0d06;">
+              Todo lo que necesitas para solicitar un mototaxi en un solo lugar.
+            </p>
+            <p class="text-start text-white" style="background: #0e0d06;">
+              Descarga nuestra app y solicita un mototaxi en cualquier momento y
+              lugar.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <div class="footer">
   <img
     src="/social.jpg"

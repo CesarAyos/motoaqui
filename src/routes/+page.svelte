@@ -238,40 +238,21 @@
       <div class="container text-center" style="">
         <div class="row">
           <div class="col" style="background: #0e0d06;">
-            <h4 class="text-start" style="color: #d09a40;background: #0e0d06;">
-              01
-            </h4>
-            <h4 class="text-white text-start" style="background: #0e0d06;">
-              Solicita tu mototaxi
-            </h4>
-            <p class="text-start text-white" style="background: #0e0d06;">
-              Accede a nuestra plataforma y solicita un mototaxi de manera
-              sencilla. Introduce donde te buscamos y a donde te dirigimos.
-            </p>
+            <img src="/app.png" 
+            class="img-fluid rounded-start"
+            style="height: 25rem;width: 30rem"
+            alt="app">
           </div>
           <div class="col" style="background: #0e0d06;">
-            <h4 class="text-start" style="color: #d09a40;background: #0e0d06;">
-              02
-            </h4>
-            <h4 class="text-white text-start" style="background: #0e0d06;">
-              Revisa la ruta
-            </h4>
-            <p class="text-start text-white" style="background: #0e0d06;">
-              Podras perzonalizar el lugar en donde te podremos buscar, en
-              cuanto tiempo, en que moneda cancelaras, y indicar si debemos
-              llevar vueltos segun el billete que dispones.
+            <p class="text-start fs-1" style="color: #d09a40;background: #0e0d06;">
+              Descarga nuestra app
             </p>
-          </div>
-          <div class="col" style="background: #0e0d06;">
-            <h4 class="text-start" style="color: #d09a40;background: #0e0d06;">
-              03
-            </h4>
-            <h4 class="text-white text-start" style="background: #0e0d06;">
-              Conoce a tu conductor
-            </h4>
+            <p class="text-white fs-2 text-start" style="background: #0e0d06;">
+              Todo lo que necesitas para solicitar un mototaxi en un solo lugar.
+            </p>
             <p class="text-start text-white" style="background: #0e0d06;">
-              Antes de iniciar el viaje, podrás acceder a la información del
-              conductor asignado, garantizando así tu seguridad y tranquilidad.
+              Descarga nuestra app y solicita un mototaxi en cualquier momento y
+              lugar.
             </p>
           </div>
         </div>

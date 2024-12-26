@@ -61,7 +61,9 @@
 </script>
 
 <main>
-  <div class="text-center text-white pt-2 pb-2 bg-dark fs-2">Carreras aceptadas</div>
+  <div class="text-center text-warning pt-2 pb-2 bg-dark fs-2">
+   <strong> CARRERAS ACEPTADAS </strong>
+  </div>
   <div class="card" style="background: #1b1b1b;">
     <div class="card-header d-flex justify-content-between text-white">
       <button
@@ -79,67 +81,119 @@
       >
     </div>
 
-    <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
-      <div class="col">
-        <div class=" card-body">
-          <blockquote class="blockquote mb-0">
-            {#if carrerasAsignadas.length > 0}
-              {#each carrerasAsignadas as carrera}
-                <div class="card mb-3">
-                  <div class="card-body">
-                    <h5 class="card-title">Carrera ID: {carrera.id}</h5>
-                    <p class="card-text">Estado: {carrera.estado}</p>
-                    <p class="card-text">Usuario: {carrera.usuario_nombre}</p>
-                    {#if carrera.conductor}
-                      <p class="card-text">
-                        Conductor: {carrera.conductor.primernombre}
-                        {carrera.conductor.primerapellido}
-                      </p>
-                      <p class="card-text">
-                        Teléfono: {carrera.conductor.telefono}
-                      </p>
-                      <p class="card-text">
-                        Modelo de la moto: {carrera.conductor.modelo}
-                      </p>
-                      <p class="card-text">Placa: {carrera.conductor.placa}</p>
-                      <p class="card-text">Color: {carrera.conductor.color}</p>
-                      <p class="card-text">
-                        Control: {carrera.conductor.control}
-                      </p>
-                    {/if}
-                  </div>
+    <div class="container mt-3">
+      <div class="row">
+        {#if carrerasAsignadas.length > 0}
+          {#each carrerasAsignadas as carrera, index}
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3 col-xxl-2 mb-3">
+              <div class="card h-100">
+                <div class="card-body">
+                  <p class="card-text text-warning">
+                    <strong>
+                      Carrera pedida por: <br> {carrera.usuario_nombre}
+                    </strong>
+                  </p>
+                  <p class="card-text text-success">
+                    <strong> Estado: {carrera.estado} </strong>
+                  </p>
+    
+                  {#if carrera.conductor}
+                    <p class="text-center text-white">
+                      <strong>Datos de tu moto taxi</strong>
+                    </p>
+                    <p class="card-text text-white">
+                      <strong>
+                        Conductor en camino: {carrera.conductor.primernombre}
+                        {carrera.conductor.primerapellido}</strong
+                      >
+                    </p>
+                    <p class="card-text text-white">
+                      <strong> Teléfono: {carrera.conductor.telefono}</strong>
+                    </p>
+                    <p class="card-text text-white">
+                      <strong>
+                        Modelo de la moto: {carrera.conductor.modelo}</strong
+                      >
+                    </p>
+                    <p class="card-text text-white" >
+                      <strong>Placa: {carrera.conductor.placa}</strong>
+                    </p>
+                    <p class="card-text text-white">
+                      <strong> Color: {carrera.conductor.color}</strong>
+                    </p>
+                    <p class="card-text text-white">
+                      <strong> Control: {carrera.conductor.control}</strong>
+                    </p>
+                    <p class="text-success text-end" style="font-size: 10px;">
+                      en minutos llegara tu conductor
+                    </p>
+                  {/if}
                 </div>
-              {/each}
-            {:else}
-              <p class="text-white">No hay carreras asignadas.</p>
-            {/if}
-          </blockquote>
-        </div>
+              </div>
+            </div>
+          {/each}
+        {:else}
+          <p class="text-white">No hay carreras asignadas.</p>
+        {/if}
       </div>
     </div>
-  </div>
+    
 </main>
 
 <style>
   .card {
-    background-color: #f8f9fa;
+    background-color: #212529;
     border: 1px solid #dee2e6;
     border-radius: 0.25rem;
-  }
-
-  .card-body {
-    padding: 1.25rem;
-  }
-
-  .card-title {
-    margin-bottom: 0.75rem;
-  }
-
-  .card-text {
-    margin-bottom: 0.5rem;
   }
 
   .btn {
     margin-left: auto;
   }
+
+  .card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1.25rem;
+}
+
+
+
+@media (max-width: 576px) {
+  .col-xxl-2 {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+  .col-md-6 {
+    flex: 0 0 auto;
+    width: 50%;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 992px) {
+  .col-lg-4 {
+    flex: 0 0 auto;
+    width: 33.33%;
+  }
+}
+
+@media (min-width: 993px) and (max-width: 1200px) {
+  .col-xl-3 {
+    flex: 0 0 auto;
+    width: 25%;
+  }
+}
+
+@media (min-width: 1201px) {
+  .col-xxl-2 {
+    flex: 0 0 auto;
+    width: 20%;
+  }
+}
+
 </style>
