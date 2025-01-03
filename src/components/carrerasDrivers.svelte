@@ -301,6 +301,18 @@
     localStorage.setItem("carreras", JSON.stringify(carrerasActualizadas));
   };
 
+  const activarGeolocalizacion = async () => {
+  try {
+    const position = await obtenerUbicacionActual(); // Usa la función obtenerUbicacionActual para obtener la ubicación actual
+    console.log("Ubicación actual:", position);
+
+    // Puedes agregar más lógica aquí para lo que quieras hacer con la ubicación
+  } catch (error) {
+    console.error("Error activando la geolocalización:", error);
+  }
+};
+
+
   const handleLogout = async () => {
     if (typeof window !== "undefined") {
       await supabase.auth.signOut();
@@ -308,6 +320,9 @@
     }
   };
 </script>
+
+<button on:click={activarGeolocalizacion}>Activar Geolocalización</button>
+
 
 <div>
   <div id="map" style="height: 400px;"></div>
