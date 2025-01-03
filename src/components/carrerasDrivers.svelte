@@ -156,29 +156,33 @@ const aceptarCarrera = async () => {
     actualizarCarreraEnLocalStorage(carreraSeleccionada); // Actualizar en almacenamiento local
     console.log("Carrera aceptada");
 
-    const conductorLat = prompt("Ingrese la latitud de su ubicación actual:");
-    const conductorLng = prompt("Ingrese la longitud de su ubicación actual:");
+    map.on('click', (e) => {
+      const conductorLat = e.latlng.lat;
+      const conductorLng = e.latlng.lng;
 
-    const origin = L.latLng(conductorLat, conductorLng);
-    const destination = L.latLng(
-      carreraSeleccionada.origen_lat,
-      carreraSeleccionada.origen_lng
-    );
+      const origin = L.latLng(conductorLat, conductorLng);
+      const destination = L.latLng(
+        carreraSeleccionada.origen_lat,
+        carreraSeleccionada.origen_lng
+      );
 
-    if (routeLayer) {
-      map.removeControl(routeLayer);
-    }
+      if (routeLayer) {
+        map.removeControl(routeLayer);
+      }
 
-    routeLayer = L.Routing.control({
-      waypoints: [origin, destination],
-      router: L.Routing.osrmv1({
-        serviceUrl: `https://router.project-osrm.org/route/v1`,
-      }),
-      lineOptions: {
-        styles: [{ color: "green", weight: 4 }],
-      },
-    }).addTo(map);
-    map.fitBounds(L.latLngBounds([origin, destination]));
+      routeLayer = L.Routing.control({
+        waypoints: [origin, destination],
+        router: L.Routing.osrmv1({
+          serviceUrl: `https://router.project-osrm.org/route/v1`,
+        }),
+        lineOptions: {
+          styles: [{ color: "green", weight: 4 }],
+        },
+      }).addTo(map);
+      map.fitBounds(L.latLngBounds([origin, destination]));
+    });
+
+    alert("Haga clic en el mapa para indicar su ubicación actual.");
   }
 };
 
