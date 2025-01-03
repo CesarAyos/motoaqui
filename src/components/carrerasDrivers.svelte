@@ -12,6 +12,7 @@
   let carreraSeleccionada = null; // Carrera seleccionada para mostrar en el mapa
   let conductorNombre = "";
   let usuarioNombre = "";
+  let ubicacionActual;
 
   let originIcon, destinationIcon;
 
@@ -185,9 +186,8 @@
       actualizarCarreraEnLocalStorage(carreraSeleccionada); // Actualizar en almacenamiento local
       console.log("Carrera aceptada");
 
-      // Obtener la ubicación actual del usuario
-      try {
-        const ubicacionActual = await obtenerUbicacionActual(); // Await the promise
+      // Verifica si la ubicación actual ya está disponible
+      if (ubicacionActual) {
         const origin = L.latLng(ubicacionActual.lat, ubicacionActual.lng);
         const destination = L.latLng(
           carreraSeleccionada.origen_lat,
@@ -208,14 +208,41 @@
           },
         }).addTo(map);
         map.fitBounds(L.latLngBounds([origin, destination]));
-      } catch (error) {
-        if (error === "Permiso de ubicación denegado") {
-          // Display a user-friendly message explaining why the map can't be shown
-          alert(
-            "Por favor, permita el acceso a su ubicación en la configuración del navegador y recargue la página."
+      } else {
+        // Solicita la ubicación actual si no está disponible
+        try {
+          const position = await solicitarPermisoGeolocalizacion();
+          const origin = L.latLng(
+            position.coords.latitude,
+            position.coords.longitude
           );
-        } else {
-          console.error("Error obteniendo la ubicación actual:", error);
+          const destination = L.latLng(
+            carreraSeleccionada.origen_lat,
+            carreraSeleccionada.origen_lng
+          );
+
+          if (routeLayer) {
+            map.removeControl(routeLayer);
+          }
+
+          routeLayer = L.Routing.control({
+            waypoints: [origin, destination],
+            router: L.Routing.osrmv1({
+              serviceUrl: `https://router.project-osrm.org/route/v1`,
+            }),
+            lineOptions: {
+              styles: [{ color: "green", weight: 4 }],
+            },
+          }).addTo(map);
+          map.fitBounds(L.latLngBounds([origin, destination]));
+        } catch (error) {
+          if (error === "Permiso de ubicación denegado") {
+            alert(
+              "Por favor, permita el acceso a su ubicación en la configuración del navegador y recargue la página."
+            );
+          } else {
+            console.error("Error obteniendo la ubicación actual:", error);
+          }
         }
       }
     }
@@ -301,30 +328,30 @@
     localStorage.setItem("carreras", JSON.stringify(carrerasActualizadas));
   };
 
-
-const solicitarPermisoGeolocalizacion = () => {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        console.log("Ubicación actual:", position);
-      },
-      (error) => {
-        if (error.code === error.PERMISSION_DENIED) {
-          alert(
-            "Permiso de ubicación denegado. Por favor, permita el acceso a su ubicación en la configuración del navegador y recargue la página."
-          );
-        } else {
-          alert("Error obteniendo la ubicación actual: " + error.message);
+  const solicitarPermisoGeolocalizacion = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          console.log("Ubicación actual:", position);
+          ubicacionActual = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+        },
+        (error) => {
+          if (error.code === error.PERMISSION_DENIED) {
+            alert(
+              "Permiso de ubicación denegado. Por favor, permita el acceso a su ubicación en la configuración del navegador y recargue la página."
+            );
+          } else {
+            alert("Error obteniendo la ubicación actual: " + error.message);
+          }
         }
-      }
-    );
-  } else {
-    alert("Geolocalización no soportada por el navegador.");
-  }
-};
-
-
-
+      );
+    } else {
+      alert("Geolocalización no soportada por el navegador.");
+    }
+  };
 
   const handleLogout = async () => {
     if (typeof window !== "undefined") {
@@ -334,10 +361,9 @@ const solicitarPermisoGeolocalizacion = () => {
   };
 </script>
 
-
-<button on:click={solicitarPermisoGeolocalizacion}>Solicitar Permiso de Geolocalización</button>
-
-
+<button on:click={solicitarPermisoGeolocalizacion}
+  >Solicitar Permiso de Geolocalización</button
+>
 
 <div>
   <div id="map" style="height: 400px;"></div>
