@@ -3,7 +3,7 @@
   import { supabase } from "../components/supabase.js";
   import "leaflet/dist/leaflet.css";
   import { protegerRuta } from "./protegerRuta.js";
-  
+
   let map;
   let originMarker;
   let destinationMarker;
@@ -12,66 +12,67 @@
   let carreraSeleccionada = null; // Carrera seleccionada para mostrar en el mapa
   let conductorNombre = "";
   let usuarioNombre = "";
-  
+
   let originIcon, destinationIcon;
-  
-  if (typeof window !== 'undefined') {
+
+  if (typeof window !== "undefined") {
     onMount(async () => {
-      const L = await import('leaflet');
-      await import('leaflet-routing-machine');
-  
+      const L = await import("leaflet");
+      await import("leaflet-routing-machine");
+
       carreras = cargarCarrerasDesdeLocalStorage(); // Cargar carreras desde almacenamiento local
       if (carreras.length === 0) {
         await cargarCarreras(); // Si no hay carreras en almacenamiento local, cargarlas desde la base de datos
       }
-      
+
       await protegerRuta();
-  
-      const mapContainer = document.getElementById('map');
+
+      const mapContainer = document.getElementById("map");
       if (mapContainer) {
         map = L.map("map").setView([8.03687, -72.2603], 14);
-  
+
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
           maxZoom: 18,
         }).addTo(map);
-  
+
         L.control.scale().addTo(map);
-  
+
         // Definir iconos personalizados
         originIcon = L.icon({
-          iconUrl: '/moto.png',
+          iconUrl: "/moto.png",
           iconSize: [38, 38],
           iconAnchor: [22, 38],
-          popupAnchor: [-3, -38]
+          popupAnchor: [-3, -38],
         });
-  
+
         destinationIcon = L.icon({
-          iconUrl: '/moto.png',
+          iconUrl: "/moto.png",
           iconSize: [38, 38],
           iconAnchor: [22, 38],
-          popupAnchor: [-3, -38]
+          popupAnchor: [-3, -38],
         });
       }
     });
   }
-  
+
   const cargarCarreras = async () => {
     const {
       data: { session },
     } = await supabase.auth.getSession();
     if (!session || !session.user) {
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         window.location.href = "/loginUser";
       }
       return;
     }
-  
+
     const { data: carrerasData, error: carrerasError } = await supabase
       .from("carreras")
       .select("*")
       .eq("estado", "asignada");
-  
+
     if (carrerasError) {
       console.error("Error fetching carreras:", carrerasError.message);
     } else {
@@ -79,30 +80,30 @@
       guardarCarrerasEnLocalStorage(carreras); // Guardar carreras en almacenamiento local
     }
   };
-  
+
   const mostrarRuta = async (carrera) => {
     carreraSeleccionada = carrera;
     usuarioNombre = carrera.usuario_nombre;
-  
+
     const { data: conductorData, error: conductorError } = await supabase
       .from("motoaquiDrivers")
       .select("primernombre, primerapellido")
       .eq("id", carrera.conductor_id)
       .single();
-  
+
     if (conductorError) {
       console.error("Error fetching conductor data:", conductorError.message);
     } else {
       conductorNombre = `${conductorData.primernombre} ${conductorData.primerapellido}`;
     }
-  
+
     const origin = L.latLng(carrera.origen_lat, carrera.origen_lng);
     const destination = L.latLng(carrera.destino_lat, carrera.destino_lng);
-  
+
     if (routeLayer) {
       map.removeControl(routeLayer);
     }
-  
+
     if (!originMarker) {
       originMarker = L.marker(origin, { icon: originIcon })
         .addTo(map)
@@ -111,7 +112,7 @@
     } else {
       originMarker.setLatLng(origin);
     }
-  
+
     if (!destinationMarker) {
       destinationMarker = L.marker(destination, { icon: destinationIcon })
         .addTo(map)
@@ -120,22 +121,22 @@
     } else {
       destinationMarker.setLatLng(destination);
     }
-  
+
     routeLayer = L.Routing.control({
       waypoints: [origin, destination],
       router: L.Routing.osrmv1({
-        serviceUrl: `https://router.project-osrm.org/route/v1`
+        serviceUrl: `https://router.project-osrm.org/route/v1`,
       }),
       lineOptions: {
-        styles: [{ color: "blue", weight: 4 }]
-      }
+        styles: [{ color: "blue", weight: 4 }],
+      },
     }).addTo(map);
-  
+
     // Ajustar vista del mapa a los puntos de referencia
     const group = L.featureGroup([originMarker, destinationMarker]);
     map.fitBounds(group.getBounds());
   };
-  
+
   const obtenerUbicacionActual = () => {
     return new Promise((resolve, reject) => {
       if (navigator.geolocation) {
@@ -148,11 +149,14 @@
           },
           (error) => {
             if (error.code === error.PERMISSION_DENIED) {
-              alert("Permiso de ubicación denegado. Por favor, permita el acceso a su ubicación en la configuración del navegador y recargue la página.");
+              alert(
+                "Permiso de ubicación denegado. Por favor, permita el acceso a su ubicación en la configuración del navegador y recargue la página."
+              );
+              reject("Permiso de ubicación denegado"); // or handle it differently
             } else {
               alert("Error obteniendo la ubicación actual: " + error.message);
+              reject(error); // Reject with the actual error
             }
-            reject(error);
           }
         );
       } else {
@@ -160,16 +164,17 @@
       }
     });
   };
-  
-  // Función para aceptar la carrera y mostrar la ruta desde la ubicación actual
+
+  // Uso en la función aceptarCarrera
+
   const aceptarCarrera = async () => {
     if (!carreraSeleccionada) return;
-  
+
     const { error } = await supabase
       .from("carreras")
       .update({ estado: "aceptada" })
       .eq("id", carreraSeleccionada.id);
-  
+
     if (error) {
       console.error("Error accepting carrera:", error.message);
     } else {
@@ -179,42 +184,51 @@
       );
       actualizarCarreraEnLocalStorage(carreraSeleccionada); // Actualizar en almacenamiento local
       console.log("Carrera aceptada");
-  
+
       // Obtener la ubicación actual del usuario
       try {
-        const ubicacionActual = await obtenerUbicacionActual();
+        const ubicacionActual = await obtenerUbicacionActual(); // Await the promise
         const origin = L.latLng(ubicacionActual.lat, ubicacionActual.lng);
-        const destination = L.latLng(carreraSeleccionada.origen_lat, carreraSeleccionada.origen_lng);
-  
+        const destination = L.latLng(
+          carreraSeleccionada.origen_lat,
+          carreraSeleccionada.origen_lng
+        );
+
         if (routeLayer) {
           map.removeControl(routeLayer);
         }
-  
+
         routeLayer = L.Routing.control({
           waypoints: [origin, destination],
           router: L.Routing.osrmv1({
-            serviceUrl: `https://router.project-osrm.org/route/v1`
+            serviceUrl: `https://router.project-osrm.org/route/v1`,
           }),
           lineOptions: {
-            styles: [{ color: "green", weight: 4 }]
-          }
+            styles: [{ color: "green", weight: 4 }],
+          },
         }).addTo(map);
         map.fitBounds(L.latLngBounds([origin, destination]));
-  
       } catch (error) {
-        console.error("Error obteniendo la ubicación actual:", error.message);
+        if (error === "Permiso de ubicación denegado") {
+          // Display a user-friendly message explaining why the map can't be shown
+          alert(
+            "Por favor, permita el acceso a su ubicación en la configuración del navegador y recargue la página."
+          );
+        } else {
+          console.error("Error obteniendo la ubicación actual:", error);
+        }
       }
     }
   };
-  
+
   const carreraRealizada = async () => {
     if (!carreraSeleccionada) return;
-  
+
     const { error } = await supabase
       .from("carreras")
       .update({ estado: "completada" })
       .eq("id", carreraSeleccionada.id);
-  
+
     if (error) {
       console.error("Error completing carrera:", error.message);
     } else {
@@ -235,38 +249,65 @@
       }
     }
   };
-  
+
+  const getLocation = async () => {
+    return new Promise((resolve, reject) => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            resolve(position);
+          },
+          (error) => {
+            if (error.code === error.PERMISSION_DENIED) {
+              console.error("User denied Geolocation");
+              reject("User denied Geolocation"); // or handle it differently
+            } else {
+              console.error("Error getting location:", error.message);
+              reject(error); // Reject with the actual error
+            }
+          }
+        );
+      } else {
+        console.error("Geolocation is not supported by this browser.");
+        reject("Geolocation not supported");
+      }
+    });
+  };
+
   const eliminarCarreraDeLocalStorage = (idCarrera) => {
-    const carrerasGuardadas = JSON.parse(localStorage.getItem("carreras")) || [];
-    const carrerasActualizadas = carrerasGuardadas.filter(c => c.id !== idCarrera);
+    const carrerasGuardadas =
+      JSON.parse(localStorage.getItem("carreras")) || [];
+    const carrerasActualizadas = carrerasGuardadas.filter(
+      (c) => c.id !== idCarrera
+    );
     localStorage.setItem("carreras", JSON.stringify(carrerasActualizadas));
   };
-  
+
   const guardarCarrerasEnLocalStorage = (carreras) => {
     localStorage.setItem("carreras", JSON.stringify(carreras));
   };
-  
+
   const cargarCarrerasDesdeLocalStorage = () => {
     const carrerasGuardadas = localStorage.getItem("carreras");
     return carrerasGuardadas ? JSON.parse(carrerasGuardadas) : [];
   };
-  
+
   const actualizarCarreraEnLocalStorage = (carreraActualizada) => {
-    const carrerasGuardadas = JSON.parse(localStorage.getItem("carreras")) || [];
-    const carrerasActualizadas = carrerasGuardadas.map(c =>
+    const carrerasGuardadas =
+      JSON.parse(localStorage.getItem("carreras")) || [];
+    const carrerasActualizadas = carrerasGuardadas.map((c) =>
       c.id === carreraActualizada.id ? carreraActualizada : c
     );
     localStorage.setItem("carreras", JSON.stringify(carrerasActualizadas));
   };
-  
+
   const handleLogout = async () => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       await supabase.auth.signOut();
       window.location.href = "/loginUser";
     }
   };
-  </script>
-  
+</script>
 
 <div>
   <div id="map" style="height: 400px;"></div>
@@ -283,22 +324,23 @@
     </div>
     <ul class="list-group list-group-flush">
       {#each carreras as carrera}
-      <li class="list-group-item d-flex justify-content-between align-items-center">
-        <button 
-          type="button"
-          class="btn btn-link"
-          on:click={() => mostrarRuta(carrera)}
-          on:keydown={(e) => e.key === 'Enter' && mostrarRuta(carrera)}
-          style="text-decoration: none; color: inherit;">
-          Carrera ID: {carrera.id}
-          <span class="badge badge-primary badge-pill">{carrera.estado}</span>
-        </button>
-      </li>
-      
+        <li
+          class="list-group-item d-flex justify-content-between align-items-center"
+        >
+          <button
+            type="button"
+            class="btn btn-link"
+            on:click={() => mostrarRuta(carrera)}
+            on:keydown={(e) => e.key === "Enter" && mostrarRuta(carrera)}
+            style="text-decoration: none; color: inherit;"
+          >
+            Carrera ID: {carrera.id}
+            <span class="badge badge-primary badge-pill">{carrera.estado}</span>
+          </button>
+        </li>
       {/each}
     </ul>
   </div>
-
 
   {#if carreraSeleccionada}
     <div class="card mt-3">
