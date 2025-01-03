@@ -179,6 +179,10 @@ const aceptarCarrera = async () => {
           styles: [{ color: "green", weight: 4 }],
         },
       }).addTo(map);
+
+      // Añadimos la línea siguiente para asegurar que ambos puntos se mantengan
+      routeLayer.getPlan().setWaypoints([origin, destination]);
+
       map.fitBounds(L.latLngBounds([origin, destination]));
     });
 
