@@ -308,9 +308,14 @@
 
     // Puedes agregar más lógica aquí para lo que quieras hacer con la ubicación
   } catch (error) {
-    console.error("Error activando la geolocalización:", error);
+    if (typeof error === "object" && error !== null) {
+      console.error("Error activando la geolocalización:", error.message || error);
+    } else {
+      console.error("Error activando la geolocalización:", error);
+    }
   }
 };
+
 
 
   const handleLogout = async () => {
