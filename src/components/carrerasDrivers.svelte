@@ -59,68 +59,114 @@
   }
 
   const cargarCarreras = async () => {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    if (!session || !session.user) {
-      if (typeof window !== "undefined") {
-        window.location.href = "/loginUser";
-      }
-      return;
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session || !session.user) {
+    if (typeof window !== "undefined") {
+      window.location.href = "/loginUser";
     }
+    return;
+  }
 
-    const { data: carrerasData, error: carrerasError } = await supabase
-      .from("carreras")
-      .select("*")
-      .eq("estado", "asignada");
+  const { data: carrerasData, error: carrerasError } = await supabase
+    .from("carreras")
+    .select("*")
+    .eq("estado", "asignada");
 
-    if (carrerasError) {
-      console.error("Error fetching carreras:", carrerasError.message);
-    } else {
-      carreras = carrerasData;
-      guardarCarrerasEnLocalStorage(carreras); // Guardar carreras en almacenamiento local
-    }
-  };
+  if (carrerasError) {
+    console.error("Error fetching carreras:", carrerasError.message);
+  } else {
+    carreras = carrerasData;
+    guardarCarrerasEnLocalStorage(carreras); // Guardar carreras en almacenamiento local
+  }
+};
 
-  const mostrarRuta = async (carrera) => {
-    carreraSeleccionada = carrera;
-    usuarioNombre = carrera.usuario_nombre;
+const mostrarRuta = async (carrera) => {
+  carreraSeleccionada = carrera;
+  usuarioNombre = carrera.usuario_nombre;
 
-    const { data: conductorData, error: conductorError } = await supabase
-      .from("motoaquiDrivers")
-      .select("primernombre, primerapellido")
-      .eq("id", carrera.conductor_id)
-      .single();
+  const { data: conductorData, error: conductorError } = await supabase
+    .from("motoaquiDrivers")
+    .select("primernombre, primerapellido")
+    .eq("id", carrera.conductor_id)
+    .single();
 
-    if (conductorError) {
-      console.error("Error fetching conductor data:", conductorError.message);
-    } else {
-      conductorNombre = `${conductorData.primernombre} ${conductorData.primerapellido}`;
-    }
+  if (conductorError) {
+    console.error("Error fetching conductor data:", conductorError.message);
+  } else {
+    conductorNombre = `${conductorData.primernombre} ${conductorData.primerapellido}`;
+  }
 
-    const origin = L.latLng(carrera.origen_lat, carrera.origen_lng);
-    const destination = L.latLng(carrera.destino_lat, carrera.destino_lng);
+  const origin = L.latLng(carrera.origen_lat, carrera.origen_lng);
+  const destination = L.latLng(carrera.destino_lat, carrera.destino_lng);
+
+  if (routeLayer) {
+    map.removeControl(routeLayer);
+  }
+
+  if (!originMarker) {
+    originMarker = L.marker(origin, { icon: originIcon })
+      .addTo(map)
+      .bindPopup("Origen")
+      .openPopup();
+  } else {
+    originMarker.setLatLng(origin);
+  }
+
+  if (!destinationMarker) {
+    destinationMarker = L.marker(destination, { icon: destinationIcon })
+      .addTo(map)
+      .bindPopup("Destino")
+      .openPopup();
+  } else {
+    destinationMarker.setLatLng(destination);
+  }
+
+  routeLayer = L.Routing.control({
+    waypoints: [origin, destination],
+    router: L.Routing.osrmv1({
+      serviceUrl: `https://router.project-osrm.org/route/v1`,
+    }),
+    lineOptions: {
+      styles: [{ color: "blue", weight: 4 }],
+    },
+  }).addTo(map);
+
+  // Ajustar vista del mapa a los puntos de referencia
+  const group = L.featureGroup([originMarker, destinationMarker]);
+  map.fitBounds(group.getBounds());
+};
+
+const aceptarCarrera = async () => {
+  if (!carreraSeleccionada) return;
+
+  const { error } = await supabase
+    .from("carreras")
+    .update({ estado: "aceptada" })
+    .eq("id", carreraSeleccionada.id);
+
+  if (error) {
+    console.error("Error accepting carrera:", error.message);
+  } else {
+    carreraSeleccionada.estado = "aceptada";
+    carreras = carreras.map((c) =>
+      c.id === carreraSeleccionada.id ? { ...c, estado: "aceptada" } : c
+    );
+    actualizarCarreraEnLocalStorage(carreraSeleccionada); // Actualizar en almacenamiento local
+    console.log("Carrera aceptada");
+
+    const conductorLat = prompt("Ingrese la latitud de su ubicación actual:");
+    const conductorLng = prompt("Ingrese la longitud de su ubicación actual:");
+
+    const origin = L.latLng(conductorLat, conductorLng);
+    const destination = L.latLng(
+      carreraSeleccionada.origen_lat,
+      carreraSeleccionada.origen_lng
+    );
 
     if (routeLayer) {
       map.removeControl(routeLayer);
-    }
-
-    if (!originMarker) {
-      originMarker = L.marker(origin, { icon: originIcon })
-        .addTo(map)
-        .bindPopup("Origen")
-        .openPopup();
-    } else {
-      originMarker.setLatLng(origin);
-    }
-
-    if (!destinationMarker) {
-      destinationMarker = L.marker(destination, { icon: destinationIcon })
-        .addTo(map)
-        .bindPopup("Destino")
-        .openPopup();
-    } else {
-      destinationMarker.setLatLng(destination);
     }
 
     routeLayer = L.Routing.control({
@@ -129,229 +175,67 @@
         serviceUrl: `https://router.project-osrm.org/route/v1`,
       }),
       lineOptions: {
-        styles: [{ color: "blue", weight: 4 }],
+        styles: [{ color: "green", weight: 4 }],
       },
     }).addTo(map);
+    map.fitBounds(L.latLngBounds([origin, destination]));
+  }
+};
 
-    // Ajustar vista del mapa a los puntos de referencia
-    const group = L.featureGroup([originMarker, destinationMarker]);
-    map.fitBounds(group.getBounds());
-  };
+const carreraRealizada = async () => {
+  if (!carreraSeleccionada) return;
 
-  const obtenerUbicacionActual = () => {
-    return new Promise((resolve, reject) => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            resolve({
-              lat: position.coords.latitude,
-              lng: position.coords.longitude,
-            });
-          },
-          (error) => {
-            if (error.code === error.PERMISSION_DENIED) {
-              alert(
-                "Permiso de ubicación denegado. Por favor, permita el acceso a su ubicación en la configuración del navegador y recargue la página."
-              );
-              reject("Permiso de ubicación denegado"); // or handle it differently
-            } else {
-              alert("Error obteniendo la ubicación actual: " + error.message);
-              reject(error); // Reject with the actual error
-            }
-          }
-        );
-      } else {
-        reject(new Error("Geolocalización no soportada por el navegador."));
-      }
-    });
-  };
+  const { error } = await supabase
+    .from("carreras")
+    .update({ estado: "completada" })
+    .eq("id", carreraSeleccionada.id);
 
-  // Uso en la función aceptarCarrera
-
-  const aceptarCarrera = async () => {
-    if (!carreraSeleccionada) return;
-
-    const { error } = await supabase
-      .from("carreras")
-      .update({ estado: "aceptada" })
-      .eq("id", carreraSeleccionada.id);
-
-    if (error) {
-      console.error("Error accepting carrera:", error.message);
-    } else {
-      carreraSeleccionada.estado = "aceptada";
-      carreras = carreras.map((c) =>
-        c.id === carreraSeleccionada.id ? { ...c, estado: "aceptada" } : c
-      );
-      actualizarCarreraEnLocalStorage(carreraSeleccionada); // Actualizar en almacenamiento local
-      console.log("Carrera aceptada");
-
-      // Verifica si la ubicación actual ya está disponible
-      if (ubicacionActual) {
-        const origin = L.latLng(ubicacionActual.lat, ubicacionActual.lng);
-        const destination = L.latLng(
-          carreraSeleccionada.origen_lat,
-          carreraSeleccionada.origen_lng
-        );
-
-        if (routeLayer) {
-          map.removeControl(routeLayer);
-        }
-
-        routeLayer = L.Routing.control({
-          waypoints: [origin, destination],
-          router: L.Routing.osrmv1({
-            serviceUrl: `https://router.project-osrm.org/route/v1`,
-          }),
-          lineOptions: {
-            styles: [{ color: "green", weight: 4 }],
-          },
-        }).addTo(map);
-        map.fitBounds(L.latLngBounds([origin, destination]));
-      } else {
-        // Solicita la ubicación actual si no está disponible
-        try {
-          const position = await solicitarPermisoGeolocalizacion();
-          const origin = L.latLng(
-            position.coords.latitude,
-            position.coords.longitude
-          );
-          const destination = L.latLng(
-            carreraSeleccionada.origen_lat,
-            carreraSeleccionada.origen_lng
-          );
-
-          if (routeLayer) {
-            map.removeControl(routeLayer);
-          }
-
-          routeLayer = L.Routing.control({
-            waypoints: [origin, destination],
-            router: L.Routing.osrmv1({
-              serviceUrl: `https://router.project-osrm.org/route/v1`,
-            }),
-            lineOptions: {
-              styles: [{ color: "green", weight: 4 }],
-            },
-          }).addTo(map);
-          map.fitBounds(L.latLngBounds([origin, destination]));
-        } catch (error) {
-          if (error === "Permiso de ubicación denegado") {
-            alert(
-              "Por favor, permita el acceso a su ubicación en la configuración del navegador y recargue la página."
-            );
-          } else {
-            console.error("Error obteniendo la ubicación actual:", error);
-          }
-        }
-      }
+  if (error) {
+    console.error("Error completing carrera:", error.message);
+  } else {
+    console.log("Carrera realizada");
+    carreras = carreras.filter((c) => c.id !== carreraSeleccionada.id);
+    eliminarCarreraDeLocalStorage(carreraSeleccionada.id); // Eliminar del almacenamiento local
+    carreraSeleccionada = null; // Remover la carrera del panel
+    if (routeLayer) {
+      map.removeLayer(routeLayer);
     }
-  };
-
-  const carreraRealizada = async () => {
-    if (!carreraSeleccionada) return;
-
-    const { error } = await supabase
-      .from("carreras")
-      .update({ estado: "completada" })
-      .eq("id", carreraSeleccionada.id);
-
-    if (error) {
-      console.error("Error completing carrera:", error.message);
-    } else {
-      console.log("Carrera realizada");
-      carreras = carreras.filter((c) => c.id !== carreraSeleccionada.id);
-      eliminarCarreraDeLocalStorage(carreraSeleccionada.id); // Eliminar del almacenamiento local
-      carreraSeleccionada = null; // Remover la carrera del panel
-      if (routeLayer) {
-        map.removeLayer(routeLayer);
-      }
-      if (originMarker) {
-        map.removeLayer(originMarker);
-        originMarker = null;
-      }
-      if (destinationMarker) {
-        map.removeLayer(destinationMarker);
-        destinationMarker = null;
-      }
+    if (originMarker) {
+      map.removeLayer(originMarker);
+      originMarker = null;
     }
-  };
-
-  const getLocation = async () => {
-    return new Promise((resolve, reject) => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            resolve(position);
-          },
-          (error) => {
-            if (error.code === error.PERMISSION_DENIED) {
-              console.error("User denied Geolocation");
-              reject("User denied Geolocation"); // or handle it differently
-            } else {
-              console.error("Error getting location:", error.message);
-              reject(error); // Reject with the actual error
-            }
-          }
-        );
-      } else {
-        console.error("Geolocation is not supported by this browser.");
-        reject("Geolocation not supported");
-      }
-    });
-  };
-
-  const eliminarCarreraDeLocalStorage = (idCarrera) => {
-    const carrerasGuardadas =
-      JSON.parse(localStorage.getItem("carreras")) || [];
-    const carrerasActualizadas = carrerasGuardadas.filter(
-      (c) => c.id !== idCarrera
-    );
-    localStorage.setItem("carreras", JSON.stringify(carrerasActualizadas));
-  };
-
-  const guardarCarrerasEnLocalStorage = (carreras) => {
-    localStorage.setItem("carreras", JSON.stringify(carreras));
-  };
-
-  const cargarCarrerasDesdeLocalStorage = () => {
-    const carrerasGuardadas = localStorage.getItem("carreras");
-    return carrerasGuardadas ? JSON.parse(carrerasGuardadas) : [];
-  };
-
-  const actualizarCarreraEnLocalStorage = (carreraActualizada) => {
-    const carrerasGuardadas =
-      JSON.parse(localStorage.getItem("carreras")) || [];
-    const carrerasActualizadas = carrerasGuardadas.map((c) =>
-      c.id === carreraActualizada.id ? carreraActualizada : c
-    );
-    localStorage.setItem("carreras", JSON.stringify(carrerasActualizadas));
-  };
-
-  const solicitarPermisoGeolocalizacion = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          console.log("Ubicación actual:", position);
-          ubicacionActual = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          };
-        },
-        (error) => {
-          if (error.code === error.PERMISSION_DENIED) {
-            alert(
-              "Permiso de ubicación denegado. Por favor, permita el acceso a su ubicación en la configuración del navegador y recargue la página."
-            );
-          } else {
-            alert("Error obteniendo la ubicación actual: " + error.message);
-          }
-        }
-      );
-    } else {
-      alert("Geolocalización no soportada por el navegador.");
+    if (destinationMarker) {
+      map.removeLayer(destinationMarker);
+      destinationMarker = null;
     }
-  };
+  }
+};
+
+const eliminarCarreraDeLocalStorage = (idCarrera) => {
+  const carrerasGuardadas = JSON.parse(localStorage.getItem("carreras")) || [];
+  const carrerasActualizadas = carrerasGuardadas.filter(
+    (c) => c.id !== idCarrera
+  );
+  localStorage.setItem("carreras", JSON.stringify(carrerasActualizadas));
+};
+
+const guardarCarrerasEnLocalStorage = (carreras) => {
+  localStorage.setItem("carreras", JSON.stringify(carreras));
+};
+
+const cargarCarrerasDesdeLocalStorage = () => {
+  const carrerasGuardadas = localStorage.getItem("carreras");
+  return carrerasGuardadas ? JSON.parse(carrerasGuardadas) : [];
+};
+
+const actualizarCarreraEnLocalStorage = (carreraActualizada) => {
+  const carrerasGuardadas =
+    JSON.parse(localStorage.getItem("carreras")) || [];
+  const carrerasActualizadas = carrerasGuardadas.map((c) =>
+    c.id === carreraActualizada.id ? carreraActualizada : c
+  );
+  localStorage.setItem("carreras", JSON.stringify(carrerasActualizadas));
+};
 
   const handleLogout = async () => {
     if (typeof window !== "undefined") {
@@ -361,9 +245,7 @@
   };
 </script>
 
-<button on:click={solicitarPermisoGeolocalizacion}
-  >Solicitar Permiso de Geolocalización</button
->
+
 
 <div>
   <div id="map" style="height: 400px;"></div>
