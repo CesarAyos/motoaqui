@@ -316,6 +316,28 @@
   }
 };
 
+const solicitarPermisoGeolocalizacion = () => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        console.log("Ubicación actual:", position);
+      },
+      (error) => {
+        if (error.code === error.PERMISSION_DENIED) {
+          alert(
+            "Permiso de ubicación denegado. Por favor, permita el acceso a su ubicación en la configuración del navegador y recargue la página."
+          );
+        } else {
+          alert("Error obteniendo la ubicación actual: " + error.message);
+        }
+      }
+    );
+  } else {
+    alert("Geolocalización no soportada por el navegador.");
+  }
+};
+
+
 
 
   const handleLogout = async () => {
@@ -327,6 +349,9 @@
 </script>
 
 <button on:click={activarGeolocalizacion}>Activar Geolocalización</button>
+
+<button on:click={solicitarPermisoGeolocalizacion}>Solicitar Permiso de Geolocalización</button>
+
 
 
 <div>
