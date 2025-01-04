@@ -12,7 +12,7 @@
   let carreraSeleccionada = null; // Carrera seleccionada para mostrar en el mapa
   let conductorNombre = "";
   let usuarioNombre = "";
-  let ubicacionActual;
+  let routeLayerConductor;
 
   let originIcon, destinationIcon;
 
@@ -153,42 +153,55 @@ const aceptarCarrera = async () => {
     carreras = carreras.map((c) =>
       c.id === carreraSeleccionada.id ? { ...c, estado: "aceptada" } : c
     );
-    actualizarCarreraEnLocalStorage(carreraSeleccionada); // Actualizar en almacenamiento local
+    actualizarCarreraEnLocalStorage(carreraSeleccionada);
     console.log("Carrera aceptada");
 
-    map.on('click', (e) => {
-      const conductorLat = e.latlng.lat;
-      const conductorLng = e.latlng.lng;
+    const origen = L.latLng(
+      carreraSeleccionada.origen_lat,
+      carreraSeleccionada.origen_lng
+    );
 
-      const origin = L.latLng(conductorLat, conductorLng);
-      const destination = L.latLng(
-        carreraSeleccionada.origen_lat,
-        carreraSeleccionada.origen_lng
-      );
+    map.on("click", (e) => {
+  const conductorLat = e.latlng.lat;
+  const conductorLng = e.latlng.lng;
 
-      if (routeLayer) {
-        map.removeControl(routeLayer);
-      }
+  const conductorUbicacion = L.latLng(conductorLat, conductorLng);
 
-      routeLayer = L.Routing.control({
-        waypoints: [origin, destination],
-        router: L.Routing.osrmv1({
-          serviceUrl: `https://router.project-osrm.org/route/v1`,
-        }),
-        lineOptions: {
-          styles: [{ color: "green", weight: 4 }],
-        },
-      }).addTo(map);
+  if (routeLayerConductor) {
+    map.removeControl(routeLayerConductor);
+  }
 
-      // Añadimos la línea siguiente para asegurar que ambos puntos se mantengan
-      routeLayer.getPlan().setWaypoints([origin, destination]);
+  routeLayerConductor = L.Routing.control({
+    waypoints: [conductorUbicacion, origen],
+    router: L.Routing.osrmv1({
+      serviceUrl: `https://router.project-osrm.org/route/v1`,
+    }),
+    lineOptions: {
+      styles: [{ color: "green", weight: 4 }],
+    },
+  }).addTo(map);
 
-      map.fitBounds(L.latLngBounds([origin, destination]));
-    });
+  routeLayerConductor.getPlan().setWaypoints([conductorUbicacion, origen]);
+  map.fitBounds(L.latLngBounds([conductorUbicacion, origen]));
+
+  // Agregar un marcador con una imagen personalizada
+  const icon = L.icon({
+    iconUrl: '/direccion.png', // Ruta a la imagen personalizada
+    iconSize: [38, 38], // Tamaño del icono
+    iconAnchor: [22, 94], // Punto de anclaje del icono
+    popupAnchor: [-3, -76], // Punto donde se mostrará el popup
+  });
+
+  L.marker([conductorLat, conductorLng], { icon: icon }).addTo(map)
+    .bindPopup('Ubicación del conductor')
+    .openPopup();
+});
+
 
     alert("Haga clic en el mapa para indicar su ubicación actual.");
   }
 };
+
 
 const carreraRealizada = async () => {
   if (!carreraSeleccionada) return;
