@@ -238,10 +238,11 @@
       <div class="container text-center" style="">
         <div class="row">
           <div class="col" style="background: #0e0d06;">
-            <img src="/app.png" 
+            <a href="https://www.appcreator24.com/app3413931-01ko69"> <img src="/favicon.png" 
             class="img-fluid rounded-start"
             style="height: 25rem;width: 30rem"
             alt="app">
+          </a>
           </div>
           <div class="col" style="background: #0e0d06;">
             <p class="text-start fs-1" style="color: #d09a40;background: #0e0d06;">
@@ -249,6 +250,7 @@
             </p>
             <p class="text-white fs-2 text-start" style="background: #0e0d06;">
               Todo lo que necesitas para solicitar un mototaxi en un solo lugar.
+              has click en la imagen para descargar la app
             </p>
             <p class="text-start text-white" style="background: #0e0d06;">
               Descarga nuestra app y solicita un mototaxi en cualquier momento y
