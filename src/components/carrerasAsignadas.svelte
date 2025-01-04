@@ -56,7 +56,7 @@
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    window.location.href = "/carrerasDrivers";
+    window.location.href = "/";
   };
 </script>
 
