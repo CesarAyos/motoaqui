@@ -156,9 +156,15 @@
   }
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    window.location.href = "/loginUser";
-  };
+  await supabase.auth.signOut();
+  localStorage.clear();
+  document.cookie.split(";").forEach((c) => {
+    document.cookie = c
+      .replace(/^ +/, "")
+      .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+  });
+  window.location.href = "/loginUser";
+};
 </script>
 
 <main class="bg-dark pt-5">
