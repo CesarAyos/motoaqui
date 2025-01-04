@@ -184,13 +184,13 @@ const aceptarCarrera = async () => {
   routeLayerConductor.getPlan().setWaypoints([conductorUbicacion, origen]);
   map.fitBounds(L.latLngBounds([conductorUbicacion, origen]));
 
-  // Agregar un marcador con una imagen personalizada
-  const icon = L.icon({
-    iconUrl: '/direccion.png', // Ruta a la imagen personalizada
-    iconSize: [38, 38], // Tamaño del icono
-    iconAnchor: [22, 94], // Punto de anclaje del icono
-    popupAnchor: [-3, -76], // Punto donde se mostrará el popup
-  });
+  
+  // const icon = L.icon({
+  //   iconUrl: '/direccion.png',
+  //   iconSize: [38, 38], 
+  //   iconAnchor: [22, 94],
+  //   popupAnchor: [-3, -76],
+  // });
 
   L.marker([conductorLat, conductorLng], { icon: icon }).addTo(map)
     .bindPopup('Ubicación del conductor')
