@@ -35,7 +35,7 @@
         <img
           src="/favicon.png"
           class="img-fluid"
-          alt="Phone image"
+          alt="Phone"
         />
       </div>
       <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
@@ -45,22 +45,22 @@
           <div class="form-outline mb-4">
             <input
               type="email"
-              id="form1Example13"
+              id="form1Example11"
               bind:value={email}
               class="form-control form-control-lg"
             />
-            <label class="form-label text-white" for="form1Example13">Correo electrónico</label>
+            <label class="form-label text-white" for="form1Example11">Correo electrónico</label>
           </div>
 
           <!-- Password input -->
           <div class="form-outline mb-4">
             <input
               type="password"
-              id="form1Example23"
+              id="form1Example20"
               bind:value={password}
               class="form-control form-control-lg"
             />
-            <label class="form-label text-white" for="form1Example23">Contraseña</label>
+            <label class="form-label text-white" for="form1Example20">Contraseña</label>
           </div>
 
           <div class="d-flex justify-content-around align-items-center mb-4">
