@@ -258,11 +258,9 @@ const actualizarCarreraEnLocalStorage = (carreraActualizada) => {
   localStorage.setItem("carreras", JSON.stringify(carrerasActualizadas));
 };
 
-  const handleLogout = async () => {
-    if (typeof window !== "undefined") {
-      await supabase.auth.signOut();
-      window.location.href = "/loginUser";
-    }
+const handleLogout = async () => {
+    await supabase.auth.signOut();
+    window.location.href = "/";
   };
 </script>
 
