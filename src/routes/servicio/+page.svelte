@@ -13,7 +13,6 @@
   </div>
 </div>
 
-
 <div class="container4 pt-5 animate-left">
   <div class="container text-center">
     <div class="row">
@@ -44,11 +43,16 @@
                   seguridad y la puntualidad en cada envio.
                 </p>
 
-                <a class="text-decoration-none" style="background: #0e0d06;" href="https://wa.me/584169752291?&text=solicito%20información%20para%20servicio%20de%20encomiendas" target="_blank">
-                <button type="button" class="btn btn-outline-warning">
-                  Contactanos
-                </button>  
-              </a>
+                <a
+                  class="text-decoration-none"
+                  style="background: #0e0d06;"
+                  href="https://wa.me/584169752291?&text=solicito%20información%20para%20servicio%20de%20encomiendas"
+                  target="_blank"
+                >
+                  <button type="button" class="btn btn-outline-warning">
+                    Contactanos
+                  </button>
+                </a>
               </div>
             </div>
           </div>
@@ -81,11 +85,16 @@
                   puntualidad, a cada parte del estado Tachira y el pais.
                 </p>
 
-                 <a class="text-decoration-none" style="background: #0e0d06;" href="https://wa.me/584169752291?&text=solicito%20información%20para%20servicio%20de%20viajes" target="_blank">
-                <button type="button" class="btn btn-outline-warning">
-                  Contactanos
-                </button>  
-              </a>
+                <a
+                  class="text-decoration-none"
+                  style="background: #0e0d06;"
+                  href="https://wa.me/584169752291?&text=solicito%20información%20para%20servicio%20de%20viajes"
+                  target="_blank"
+                >
+                  <button type="button" class="btn btn-outline-warning">
+                    Contactanos
+                  </button>
+                </a>
               </div>
             </div>
           </div>
@@ -123,11 +132,16 @@
                   comodidad y puntualidad, nos ajustamos a tus horarios.
                 </p>
 
-                 <a class="text-decoration-none" style="background: #0e0d06;" href="https://wa.me/584169752291?&text=solicito%20información%20para%20servicio%20escolar" target="_blank">
-                <button type="button" class="btn btn-outline-warning">
-                  Contactanos
-                </button>  
-              </a>
+                <a
+                  class="text-decoration-none"
+                  style="background: #0e0d06;"
+                  href="https://wa.me/584169752291?&text=solicito%20información%20para%20servicio%20escolar"
+                  target="_blank"
+                >
+                  <button type="button" class="btn btn-outline-warning">
+                    Contactanos
+                  </button>
+                </a>
               </div>
             </div>
           </div>
@@ -161,12 +175,16 @@
                   ajustamos a tus horarios.
                 </p>
 
-                 <a class="text-decoration-none" style="background: #0e0d06;" href="https://wa.me/584169752291?&text=solicito%20información%20para%20servicio%20laboral" target="_blank">
-                <button type="button" class="btn btn-outline-warning">
-                  Contactanos
-                </button>  
-              </a>                          
-                
+                <a
+                  class="text-decoration-none"
+                  style="background: #0e0d06;"
+                  href="https://wa.me/584169752291?&text=solicito%20información%20para%20servicio%20laboral"
+                  target="_blank"
+                >
+                  <button type="button" class="btn btn-outline-warning">
+                    Contactanos
+                  </button>
+                </a>
               </div>
             </div>
           </div>
@@ -206,11 +224,16 @@
                   seguridad y la puntualidad que tu empresa necesita.
                 </p>
 
-                 <a class="text-decoration-none" style="background: #0e0d06;" href="https://wa.me/584169752291?&text=solicito%20información%20para%20servicio%20empresarial." target="_blank">
-                <button type="button" class="btn btn-outline-warning">
-                  Contactanos
-                </button>  
-              </a>
+                <a
+                  class="text-decoration-none"
+                  style="background: #0e0d06;"
+                  href="https://wa.me/584169752291?&text=solicito%20información%20para%20servicio%20empresarial."
+                  target="_blank"
+                >
+                  <button type="button" class="btn btn-outline-warning">
+                    Contactanos
+                  </button>
+                </a>
               </div>
             </div>
           </div>
@@ -243,11 +266,16 @@
                   lugares frecuentes.
                 </p>
 
-                 <a class="text-decoration-none" style="background: #0e0d06;" href="https://wa.me/584169752291?&text=solicito%20información%20para%20servicio%20personalizado" target="_blank">
-                <button type="button" class="btn btn-outline-warning">
-                  Contactanos
-                </button>  
-              </a>
+                <a
+                  class="text-decoration-none"
+                  style="background: #0e0d06;"
+                  href="https://wa.me/584169752291?&text=solicito%20información%20para%20servicio%20personalizado"
+                  target="_blank"
+                >
+                  <button type="button" class="btn btn-outline-warning">
+                    Contactanos
+                  </button>
+                </a>
               </div>
             </div>
           </div>
@@ -257,40 +285,37 @@
   </div>
 </div>
 
-<div
-  class="container6 d-flex justify-content-center"
-  style="background: #0e0d06;"
->
-  <div class="card" style="border:none;">
-    <div class="card-body p-5" style="background: #0e0d06;">
-      <div class="container text-center" style="">
-        <div class="row">
-          <div class="col" style="background: #0e0d06;">
-            <a href="https://www.appcreator24.com/app3413931-01ko69"> <img src="/favicon.png" 
+<div class="col d-flex justify-content-center pt-5 pb-5">
+  <div class="card pb-3" style="max-width: 540px;border:none;">
+    <div class="row g-0">
+      <div class="col-md-6">
+        <a href="https://www.appcreator24.com/app3413931-01ko69">
+          <img
+            src="/favicon.png"
             class="img-fluid rounded-start"
             style="height: 25rem;width: 30rem"
-            alt="app">
-          </a>
-          </div>
-          <div class="col" style="background: #0e0d06;">
-            <p class="text-start fs-1" style="color: #d09a40;background: #0e0d06;">
-              Descarga nuestra app
-            </p>
-            <p class="text-white fs-2 text-start" style="background: #0e0d06;">
-              Todo lo que necesitas para solicitar un mototaxi en un solo lugar.
-              has click en la imagen para descargar la app
-            </p>
-            <p class="text-start text-white" style="background: #0e0d06;">
-              Descarga nuestra app y solicita un mototaxi en cualquier momento y
-              lugar.
-            </p>
-          </div>
+            alt="app"
+          />
+        </a>
+      </div>
+      <div class="col-md-6 ">
+        <div class="card-body">
+          <h3 class="card-title pt-5 text-white text-start">
+            Descarga nuestra app
+          </h3>
+          <p class="card-text text-white text-start">
+            Todo lo que necesitas para solicitar un mototaxi en un solo lugar.
+            has click en la imagen para descargar la app
+          </p>
+          <p class="card-text text-white text-start">
+            Descarga nuestra app y solicita un mototaxi en cualquier momento y
+            lugar.
+          </p>
         </div>
       </div>
     </div>
   </div>
 </div>
-
 
 <div class="footer">
   <img
@@ -308,7 +333,6 @@
       class="text-decoration-none"
       style="background: #0e0d06;"
       href="/servicio"
-
     >
       <button type="button" class="btn btn-outline-warning">
         Registrate
@@ -353,28 +377,24 @@
   </p>
 </div>
 
-
 <style>
-*{
-  background: #1b1b1b;
-}
-
+  * {
+    background: #1b1b1b;
+  }
 
   /* animacion izquierda derecha */
-@keyframes slideInLeft {
-  from {
-    transform: translateX(-100%);
-    opacity: 0;
+  @keyframes slideInLeft {
+    from {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
   }
-  to {
-    transform: translateX(0);
-    opacity: 1;
+
+  .animate-left {
+    animation: slideInLeft 1s ease-in-out;
   }
-}
-
-
-.animate-left {
-  animation: slideInLeft 1s ease-in-out;
-}
-
 </style>

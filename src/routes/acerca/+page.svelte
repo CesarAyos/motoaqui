@@ -14,7 +14,7 @@
 <div class="container2 animate-left p-3" style="background: #0e0d06;">
   <div class="container text-center mt-5">
     <div class="row">
-      <div class="col" style="background: #0e0d06;">
+      <div class="col-md-6" style="background: #0e0d06;">
         <img
           src="/bera.jpeg"
           class="imgPrincipal"
@@ -22,7 +22,7 @@
           alt=""
         />
       </div>
-      <div class="col pb-5" style="background: #0e0d06;">
+      <div class="col-md-6 pb-5" style="background: #0e0d06;">
         <h2 class="text-white text-start mt-5" style="background: #0e0d06;">
           Descubre quiénes somos y qué ofrecemos
         </h2>
@@ -107,30 +107,29 @@
     </div>
   </div>
 
-  <div
-  class="container6 d-flex justify-content-center"
-  style="background: #0e0d06;"
->
-  <div class="card" style="border:none;">
-    <div class="card-body p-5" style="background: #0e0d06;">
-      <div class="container text-center" style="">
-        <div class="row">
-          <div class="col" style="background: #0e0d06;">
-            <a href="https://www.appcreator24.com/app3413931-01ko69"> <img src="/favicon.png" 
-            class="img-fluid rounded-start"
-            style="height: 25rem;width: 30rem"
-            alt="app">
+  <div class="col d-flex justify-content-center pt-5 pb-5">
+    <div class="card pb-3" style="max-width: 540px;border:none;">
+      <div class="row g-0">
+        <div class="col-md-6">
+          <a href="https://www.appcreator24.com/app3413931-01ko69">
+            <img
+              src="/favicon.png"
+              class="img-fluid rounded-start"
+              style="height: 25rem;width: 30rem"
+              alt="app"
+            />
           </a>
-          </div>
-          <div class="col" style="background: #0e0d06;">
-            <p class="text-start fs-1" style="color: #d09a40;background: #0e0d06;">
+        </div>
+        <div class="col-md-6 ">
+          <div class="card-body">
+            <h3 class="card-title pt-5 text-white text-start">
               Descarga nuestra app
-            </p>
-            <p class="text-white fs-2 text-start" style="background: #0e0d06;">
+            </h3>
+            <p class="card-text text-white text-start">
               Todo lo que necesitas para solicitar un mototaxi en un solo lugar.
               has click en la imagen para descargar la app
             </p>
-            <p class="text-start text-white" style="background: #0e0d06;">
+            <p class="card-text text-white text-start">
               Descarga nuestra app y solicita un mototaxi en cualquier momento y
               lugar.
             </p>
@@ -139,8 +138,7 @@
       </div>
     </div>
   </div>
-</div>
-
+  
 
 
 <div class="footer">
