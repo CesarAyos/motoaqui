@@ -1,346 +1,539 @@
-<div class="container2 animate-left p-5">
-  <div class="container text-center">
-    <div class="row">
-      <div class="col">
-        <p class="text-white text-start mt-5" style="font-size: 62px;">
-          TU MOTO TAXI A UN CLICK
-        </p>
-        <p class="text-white text-start">
-          Solicita tu mototaxi fácilmente. Selecciona la ruta en el mapa, conoce
-          a tu conductor antes de partir con total seguridad.
-        </p>
-        <div class="d-flex justify-content-start mt-4">
-          <a class="text-decoration-none" style="background: #0e0d06;" href="/">
-            <button type="button" class="btn btn-outline-warning">
-              Registrate
+<script>
+  import { fade } from "svelte/transition";
+  import { supabase } from "../components/supabase.js";
+  import { onMount } from "svelte";
+
+  let steps = [
+    { id: 1, question: "¿Hola como te llamas?", field: "primernombre", type: "text" },
+    { id: 2, question: "¿Y te pusieron segundo nombre?", field: "segundonombre", type: "text" },
+    { id: 3, question: "¿Y tu primer apellido?", field: "primerapellido", type: "text" },
+    { id: 4, question: "¿También tienes segundo apellido?", field: "segundoapellido", type: "text" },
+    { id: 5, question: "Crea una contraseña segura", field: "contraseña", type: "password" },
+    { id: 6, question: "¿Cuál es tu número de teléfono?", field: "telefono", type: "tel" },
+    { id: 7, question: "¿Cuál es tu edad?", field: "edad", type: "number" },
+    { id: 8, question: "¿En qué ciudad vives?", field: "ciudad", type: "text" },
+    { id: 9, question: "¿Cuál es tu correo electrónico?", field: "correo", type: "email" },
+    { id: 10, question: "¿Cuál es tu número de cédula?", field: "cedula", type: "number" },
+    { id: 11, question: "¿En qué sector vives?", field: "sector", type: "text" },
+    { id: 12, question: "¿Cuál es tu grupo sanguíneo?", field: "sanguineo", type: "text" },
+    { id: 13, question: "Toma una foto de tu rostro (frontal)", field: "foto", type: "face" }, // Cambiado a "foto"
+    { id: 14, question: "Toma una foto de tu cédula (frontal)", field: "cedula_foto", type: "document" }, // Cambiado a "cedula_foto"
+  ];
+
+  let currentStep = 1;
+  let client = {};
+  let videoStream;
+  let isLoading = false;
+  let progress = 0;
+  let errorMessage = "";
+  let cameraActive = false;
+
+  $: progress = Math.round((currentStep / steps.length) * 100);
+
+  const toggleCamera = async () => {
+    if (!cameraActive) {
+      await startCamera();
+    } else {
+      await capturePhoto();
+    }
+  };
+
+  const startCamera = async () => {
+    try {
+      stopCamera();
+      
+      // Configuración diferente para cámara frontal (rostro) vs trasera (documento)
+      const isFaceStep = steps.find(s => s.id === currentStep).type === 'face';
+      const constraints = {
+        video: {
+          facingMode: isFaceStep ? 'user' : { exact: 'environment' }, // Fuerza cámara trasera para documentos
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        }
+      };
+      
+      videoStream = await navigator.mediaDevices.getUserMedia(constraints);
+      const video = document.getElementById("video");
+      video.srcObject = videoStream;
+      cameraActive = true;
+    } catch (error) {
+      errorMessage = "No se pudo acceder a la cámara. Asegúrate de dar los permisos necesarios.";
+      console.error("Error al acceder a la cámara:", error);
+      
+      // Intento alternativo si falla la cámara trasera
+      if (steps.find(s => s.id === currentStep).type === 'document') {
+        errorMessage += " Si no puedes acceder a la cámara trasera, intenta con la frontal.";
+      }
+    }
+  };
+
+  const capturePhoto = async () => {
+    const video = document.getElementById("video");
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    try {
+      const currentField = steps.find(s => s.id === currentStep).field;
+      const fileName = `${currentField}-${client.cedula || 'temp'}-${Date.now()}.jpg`;
+      
+      // Convertir a Blob
+      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.9));
+      
+      // Subir a Supabase Storage
+      const { data, error } = await supabase.storage
+        .from("user-documents")
+        .upload(fileName, blob);
+      
+      if (error) throw error;
+      
+      // Obtener URL pública de la imagen
+      const { data: { publicUrl } } = supabase.storage
+        .from("user-documents")
+        .getPublicUrl(fileName);
+      
+      // Guardar URL en el campo correspondiente
+      client[currentField] = publicUrl;
+      
+      stopCamera();
+      nextStep();
+    } catch (error) {
+      errorMessage = "Error al guardar la foto. Intenta nuevamente.";
+      console.error("Error al capturar foto:", error);
+    }
+  };
+
+  const stopCamera = () => {
+    if (videoStream) {
+      videoStream.getTracks().forEach(track => track.stop());
+      videoStream = null;
+    }
+    cameraActive = false;
+  };
+
+  const nextStep = () => {
+    if (currentStep < steps.length) {
+      currentStep += 1;
+    } else {
+      submitForm();
+    }
+  };
+
+  const prevStep = () => {
+    if (currentStep > 1) {
+      currentStep -= 1;
+    }
+  };
+
+  const submitForm = async () => {
+    isLoading = true;
+    try {
+      const { data, error: authError } = await supabase.auth.signUp({
+      email: client.correo,
+      password: client.contraseña,
+      options: {
+        data: {
+          primernombre: client.primernombre,
+          primerapellido: client.primerapellido,
+          cedula: client.cedula
+        }
+      }
+    });
+
+      if (authError) throw authError;
+
+      // 2. Guardar datos en la tabla 'clientes'
+      const { data: dbData, error: dbError } = await supabase
+        .from('registro_clientes')
+        .insert([{
+          user_id: data.user.id,
+          primernombre: client.primernombre,
+          segundonombre: client.segundonombre,
+          primerapellido: client.primerapellido,
+          segundoapellido: client.segundoapellido,
+          telefono: client.telefono,
+          edad: client.edad,
+          ciudad: client.ciudad,
+          correo: client.correo,
+          cedula: client.cedula,
+          sector: client.sector,
+          sanguineo: client.sanguineo,
+          foto: client.foto, // URL de la foto de rostro
+          cedula_foto: client.cedula_foto, // URL de la foto de cédula
+         
+        }]);
+
+      if (dbError) throw dbError;
+
+      // 3. Redirigir a página de éxito
+      window.location.href = '/';
+    } catch (error) {
+      errorMessage = error.message || "Error en el registro. Intenta nuevamente.";
+      if (error.message.includes('already registered')) {
+        errorMessage = "Este correo ya está registrado. Serás redirigido al login...";
+        setTimeout(() => window.location.href = '/login', 3000);
+      }
+    } finally {
+      isLoading = false;
+    }
+  };
+</script>
+
+<div class="form-wrapper">
+  <div class="progress-bar" style={`width: ${progress}%`}></div>
+  
+  <div class="form-container">
+    {#if errorMessage}
+      <div class="error-message">
+        {errorMessage}
+        {#if errorMessage.includes('redirigido')}
+          <div class="spinner"></div>
+        {/if}
+      </div>
+    {/if}
+    
+    {#each steps as step (step.id)}
+      {#if step.id === currentStep}
+        <div transition:fade class="form-step">
+          <div class="step-indicator">Paso {step.id} de {steps.length}</div>
+          <h2 class="form-question">{step.question}</h2>
+          
+          {#if step.type === 'face' || step.type === 'document'}
+            <div class="camera-section">
+              <div class="camera-preview-large">
+                <video id="video" autoplay playsinline></video>
+                <button class="camera-control-btn" on:click={toggleCamera}>
+                  <span class="icon">
+                    {#if cameraActive}
+                      ⏺️
+                    {:else}
+                      📷
+                    {/if}
+                  </span>
+                  {cameraActive ? 'Capturar Foto' : 'Activar Cámara'}
+                </button>
+              </div>
+              <div class="photo-instructions">
+                <p>Instrucciones:</p>
+                <ul>
+                  {#if step.type === 'face'}
+                    <li>Asegúrate de tener buena iluminación</li>
+                    <li>Mira directamente a la cámara</li>
+                    <li>Mantén un fondo neutro</li>
+                  {:else}
+                    <li>Coloca la cédula dentro del marco</li>
+                    <li>Asegúrate que todos los datos sean legibles</li>
+                    <li>Evita sombras y reflejos</li>
+                  {/if}
+                </ul>
+              </div>
+            </div>
+          {:else}
+            <input
+              bind:value={client[step.field]}
+              type={step.type}
+              placeholder={step.question}
+              class="form-input"
+              required
+              on:input={() => errorMessage = ""}
+            />
+          {/if}
+
+          <div class="actions">
+            {#if currentStep > 1}
+              <button class="btn secondary" on:click={prevStep}>
+                <span class="icon">←</span> Anterior
+              </button>
+            {/if}
+            
+            <button 
+              class="btn next" 
+              on:click={nextStep}
+              disabled={isLoading || 
+                ((step.type === 'face' || step.type === 'document') && !client[step.field])}
+            >
+              {isLoading ? 'Procesando...' : currentStep === steps.length ? 'Completar Registro' : 'Siguiente'}
             </button>
-          </a>
-        </div>
-      </div>
-      <div class="col">
-        <img
-          src="/pide.jpg"
-          class="img-fluid imgPrincipal rounded-start"
-          style="height: 350px;width: auto;object-fit:cover;"
-          alt="..."
-        />
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="container2 p-3" style="background: #0e0d06;">
-  <div class="container text-center mt-5">
-    <div class="row">
-      <div class="col" style="background: #0e0d06;">
-        <img
-          src="/pexels-photo-20899107.webp"
-          class="img-fluid imgPrincipal rounded-start"
-          style="height: 350px;width: auto;object-fit:cover;"
-          alt="..."
-        />
-      </div>
-      <div class="col pb-5" style="background: #0e0d06;">
-        <p
-          class="text-white text-start mt-5"
-          style="font-size: 62px;background: #0e0d06;"
-        >
-          Conoce Motoaqui
-        </p>
-        <p class="text-white text-start" style="background: #0e0d06;">
-          Motoaqui es una plataforma que conecta a usuarios con conductores de
-          mototaxi, garantizando un servicio seguro y eficiente para todos
-          nuestros clientes.
-        </p>
-        <div class="container text-end">
-          <div class="row">
-            <div class="col" style="background: #0e0d06;">
-              <p class="text-white fs-4" style="background: #0e0d06;">4</p>
-              <p class="text-white" style="background: #0e0d06;">
-                Años de experiencia
-              </p>
-            </div>
-            <div class="col" style="background: #0e0d06;">
-              <p class="text-white fs-4" style="background: #0e0d06;">22</p>
-              <p class="text-white" style="background: #0e0d06;">
-                Miembros del equipo
-              </p>
-            </div>
-            <div class="col" style="background: #0e0d06;">
-              <p class="text-white fs-4" style="background: #0e0d06;">+10</p>
-              <p class="text-white" style="background: #0e0d06;">
-                Premios entregados a nuestros clientes
-              </p>
-            </div>
           </div>
         </div>
-      </div>
-    </div>
+      {/if}
+    {/each}
   </div>
-</div>
-
-<div class="container3 animate-left d-flex justify-content-center">
-  <div class="card" style="width: 50rem;border:none;">
-    <div class="card-body">
-      <h1 class="card-title pt-5 text-center text-white">
-        Nuestros servicios de mototaxi
-      </h1>
-      <p class="card-text text-white text-center pt-3">
-        Ofrecemos solicitud de mototaxis, asignacion de ruta por nuestros
-        clientes y un sistema de registro para garantizar seguridad y comodidad
-        a nuestros usuarios y conductores.
-      </p>
-    </div>
-  </div>
-</div>
-
-<div class="container4 animate-left">
-  <div class="container text-center">
-    <div class="row">
-      <div class="col">
-        <div class="card mb-3" style="max-width: 540px;border:none;">
-          <div class="row g-0">
-            <div class="col-md-6">
-              <img
-                src="/pexels-photo-11073539.jpg"
-                class="img-fluid rounded-start"
-                style="height: 350px;width: auto;object-fit:cover;"
-                alt="..."
-              />
-            </div>
-            <div class="col-md-6" style="background:#0e0d06;">
-              <div class="card-body" style="background:#0e0d06;">
-                <h3
-                  class="card-title text-white text-start pt-5"
-                  style="background:#0e0d06;"
-                >
-                  Mototaxis rápidos y seguros
-                </h3>
-                <p
-                  class="card-text text-white text-start pt-2"
-                  style="background:#0e0d06;"
-                >
-                  Te ofrecemos un servicio de mototaxi que prioriza la seguridad
-                  y la puntualidad en cada viaje.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card mb-3" style="max-width: 540px;border:none;">
-          <div class="row g-0">
-            <div class="col-md-6">
-              <img
-                src="/form.jpg"
-                class="img-fluid rounded-start"
-                style="height: 350px;object-fit:cover;"
-                alt="..."
-              />
-            </div>
-            <div class="col-md-6" style="background:#0e0d06;">
-              <div class="card-body" style="background:#0e0d06;">
-                <h3
-                  class="card-title pt-5 text-white text-start"
-                  style="background:#0e0d06;"
-                >
-                  Registro de conductores
-                </h3>
-                <p
-                  class="card-text text-white text-start"
-                  style="background:#0e0d06;"
-                >
-                  Los conductores pueden registrarse fácilmente y compartir su
-                  información personal y la de sus motos.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="container text-center">
-    <div class="row">
-      <div class="col">
-        <div class="card mb-3" style="max-width: 540px;border:none;">
-          <div class="row g-0">
-            <div class="col-md-6">
-              <img
-                src="/dispo.jpg"
-                class="img-fluid rounded-start"
-                style="height: 350px;width: auto;object-fit:cover;"
-                alt="..."
-              />
-            </div>
-            <div class="col-md-6" style="background:#0e0d06;">
-              <div class="card-body" style="background:#0e0d06;">
-                <h3
-                  class="card-title text-white text-start pt-5"
-                  style="background:#0e0d06;"
-                >
-                  Disponibilidad
-                </h3>
-                <p
-                  class="card-text text-white text-start pt-2"
-                  style="background:#0e0d06;"
-                >
-                  Siempre tendras un mototaxi disponible para ti, solo debes
-                  pedirlo
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card mb-3" style="max-width: 540px;border:none;">
-          <div class="row g-0">
-            <div class="col-md-6">
-              <img
-                src="/registro.png"
-                class="img-fluid rounded-start"
-                style="height: 350px;object-fit:cover;"
-                alt="..."
-              />
-            </div>
-            <div class="col-md-6" style="background:#0e0d06;">
-              <div class="card-body" style="background:#0e0d06;">
-                <h3
-                  class="card-title pt-5 text-white text-start"
-                  style="background:#0e0d06;"
-                >
-                  Sencillo asignador de rutas
-                </h3>
-                <p
-                  class="card-text text-white text-start"
-                  style="background:#0e0d06;"
-                >
-                  Con solo un click o presionar en el mapa, podras asignar la
-                  ruta
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="col d-flex justify-content-center pt-5 pb-5">
-  <div class="card pb-3" style="max-width: 540px;border:none;">
-    <div class="row g-0">
-      <div class="col-md-6">
-        <a href="https://www.appcreator24.com/app3413931-01ko69">
-          <img
-            src="/favicon.png"
-            class="img-fluid rounded-start"
-            style="height: 25rem;width: 30rem"
-            alt="app"
-          />
-        </a>
-      </div>
-      <div class="col-md-6">
-        <div class="card-body">
-          <h3 class="card-title pt-5 text-white text-start">
-            Descarga nuestra app
-          </h3>
-          <p class="card-text text-white text-start">
-            Todo lo que necesitas para solicitar un mototaxi en un solo lugar.
-            has click en la imagen para descargar la app
-          </p>
-          <p class="card-text text-white text-start">
-            Descarga nuestra app y solicita un mototaxi en cualquier momento y
-            lugar.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="footer">
-  <img
-    src="/pexels-photo-20899107.webp"
-    style="height: 500px;object-fit:cover;"
-    class="card-img"
-    alt="..."
-  />
-
-  <h1 class="card-title text-white text-center pt-5">
-    Solicita tu mototaxi ahora mismo
-  </h1>
-  <div class="d-flex justify-content-center pt-5 pb-5">
-    <a class="text-decoration-none" style="background: #0e0d06;" href="/">
-      <button type="button" class="btn btn-outline-warning">
-        Registrate
-      </button>
-    </a>
-  </div>
-</div>
-
-<div class="container8 pt-5 pb-5" style="background: #0e0d06;">
-  <div class="container text-center">
-    <div class="row">
-      <div class="col" style="background: #0e0d06;">
-        <h3 class="text-white" style="background: #0e0d06;">Sobre nosotros</h3>
-        <p class="text-white" style="background: #0e0d06;">
-          Motoaqui es la solución perfecta para tus necesidades de transporte en
-          moto.
-        </p>
-      </div>
-      <div class="col" style="background: #0e0d06;">
-        <h3 class="text-white" style="background: #0e0d06;">Dirección:</h3>
-        <p class="text-white" style="background: #0e0d06;">Táchira</p>
-      </div>
-      <div class="col" style="background: #0e0d06;">
-        <h3 class="text-white" style="background: #0e0d06;">Contacto:</h3>
-        <p class="text-white" style="background: #0e0d06;">
-          04169752291 ayos007@gmail.com
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div
-  class="container9 p-3 d-flex justify-content-center"
-  style="background: #0e0d06;"
->
-  <p
-    class="text-white"
-    style="background: #0e0d06;border-top:solid white;border-bottom:solid white;"
-  >
-    Derechos de autor © 2024 motoaqui
-  </p>
 </div>
 
 <style>
-  * {
-    background: #1b1b1b;
+  :global(body) {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #f8fafc;
+    color: #1e293b;
   }
 
-  /* animacion izquierda derecha */
-  @keyframes slideInLeft {
-    from {
-      transform: translateX(-100%);
-      opacity: 0;
+  .form-wrapper {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+    position: relative;
+  }
+
+  .progress-bar {
+    height: 6px;
+    background: linear-gradient(90deg, #3b82f6, #10b981);
+    border-radius: 3px;
+    margin-bottom: 2rem;
+    transition: width 0.4s ease;
+  }
+
+  .error-message {
+    background: #fee2e2;
+    color: #b91c1c;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-left: 4px solid #dc2626;
+  }
+
+  .spinner {
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top: 2px solid #b91c1c;
+    width: 16px;
+    height: 16px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .form-step {
+    width: 100%;
+    padding: 1.5rem;
+  }
+
+  .step-indicator {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+
+  .form-question {
+    font-size: 1.5rem;
+    color: #1e293b;
+    margin: 0 0 1.5rem 0;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s;
+    background: #f8fafc;
+  }
+
+  .form-input:focus {
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    background: white;
+  }
+
+  .form-input:invalid {
+    border-color: #f87171;
+  }
+
+  .camera-section {
+    margin-bottom: 2rem;
+  }
+
+  .camera-preview-large {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    background: #f0f0f0;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 3px dashed #4CAF50;
+  }
+
+  .document-capture-section .camera-preview-large {
+    border-color: #3b82f6;
+  }
+
+  video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .camera-control-btn {
+    position: absolute;
+    bottom: 20px;
+    padding: 14px 28px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 10;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+  }
+
+  .document-capture-section .camera-control-btn {
+    background: #3b82f6;
+  }
+
+  .camera-control-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .camera-control-btn .icon {
+    font-size: 1.3rem;
+  }
+
+  .photo-instructions {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 10px;
+    border-left: 4px solid #4CAF50;
+  }
+
+  .document-capture-section .photo-instructions {
+    border-left-color: #3b82f6;
+  }
+
+  .photo-instructions p {
+    margin-top: 0;
+    color: #2c3e50;
+    font-size: 1.1rem;
+  }
+
+  .photo-instructions ul {
+    padding-left: 20px;
+    color: #34495e;
+    margin-bottom: 0;
+  }
+
+  .photo-instructions li {
+    margin-bottom: 8px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    flex: 1;
+  }
+
+  .btn.secondary {
+    background-color: #e2e8f0;
+    color: #334155;
+    margin-right: 0.5rem;
+  }
+
+  .btn.secondary:hover {
+    background-color: #cbd5e1;
+  }
+
+  .btn.next {
+    background-color: #1e293b;
+    color: white;
+  }
+
+  .btn.next:hover {
+    background-color: #0f172a;
+  }
+
+  .btn:disabled {
+    background-color: #e2e8f0;
+    color: #94a3b8;
+    cursor: not-allowed;
+  }
+
+  .icon {
+    margin-right: 8px;
+  }
+
+  .actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    .form-wrapper {
+      margin: 0;
+      padding: 1.5rem;
+      border-radius: 0;
+      min-height: 100vh;
     }
-    to {
-      transform: translateX(0);
-      opacity: 1;
+    
+    .camera-preview-large {
+      height: 400px;
+    }
+    
+    .camera-control-btn {
+      font-size: 1rem;
+      padding: 12px 24px;
+    }
+    
+    .form-question {
+      font-size: 1.3rem;
+    }
+    
+    .actions {
+      flex-direction: column;
+    }
+    
+    .btn.secondary {
+      margin-right: 0;
+      margin-bottom: 0.5rem;
     }
   }
 
-  .animate-left {
-    animation: slideInLeft 1s ease-in-out;
-  }
-
-  @media (max-width: 900px) {
-    .imgPrincipal {
-      display: none;
+  @media (max-width: 480px) {
+    .camera-preview-large {
+      height: 350px;
+    }
+    
+    .photo-instructions {
+      padding: 1rem;
     }
   }
 </style>

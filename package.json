@@ -44,9 +44,13 @@
     },
     "dependencies": {
         "20": "^3.1.9",
-        "@supabase/supabase-js": "^2.47.6",
+        "@supabase/auth-helpers-sveltekit": "^0.13.0",
+        "@supabase/supabase-js": "^2.49.4",
+        "face-api.js": "^0.22.2",
         "leaflet": "^1.9.4",
-        "leaflet-routing-machine": "^3.2.12"
+        "leaflet-routing-machine": "^3.2.12",
+        "svelte-webcam": "^0.0.0",
+        "tesseract.js": "^6.0.0"
     },
     "optionalDependencies": {
         "@rollup/rollup-linux-x64-gnu": "^4.28.1"

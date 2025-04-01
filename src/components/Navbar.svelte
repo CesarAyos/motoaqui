@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg">
   <div class="container-fluid">
-    <a class="navbar-brand text-white fs-2" href="/">Motoaqui</a>
+    <a class="navbar-brand text-white fs-2" href="/">Rapiditos Colón</a>
     <button
       class="navbar-toggler"
       type="button"
