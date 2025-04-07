@@ -1,6 +1,5 @@
 <script>
   import Maps from "../../components/maps.svelte";
-  import Navbar from "../../components/navbar.svelte";
   import { supabase } from "../../components/supabase.js";
   import { onMount } from "svelte";
   
@@ -43,15 +42,6 @@
   });
 </script>
 
-<Navbar />
-
-{#if loading}
-  <div class="text-center text-white">Cargando...</div>
-{:else}
-  <div class="container m-2">
-    <p class="text-end"><strong> Bienvenido {userName}</strong></p>
-  </div>
-{/if}
 
 <div
   class="alert alert-primary alert-dismissible fade show"
@@ -77,6 +67,13 @@
   </ol>
 </div>
 
+{#if loading}
+  <div class="text-center text-white">Cargando...</div>
+{:else}
+  <div class="container d-flex justify-content-end m-2">
+    <button type="button" class="btn btn-primary"><strong> Bienvenido {userName}</strong></button>
+  </div>
+{/if}
 
 
 
