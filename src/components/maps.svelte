@@ -55,11 +55,6 @@ async function getCurrentLocation() {
   locationError = null;
 
   try {
-    const hasPermission = await checkLocationPermission();
-    if (!hasPermission) {
-      return;
-    }
-
     const position = await new Promise((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(resolve, reject, {
         enableHighAccuracy: true,
@@ -104,14 +99,20 @@ async function getCurrentLocation() {
   } catch (error) {
     console.error("Error getting location:", error);
     locationError = error.message || "No se pudo obtener la ubicación.";
+
     if (!userLocation && map) {
       userLocation = { lat: 8.03687, lng: -72.2603 };
       map.setView([userLocation.lat, userLocation.lng], 14);
+    }
+
+    if (error.code === error.PERMISSION_DENIED) {
+      alert("La aplicación necesita acceso a tu ubicación. Por favor habilita los permisos en la configuración de tu celular.");
     }
   } finally {
     loadingLocation = false;
   }
 }
+
 
 
   async function updateAddress() {
