@@ -28,81 +28,87 @@
   };
 
   async function checkLocationPermission() {
-    try {
-      if (navigator.permissions) {
-        const status = await navigator.permissions.query({ name: 'geolocation' });
-        return status.state === 'granted';
+  try {
+    if (navigator.permissions) {
+      const status = await navigator.permissions.query({ name: 'geolocation' });
+      if (status.state === 'denied') {
+        alert("Por favor habilita los permisos de ubicación en tu navegador.");
+        return false;
+      } else if (status.state === 'prompt') {
+        alert("Se necesita acceso a tu ubicación. Por favor acepta la solicitud de permiso.");
       }
-      return true;
-    } catch (e) {
-      console.error("Error checking permissions:", e);
-      return false;
+      return status.state === 'granted';
     }
+    return true;
+  } catch (e) {
+    console.error("Error checking permissions:", e);
+    return false;
   }
+}
 
-  async function getCurrentLocation() {
-    loadingLocation = true;
-    locationError = null;
-    
-    try {
-      const hasPermission = await checkLocationPermission();
-      if (!hasPermission) {
-        throw new Error("Por favor habilita los permisos de ubicación en tu navegador");
-      }
+async function getCurrentLocation() {
+  loadingLocation = true;
+  locationError = null;
 
-      const position = await new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 0
-        });
+  try {
+    const hasPermission = await checkLocationPermission();
+    if (!hasPermission) {
+      return;
+    }
+
+    const position = await new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject, {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
       });
+    });
 
-      userLocation = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
-        accuracy: position.coords.accuracy
-      };
+    userLocation = {
+      lat: position.coords.latitude,
+      lng: position.coords.longitude,
+      accuracy: position.coords.accuracy
+    };
 
-      if (map) {
-        map.setView([userLocation.lat, userLocation.lng], 16);
-        
-        if (!pickupMarker) {
-          pickupMarker = L.circleMarker([userLocation.lat, userLocation.lng], {
-            radius: 8,
-            fillColor: "#3388ff",
-            color: "#000",
-            weight: 1,
-            opacity: 1,
-            fillOpacity: 0.8,
-            draggable: true
-          }).addTo(map);
-          
-          pickupMarker.bindPopup("<b>Punto de recogida</b><br>Arrastra para ajustar").openPopup();
-          
-          pickupMarker.on("dragend", async function(e) {
-            const newPos = e.target.getLatLng();
-            userLocation = { lat: newPos.lat, lng: newPos.lng };
-            await updateAddress();
-          });
-        } else {
-          pickupMarker.setLatLng([userLocation.lat, userLocation.lng]);
-        }
-        
-        await updateAddress();
+    if (map) {
+      map.setView([userLocation.lat, userLocation.lng], 16);
+
+      if (!pickupMarker) {
+        pickupMarker = L.circleMarker([userLocation.lat, userLocation.lng], {
+          radius: 8,
+          fillColor: "#3388ff",
+          color: "#000",
+          weight: 1,
+          opacity: 1,
+          fillOpacity: 0.8,
+          draggable: true
+        }).addTo(map);
+
+        pickupMarker.bindPopup("<b>Punto de recogida</b><br>Arrastra para ajustar").openPopup();
+
+        pickupMarker.on("dragend", async function(e) {
+          const newPos = e.target.getLatLng();
+          userLocation = { lat: newPos.lat, lng: newPos.lng };
+          await updateAddress();
+        });
+      } else {
+        pickupMarker.setLatLng([userLocation.lat, userLocation.lng]);
       }
-      
-    } catch (error) {
-      console.error("Error getting location:", error);
-      locationError = error.message || "No se pudo obtener la ubicación";
-      if (!userLocation && map) {
-        userLocation = { lat: 8.03687, lng: -72.2603 };
-        map.setView([userLocation.lat, userLocation.lng], 14);
-      }
-    } finally {
-      loadingLocation = false;
+
+      await updateAddress();
     }
+  } catch (error) {
+    console.error("Error getting location:", error);
+    locationError = error.message || "No se pudo obtener la ubicación.";
+    if (!userLocation && map) {
+      userLocation = { lat: 8.03687, lng: -72.2603 };
+      map.setView([userLocation.lat, userLocation.lng], 14);
+    }
+  } finally {
+    loadingLocation = false;
   }
+}
+
 
   async function updateAddress() {
     if (!userLocation) return;
