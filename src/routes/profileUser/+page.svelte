@@ -1,7 +1,9 @@
 <script>
   import Maps from "../../components/maps.svelte";
+  import Navbar from "../../components/navbar.svelte";
   import { supabase } from "../../components/supabase.js";
   import { onMount } from "svelte";
+  
 
   let user = "";
   let userName = "";
@@ -41,6 +43,16 @@
   });
 </script>
 
+<Navbar />
+
+{#if loading}
+  <div class="text-center text-white">Cargando...</div>
+{:else}
+  <div class="container m-2">
+    <p class="text-end"><strong> Bienvenido {userName}</strong></p>
+  </div>
+{/if}
+
 <div
   class="alert alert-primary alert-dismissible fade show"
   role="alert"
@@ -52,17 +64,16 @@
     aria-label="Close"
   ></button>
   <ol>
-   <li> <strong>Bienvenido</strong> Estos son los pasos para pedir un motoaqui</li>
-   <li> <strong>Selecciona manualmente</strong> en donde estas ubicado y tu destino</li>
-   <li> <strong>Elige la moneda</strong> en la que quieres cancelar</li>
-   <li> <strong>Indicanos si debemos llevar vueltos</strong> y dinos que billete tienes</li>
-   <li> <strong>Dinos en que tiempo quieres</strong> que te busquemos</li>
-   <li> <strong>Dale pedir carrera</strong> esto nos enviara un mensaje de whatsapp</li>
+   <li> <strong>Bienvenido</strong> Estos son los pasos para apartar un puesto en <strong>Rapiditos Colón</strong></li>
+   <li> <strong>Usa el boton de usar mi ubicacion exacta</strong> es para dirigir al chofer a tu ubicacion </li>
+   <li> <strong>Seleccione el dia y la hora exacta</strong> en la que quieres apartar tu puesto</li>
+   <li> <strong>Indicanos el numero de pasajero</strong> o si vas tu solo/a</li>
+   <li> <strong>Puedes decir cuantas maletas llevas</strong> 1,2,3...</li>
+   <li> <strong>Dale a confirmar servicio carrera</strong> esto nos enviara un mensaje de whatsapp</li>
+   <li> <strong>Te saldra un mensaje de solicitud enviada con exito</strong> y te redirigira a nuestro whatsapp principal</li>
    <li> <strong>Vuelve a la aplicacion</strong> </li>
-   <li> <strong>Dale click en </strong> Chequear carrera </li>
-   <li> <strong>Dale click en  </strong>  recargar </li>
-   <li> <strong>En unos instantes te aparecera </strong>Los datos necesario de tu conductor asignado </li>
-   <li> <strong>Ten un feliz viaje </strong> recomiendanos </li>
+   <li> <strong>En unos instantes te confirmaran tu viaje </strong> </li>
+   <li> <strong>Ten un feliz viaje </strong></li>
   </ol>
 </div>
 

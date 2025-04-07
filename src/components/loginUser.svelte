@@ -28,92 +28,121 @@
     });
   </script>
   
-  <section class="vh-100" style="background: #1b1b1b;">
-    <div class="container login py-5 h-100">
-      <div class="row d-flex align-items-center justify-content-center h-100">
-        <div class="col-md-8 col-lg-7 col-xl-6">
-          <img
-            src="/favicon.png"
-            class="img-fluid rounded-circle"
-            style="border: solid;"
-            alt="Phone"
-          />
-        </div>
-        <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
-          <h3 class="text-center p-2 text-white">¿A dónde vamos?</h3>
-          <form on:submit|preventDefault={handleLogin}>
-            <!-- Email input -->
-            <div data-mdb-input-init class="form-outline mb-4">
-              <input
-                type="email"
-                id="form1Example13"
-                bind:value={email}
-                class="form-control form-control-lg"
-              />
-              <label class="form-label text-white" for="form1Example13">Correo electrónico</label>
-            </div>
-  
-            <!-- Password input -->
-            <div data-mdb-input-init class="form-outline mb-4">
-              <input
-                type="password"
-                id="form1Example23"
-                bind:value={password}
-                class="form-control form-control-lg"
-              />
-              <label class="form-label text-white" for="form1Example23">Contraseña</label>
-            </div>
-  
-            <div class="d-flex justify-content-around align-items-center mb-4">
-              <!-- Checkbox -->
-              <div class="form-check">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  value=""
-                  id="form1Example3"
-                  checked
-                />
-                <label class="form-check-label text-white" for="form1Example3">
-                  Recordar
-                </label>
+  <section class="vh-100 gradient-custom">
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+          <div class="card bg-dark text-white" style="border-radius: 1rem; border: none; box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.6);">
+            <div class="card-body p-5 text-center">
+              <div class="mb-4">
+                <h3 class="fw-bold mb-4 text-uppercase">¿Listo para viaja?</h3>
+                <p class="text-white-50 mb-4">Ingresa tus credenciales para continuar</p>
               </div>
-              <a href="#!">¿Olvidaste tu contraseña?</a>
-            </div>
   
-            <div class="d-flex justify-content-end">
-              <button
-                type="submit"
-                data-mdb-button-init
-                data-mdb-ripple-init
-                class="btn btn-outline-warning">Ingresar</button>
-            </div>
+              <form on:submit|preventDefault={handleLogin}>
+                <!-- Email input -->
+                <div class="form-outline form-white mb-4">
+                  <input
+                    type="email"
+                    id="typeEmailX"
+                    bind:value={email}
+                    class="form-control form-control-lg"
+                    placeholder=" "
+                  />
+                  <label class="form-label" for="typeEmailX">Correo electrónico</label>
+                </div>
   
-            <!-- Mostrar mensaje de error -->
-            {#if errorMessage}
-              <div class="alert alert-danger mt-4" role="alert">
-                {errorMessage}
+                <!-- Password input -->
+                <div class="form-outline form-white mb-4">
+                  <input
+                    type="password"
+                    id="typePasswordX"
+                    bind:value={password}
+                    class="form-control form-control-lg"
+                    placeholder=" "
+                  />
+                  <label class="form-label" for="typePasswordX">Contraseña</label>
+                </div>
+
+                <button
+                  type="submit"
+                  class="btn btn-outline-light btn-lg px-5 w-100"
+                >
+                  Ingresar
+                </button>
+  
+                <!-- Mostrar mensaje de error -->
+                {#if errorMessage}
+                  <div class="alert alert-danger mt-4 alert-dismissible fade show" role="alert">
+                    {errorMessage}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                {/if}
+              </form>
+  
+              <div class="mt-4">
+                <p class="mb-0">¿No tienes una cuenta? <a href="/registros" class="text-white-50 fw-bold">Regístrate</a></p>
               </div>
-            {/if}
-          </form>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </section>
   
   <style>
-    .container.login {
-      background: #1b1b1b;
+    .gradient-custom {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
-  
-    .form-label {
-      color: #fff !important;
+    
+    .card {
+      backdrop-filter: blur(10px);
+      background-color: rgba(0, 0, 0, 0.5) !important;
     }
-  
+    
+    .form-outline {
+      position: relative;
+    }
+    
+    .form-outline input {
+      background: transparent;
+      color: white;
+      border: 1px solid #6c757d;
+      transition: all 0.3s;
+    }
+    
+    .form-outline input:focus {
+      border-color: #fff;
+      box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25);
+    }
+    
+    .form-outline label {
+      position: absolute;
+      top: 12px;
+      left: 15px;
+      color: #adb5bd;
+      transition: all 0.3s;
+      pointer-events: none;
+    }
+    
+    .form-outline input:focus + label,
+    .form-outline input:not(:placeholder-shown) + label {
+      top: -10px;
+      left: 10px;
+      font-size: 0.8rem;
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 0 5px;
+      color: #fff;
+    }
+    
+    .btn-outline-light:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
     .alert-danger {
-      color: #721c24;
-      background-color: #f8d7da;
-      border-color: #f5c6cb;
+      background-color: rgba(220, 53, 69, 0.2);
+      border-color: rgba(220, 53, 69, 0.3);
+      color: #fff;
     }
   </style>
   

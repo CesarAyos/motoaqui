@@ -3,6 +3,8 @@
   import "leaflet/dist/leaflet.css";
   import { supabase } from "../components/supabase.js";
   import { protegerRuta } from "./protegerRuta.js";
+  import Cerrarsesion from "./cerrarsesion.svelte";
+  
 
   let map;
   let pickupMarker;
@@ -25,7 +27,6 @@
     email: ""
   };
 
-  // Verificar permisos de geolocalización
   async function checkLocationPermission() {
     try {
       if (navigator.permissions) {
@@ -39,7 +40,6 @@
     }
   }
 
-  // Obtener ubicación actual del usuario
   async function getCurrentLocation() {
     loadingLocation = true;
     locationError = null;
@@ -104,7 +104,6 @@
     }
   }
 
-  // Actualizar dirección basada en coordenadas
   async function updateAddress() {
     if (!userLocation) return;
     
@@ -199,16 +198,12 @@
 
       if (error) throw error;
 
-      // Mostrar modal de confirmación
       showConfirmationModal = true;
-      
-      // Ocultar después de 5 segundos y resetear formulario
       setTimeout(() => {
         showConfirmationModal = false;
         resetForm();
       }, 5000);
 
-      // Enviar mensaje al conductor
       const mensaje = `🚖 *Nueva solicitud de servicio*  
       
 👤 *Pasajero:* ${userInfo.nombre}  
@@ -225,7 +220,7 @@ Ver en mapa: https://www.google.com/maps?q=${userLocation.lat},${userLocation.ln
 
 *Por favor confirma si puedes atender esta solicitud.*`;
 
-      const whatsappUrl = `https://wa.me/584169752291?text=${encodeURIComponent(mensaje)}`;
+      const whatsappUrl = `https://wa.me/584268754094?text=${encodeURIComponent(mensaje)}`;
       window.open(whatsappUrl, "_blank");
 
     } catch (error) {
@@ -251,19 +246,36 @@ Ver en mapa: https://www.google.com/maps?q=${userLocation.lat},${userLocation.ln
 
 <main class="container py-4">
   {#if showConfirmationModal}
-    <div class="modal-backdrop show d-block"></div>
-    <div class="modal show d-block" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header bg-success text-white">
-            <h5 class="modal-title">¡Gracias por preferirnos!</h5>
-          </div>
-          <div class="modal-body text-center py-4">
-            <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
-            <h4 class="mt-3">Solicitud enviada con éxito</h4>
-            <p>En breve confirmaremos tu viaje</p>
-          </div>
+    <div class="modal-backdrop show d-block" style="
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 1040;
+    "></div>
+    <div class="modal show d-block" style="
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1050;
+    ">
+      <div class="modal-content" style="
+        background: white;
+        padding: 20px;
+        border-radius: 5px;
+        max-width: 500px;
+        margin: 0 auto;
+        text-align: center;
+      ">
+        <div style="color: #28a745; font-size: 3rem; margin-bottom: 1rem;">
+          ✓
         </div>
+        <h3 style="color: #28a745;">¡Gracias por preferirnos!</h3>
+        <p>Solicitud enviada con éxito</p>
+        <p>En breve confirmaremos tu viaje</p>
       </div>
     </div>
   {/if}
@@ -402,6 +414,7 @@ Ver en mapa: https://www.google.com/maps?q=${userLocation.lat},${userLocation.ln
               >
                 <i class="bi bi-x-circle me-2"></i>Cancelar
               </button>
+              <Cerrarsesion/>
             </div>
           </form>
         </div>
@@ -425,17 +438,6 @@ Ver en mapa: https://www.google.com/maps?q=${userLocation.lat},${userLocation.ln
   
   .card-header {
     border-radius: 0.25rem 0.25rem 0 0 !important;
-  }
-  
-  .modal-backdrop {
-    opacity: 0.5;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1040;
-    width: 100vw;
-    height: 100vh;
-    background-color: #000;
   }
   
   @media (max-width: 767.98px) {
