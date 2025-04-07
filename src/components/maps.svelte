@@ -31,20 +31,24 @@
   try {
     if (navigator.permissions) {
       const status = await navigator.permissions.query({ name: 'geolocation' });
+      
       if (status.state === 'denied') {
-        alert("Por favor habilita los permisos de ubicación en tu navegador.");
+        alert("El acceso a la ubicación está bloqueado. Por favor, ve a la configuración de tu navegador o dispositivo para habilitarlo.");
         return false;
       } else if (status.state === 'prompt') {
-        alert("Se necesita acceso a tu ubicación. Por favor acepta la solicitud de permiso.");
+        alert("Se necesita acceso a tu ubicación. Por favor acepta la solicitud cuando aparezca.");
       }
+      
       return status.state === 'granted';
     }
-    return true;
+    
+    return true; // Suponemos acceso si no hay soporte para navigator.permissions
   } catch (e) {
-    console.error("Error checking permissions:", e);
+    console.error("Error al verificar permisos:", e);
     return false;
   }
 }
+
 
 async function getCurrentLocation() {
   loadingLocation = true;
