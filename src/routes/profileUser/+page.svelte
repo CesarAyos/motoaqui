@@ -6,34 +6,39 @@
   let user = "";
   let userName = "";
   let ultimaCarrera = {};
+  let loading = true;
 
   onMount(async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session || !session.user) {
-      window.location.href = "/loginUser";
-    } else {
+    try {
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !session?.user) {
+        window.location.href = "/loginUser";
+        return;
+      }
+
       user = session.user;
+      
       const { data, error } = await supabase
-        .from("motoaquiClient")
+        .from("registro_clientes")
         .select("primernombre, primerapellido")
-        .eq("correo", user.email)
+        .eq("id", user.id)
         .single();
 
       if (error) {
         console.error("Error fetching user data:", error.message);
-        userName = user.email; // fallback to email if error occurs
+        userName = user.email; // fallback to email
       } else {
         userName = data.primernombre;
         user = data.primerapellido;
       }
-
-      
+    } catch (e) {
+      console.error("Unexpected error:", e);
+      window.location.href = "/loginUser";
+    } finally {
+      loading = false;
     }
   });
-
-  
-
-  
 </script>
 
 <div

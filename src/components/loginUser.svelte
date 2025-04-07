@@ -1,5 +1,5 @@
 <script>
-    import { supabase } from "../../components/supabase.js";
+    import { supabase } from "../components/supabase.js";
     import { onMount } from "svelte";
   
     let email = "";

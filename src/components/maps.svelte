@@ -1,266 +1,410 @@
 <script>
-  import { onMount, onDestroy } from "svelte";
+  import { onMount } from "svelte";
   import "leaflet/dist/leaflet.css";
-  import { supabase } from "../components/supabase.js"; // Ruta corregida
+  import { supabase } from "../components/supabase.js";
   import { protegerRuta } from "./protegerRuta.js";
 
   let map;
-  let originMarker;
-  let destinationMarker;
+  let pickupMarker;
+  let userLocation = null;
+  let loadingLocation = false;
+  let locationError = null;
+  let showConfirmationModal = false;
 
   let formData = {
-    moneda: "",
-    llevarVueltos: false,
-    cantidadVueltos: "",
-    tiempo: "",
+    horaServicio: "",
+    llevaMaletas: false,
+    cantidadMaletas: 0,
+    pasajeros: 1,
+    direccion: "Ubicando tu posición..."
   };
 
-  let user = "";
-  let userFirstName = "";
-  let userLastName = "";
+  let user = null;
+  let userInfo = {
+    nombre: "",
+    email: ""
+  };
 
-  onMount(async () => {
-    if (typeof window === "undefined") return;
-    await protegerRuta();
-
-    // Obtener la sesión del usuario
-    const {
-      data: { session },
-      error: sessionError,
-    } = await supabase.auth.getSession();
-    if (sessionError || !session || !session.user) {
-      window.location.href = "/loginUser";
-      return;
-    }
-
-    user = session.user;
-
-    const { data, error } = await supabase
-      .from("motoaquiClient")
-      .select("primernombre, primerapellido")
-      .eq("correo", user.email)
-      .limit(1) // Asegurarse de que solo se devuelve una fila
-      .single();
-
-    if (error) {
-      alert("Esta no es tu seccion, verifique y vuelva a ingresar.");
-      console.error("Error:", error.message);
-      window.location.href = "/"; // Redirigir a la página de inicio
-      return;
-    }
-
-    if (!data) {
-      alert("User data not found.");
-      console.error("User data not found");
-      window.location.href = "/"; // Redirigir a la página de inicio
-      return;
-    }
-
-    // Código adicional para manejar los datos del usuario
-
-    userFirstName = data.primernombre;
-    userLastName = data.primerapellido;
-
-    // Inicialización del mapa
-    const L = (await import("leaflet")).default;
-    map = L.map("map").setView([8.03687, -72.2603], 14);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      maxZoom: 18,
-    }).addTo(map);
-    L.control.scale().addTo(map);
-
-    let taxiIcon = L.icon({
-      iconUrl: "/moto.png",
-      iconSize: [20, 20],
-    });
-
-    map.on("click", (e) => handleMapClick(e.latlng, taxiIcon));
-  });
-
-  function handleMapClick(latlng, taxiIcon) {
-    if (!originMarker) {
-      originMarker = L.marker([latlng.lat, latlng.lng], {
-        icon: taxiIcon,
-      }).addTo(map);
-      originMarker.bindPopup("¿Me puedes buscar aquí?").openPopup();
-    } else if (!destinationMarker) {
-      destinationMarker = L.marker([latlng.lat, latlng.lng], {
-        icon: taxiIcon,
-      }).addTo(map);
-      destinationMarker.bindPopup("Llévame aquí").openPopup();
-    } else {
-      destinationMarker.setLatLng([latlng.lat, latlng.lng]);
-      destinationMarker.bindPopup("Mejor llévame aquí").openPopup();
+  // Verificar permisos de geolocalización
+  async function checkLocationPermission() {
+    try {
+      if (navigator.permissions) {
+        const status = await navigator.permissions.query({ name: 'geolocation' });
+        return status.state === 'granted';
+      }
+      return true;
+    } catch (e) {
+      console.error("Error checking permissions:", e);
+      return false;
     }
   }
 
-  async function enviarWhatsApp() {
-    if (!originMarker || !destinationMarker) {
-      return alert(
-        "Por favor selecciona tanto el origen como el destino en el mapa."
-      );
+  // Obtener ubicación actual del usuario
+  async function getCurrentLocation() {
+    loadingLocation = true;
+    locationError = null;
+    
+    try {
+      const hasPermission = await checkLocationPermission();
+      if (!hasPermission) {
+        throw new Error("Por favor habilita los permisos de ubicación en tu navegador");
+      }
+
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        });
+      });
+
+      userLocation = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+        accuracy: position.coords.accuracy
+      };
+
+      if (map) {
+        map.setView([userLocation.lat, userLocation.lng], 16);
+        
+        if (!pickupMarker) {
+          pickupMarker = L.circleMarker([userLocation.lat, userLocation.lng], {
+            radius: 8,
+            fillColor: "#3388ff",
+            color: "#000",
+            weight: 1,
+            opacity: 1,
+            fillOpacity: 0.8,
+            draggable: true
+          }).addTo(map);
+          
+          pickupMarker.bindPopup("<b>Punto de recogida</b><br>Arrastra para ajustar").openPopup();
+          
+          pickupMarker.on("dragend", async function(e) {
+            const newPos = e.target.getLatLng();
+            userLocation = { lat: newPos.lat, lng: newPos.lng };
+            await updateAddress();
+          });
+        } else {
+          pickupMarker.setLatLng([userLocation.lat, userLocation.lng]);
+        }
+        
+        await updateAddress();
+      }
+      
+    } catch (error) {
+      console.error("Error getting location:", error);
+      locationError = error.message || "No se pudo obtener la ubicación";
+      if (!userLocation && map) {
+        userLocation = { lat: 8.03687, lng: -72.2603 };
+        map.setView([userLocation.lat, userLocation.lng], 14);
+      }
+    } finally {
+      loadingLocation = false;
+    }
+  }
+
+  // Actualizar dirección basada en coordenadas
+  async function updateAddress() {
+    if (!userLocation) return;
+    
+    try {
+      const { data, error } = await supabase.rpc('geocode_reverse', {
+        lat: userLocation.lat,
+        lon: userLocation.lng
+      });
+      
+      if (!error && data) {
+        formData.direccion = data.display_name || `Ubicación (${userLocation.lat.toFixed(5)}, ${userLocation.lng.toFixed(5)})`;
+      } else {
+        formData.direccion = `Ubicación exacta (${userLocation.lat.toFixed(5)}, ${userLocation.lng.toFixed(5)})`;
+      }
+    } catch (err) {
+      console.error("Error en geocodificación:", err);
+      formData.direccion = `Ubicación (${userLocation.lat.toFixed(5)}, ${userLocation.lng.toFixed(5)})`;
+    }
+  }
+
+  onMount(async () => {
+    if (typeof window === "undefined") return;
+    
+    await protegerRuta();
+    
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !session) {
+      window.location.href = "/loginUser";
+      return;
+    }
+    
+    user = session.user;
+    userInfo.email = user.email;
+    
+    const { data: userData } = await supabase
+      .from("registro_clientes")
+      .select("primernombre, primerapellido")
+      .eq("correo", user.email)
+      .single();
+    
+    if (userData) {
+      userInfo.nombre = `${userData.primernombre} ${userData.primerapellido}`;
     }
 
-    const origin = originMarker.getLatLng();
-    const destination = destinationMarker.getLatLng();
-    const originLink = `https://www.openstreetmap.org/?mlat=${origin.lat}&mlon=${origin.lng}#map=18/${origin.lat}/${origin.lng}`;
-    const destinationLink = `https://www.openstreetmap.org/?mlat=${destination.lat}&mlon=${destination.lng}#map=18/${destination.lat}/${destination.lng}`;
-    const mensaje = `Hola soy ${userFirstName} ${userLastName}. Voy a cancelar en ${formData.moneda}.\n${formData.llevarVueltos ? `Llevar vueltos: ${formData.cantidadVueltos}.\n` : ""}Búscame en: ${formData.tiempo}.\nPor favor búscame aquí: [${originLink}].\nPor favor llévame aquí: [${destinationLink}].`;
+    const L = (await import("leaflet")).default;
+    map = L.map("map").setView([8.03687, -72.2603], 14);
+    
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      maxZoom: 19
+    }).addTo(map);
+    
+    await getCurrentLocation();
+  });
 
-    const { data, error } = await supabase
-      .from("carreras")
-      .insert([
-        {
-          origen_lat: origin.lat,
-          origen_lng: origin.lng,
-          destino_lat: destination.lat,
-          destino_lng: destination.lng,
-          moneda: formData.moneda,
-          llevar_vueltos: formData.llevarVueltos,
-          cantidad_vueltos: formData.cantidadVueltos,
-          tiempo: formData.tiempo,
-          fecha: new Date().toISOString(),
-          usuario_nombre: `${userFirstName} ${userLastName}`, // Asegúrate de que esto se inserta correctamente
-        },
-      ])
-      .single();
+  async function confirmarServicio() {
+    if (!userLocation) {
+      alert("Por favor permite el acceso a tu ubicación o selecciona un punto en el mapa");
+      return;
+    }
+    
+    if (!formData.horaServicio) {
+      alert("Por favor ingresa la hora en que necesitas el servicio");
+      return;
+    }
+    
+    if (formData.llevaMaletas && formData.cantidadMaletas < 1) {
+      alert("Por favor ingresa cuántas maletas llevarás");
+      return;
+    }
 
-    if (error) {
-      alert("Error inserting data. Please try again.");
-      console.error("Error:", error.message);
-    } else {
-      const url = `https://wa.me/584169752291?text=${encodeURIComponent(mensaje)}`;
-      window.open(url, "_blank");
-      resetForm();
-      window.location.href = "/carrerasUsers"; // Redirigir a la página carreras
+    try {
+      const horaServicio = new Date(formData.horaServicio);
+      if (isNaN(horaServicio.getTime())) {
+        alert("La hora ingresada no es válida");
+        return;
+      }
+
+      const { error } = await supabase.from("solicitudes_servicio").insert([{
+        usuario_id: user.id,
+        usuario_email: userInfo.email,
+        usuario_nombre: userInfo.nombre,
+        punto_recogida: `POINT(${userLocation.lng} ${userLocation.lat})`,
+        latitud: userLocation.lat,
+        longitud: userLocation.lng,
+        direccion_recogida: formData.direccion,
+        hora_servicio: horaServicio.toISOString(),
+        lleva_maletas: formData.llevaMaletas,
+        cantidad_maletas: formData.llevaMaletas ? formData.cantidadMaletas : null,
+        pasajeros: formData.pasajeros
+      }]);
+
+      if (error) throw error;
+
+      // Mostrar modal de confirmación
+      showConfirmationModal = true;
+      
+      // Ocultar después de 5 segundos y resetear formulario
+      setTimeout(() => {
+        showConfirmationModal = false;
+        resetForm();
+      }, 5000);
+
+      // Enviar mensaje al conductor
+      const mensaje = `🚖 *Nueva solicitud de servicio*  
+      
+👤 *Pasajero:* ${userInfo.nombre}  
+📧 *Contacto:* ${userInfo.email}  
+👥 *Pasajeros:* ${formData.pasajeros}  
+
+📍 *Punto de recogida:*  
+${formData.direccion}  
+Ver en mapa: https://www.google.com/maps?q=${userLocation.lat},${userLocation.lng}  
+
+🕒 *Hora requerida:* ${horaServicio.toLocaleTimeString()}  
+
+🧳 *Maletas:* ${formData.llevaMaletas ? formData.cantidadMaletas : 'No'}  
+
+*Por favor confirma si puedes atender esta solicitud.*`;
+
+      const whatsappUrl = `https://wa.me/584169752291?text=${encodeURIComponent(mensaje)}`;
+      window.open(whatsappUrl, "_blank");
+
+    } catch (error) {
+      console.error("Error al guardar la solicitud:", error);
+      alert("Ocurrió un error al registrar tu solicitud. Por favor intenta nuevamente.");
     }
   }
 
   function resetForm() {
     formData = {
-      moneda: "",
-      llevarVueltos: false,
-      cantidadVueltos: "",
-      tiempo: "",
+      horaServicio: "",
+      llevaMaletas: false,
+      cantidadMaletas: 0,
+      pasajeros: 1,
+      direccion: "Ubicando tu posición..."
     };
-    if (originMarker) {
-      map.removeLayer(originMarker);
-      originMarker = null;
-    }
-    if (destinationMarker) {
-      map.removeLayer(destinationMarker);
-      destinationMarker = null;
+    if (pickupMarker) {
+      map.removeLayer(pickupMarker);
+      pickupMarker = null;
     }
   }
-
-  const handleLogout = async () => {
-  await supabase.auth.signOut();
-  localStorage.clear();
-  document.cookie.split(";").forEach((c) => {
-    document.cookie = c
-      .replace(/^ +/, "")
-      .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-  });
-  window.location.href = "/loginUser";
-};
 </script>
 
-<main class="bg-dark pt-5">
-  <div class="container">
-    <div class="row">
-      <div class="col map">
-        <div id="map"></div>
-      </div>
-      <div class="card dform col bg-dark">
-        <h3 class="text-white border-bottom border-danger">
-          Hola {userFirstName}
-          {userLastName}, ¿a dónde iremos hoy?
-        </h3>
-
-        <form on:submit|preventDefault={enviarWhatsApp}>
-          <label class="text-white">
-            <p class="fs-2 border-bottom border-danger">
-              ¿En qué moneda vas a cancelar?
-            </p>
-            <select
-              class="btn btn-outline-warning"
-              bind:value={formData.moneda}
-              required
-            >
-              <option value="" disabled selected>Selecciona una opción</option>
-              <option value="pesos">Pesos</option>
-              <option value="dólares">Dólares</option>
-            </select>
-          </label>
-
-          <label class="text-white">
-            <p class="fs-3 border-bottom border-danger">
-              ¿Debemos llevar vueltos?
-            </p>
-            <input
-              type="radio"
-              bind:group={formData.llevarVueltos}
-              value={true}
-            />
-            Sí
-            <input
-              type="radio"
-              bind:group={formData.llevarVueltos}
-              value={false}
-            /> No
-          </label>
-
-          {#if formData.llevarVueltos}
-            <label class="text-white">
-              Valor del billete que tengo:
-              <input
-                type="number"
-                bind:value={formData.cantidadVueltos}
-                min="0"
-              />
-            </label>
-          {:else}
-            <p class="text-white fs-3 border-bottom border-danger">Perfecto</p>
-          {/if}
-
-          <label class="text-white">
-            <p class="fs-3 border-bottom border-danger">
-              ¿En cuánto tiempo te buscamos?:
-            </p>
-            <select
-              class="btn btn-outline-warning"
-              bind:value={formData.tiempo}
-              required
-            >
-              <option value="" disabled selected>Selecciona una opción</option>
-              <option value="Ahora mismo">Ahora mismo</option>
-              <option value="En 5 minutos">En 5 minutos</option>
-              <option value="En 10 minutos">En 10 minutos</option>
-              <option value="En 15 minutos">En 15 minutos</option>
-              <option value="En 20 minutos">En 20 minutos</option>
-              <option value="En 25 minutos">En 25 minutos</option>
-              <option value="En 30 minutos">En 30 minutos</option>
-            </select>
-          </label>
-
-          <div class="d-flex justify-content-end">
-            <a class="text-decoration-none" href="/carrerasUsers">
-              <button class="btn btn-outline-warning m-2" type="button"
-                >chequear carreras</button
-              ></a
-            >
-            <button class="btn btn-outline-warning m-2" type="submit"
-              >Pedir Carrera</button
-            >
-            <button
-              class="btn btn-danger m-2"
-              type="button"
-              on:click={handleLogout}>Cerrar Sesión</button
-            >
+<main class="container py-4">
+  {#if showConfirmationModal}
+    <div class="modal-backdrop show d-block"></div>
+    <div class="modal show d-block" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-success text-white">
+            <h5 class="modal-title">¡Gracias por preferirnos!</h5>
           </div>
-        </form>
+          <div class="modal-body text-center py-4">
+            <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+            <h4 class="mt-3">Solicitud enviada con éxito</h4>
+            <p>En breve confirmaremos tu viaje</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  {/if}
+
+  <div class="row">
+    <div class="col-md-8 mb-4">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h2 class="h5 mb-0">¿Dónde te recogemos?</h2>
+        </div>
+        <div class="card-body p-0">
+          <div id="map" style="height: 400px;"></div>
+          <div class="p-3">
+            {#if loadingLocation}
+              <div class="d-flex align-items-center text-primary">
+                <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                <span>Obteniendo tu ubicación...</span>
+              </div>
+            {:else if locationError}
+              <div class="alert alert-warning mb-2">
+                {locationError}
+              </div>
+            {/if}
+            
+            <div class="mb-3">
+              <p class="form-label fw-bold">Dirección exacta:</p>
+              <textarea 
+                class="form-control" 
+                rows="2" 
+                readonly
+                bind:value={formData.direccion}
+              ></textarea>
+            </div>
+            
+            <button 
+              class="btn btn-primary w-100"
+              on:click={getCurrentLocation}
+            >
+              <i class="bi bi-geo-alt-fill me-2"></i> Usar mi ubicación actual
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h2 class="h5 mb-0">Detalles del servicio</h2>
+        </div>
+        <div class="card-body">
+          <form on:submit|preventDefault={confirmarServicio}>
+            <div class="mb-3">
+              <label for="horaServicio" class="form-label fw-bold">
+                <i class="bi bi-clock me-2"></i>Hora requerida:
+              </label>
+              <input
+                type="datetime-local"
+                id="horaServicio"
+                class="form-control"
+                bind:value={formData.horaServicio}
+                required
+                min={new Date().toISOString().slice(0, 16)}
+              />
+            </div>
+            
+            <div class="mb-3">
+              <label for="pasajeros" class="form-label fw-bold">
+                <i class="bi bi-people me-2"></i>Número de pasajeros:
+              </label>
+              <select
+                id="pasajeros"
+                class="form-select"
+                bind:value={formData.pasajeros}
+                required
+              >
+                <option value="1">1 pasajero</option>
+                <option value="2">2 pasajeros</option>
+                <option value="3">3 pasajeros</option>
+                <option value="4">4 pasajeros</option>
+                <option value="5">5 pasajeros</option>
+                <option value="6">6 o más pasajeros</option>
+              </select>
+            </div>
+            
+            <div class="mb-3">
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="llevaMaletas"
+                  bind:checked={formData.llevaMaletas}
+                >
+                <label class="form-check-label fw-bold" for="llevaMaletas">
+                  <i class="bi bi-bag-check me-2"></i>¿Llevas maletas?
+                </label>
+              </div>
+              
+              {#if formData.llevaMaletas}
+                <div class="mt-2">
+                  <label for="cantidadMaletas" class="form-label">Cantidad de maletas:</label>
+                  <select
+                    id="cantidadMaletas"
+                    class="form-select"
+                    bind:value={formData.cantidadMaletas}
+                    required
+                  >
+                    <option value="1">1 maleta</option>
+                    <option value="2">2 maletas</option>
+                    <option value="3">3 maletas</option>
+                    <option value="4">4 maletas</option>
+                    <option value="5">5 o más maletas</option>
+                  </select>
+                </div>
+              {/if}
+            </div>
+            
+            <div class="d-grid gap-2">
+              <button 
+                type="submit" 
+                class="btn btn-success btn-lg"
+                disabled={!userLocation || loadingLocation}
+              >
+                {#if loadingLocation}
+                  <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                {:else}
+                  <i class="bi bi-check-circle me-2"></i>
+                {/if}
+                Confirmar Servicio
+              </button>
+              
+              <button 
+                type="button" 
+                class="btn btn-outline-secondary"
+                on:click={resetForm}
+              >
+                <i class="bi bi-x-circle me-2"></i>Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
@@ -269,34 +413,34 @@
 <style>
   #map {
     width: 100%;
-    height: 600px;
+    height: 100%;
+    min-height: 400px;
+    border-radius: 0.25rem 0.25rem 0 0;
   }
-
-  form {
-    margin-top: 20px;
+  
+  .card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
   }
-  label,
-  select,
-  input,
-  button {
-    display: block;
-    margin: 10px 0;
+  
+  .card-header {
+    border-radius: 0.25rem 0.25rem 0 0 !important;
   }
-  .container {
-    display: flex;
-    flex-direction: column;
+  
+  .modal-backdrop {
+    opacity: 0.5;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1040;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000;
   }
-  .row {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-  }
-  .col {
-    flex: 1;
-  }
-  @media (max-width: 900px) {
-    .row {
-      flex-direction: column;
+  
+  @media (max-width: 767.98px) {
+    #map {
+      min-height: 300px;
     }
   }
 </style>
