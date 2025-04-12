@@ -35,7 +35,7 @@
           <div class="card bg-dark text-white" style="border-radius: 1rem; border: none; box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.6);">
             <div class="card-body p-5 text-center">
               <div class="mb-4">
-                <h3 class="fw-bold mb-4 text-uppercase">¿Listo para viaja?</h3>
+                <h3 class="fw-bold mb-4 text-uppercase">¿Listo para viajar?</h3>
                 <p class="text-white-50 mb-4">Ingresa tus credenciales para continuar</p>
               </div>
   

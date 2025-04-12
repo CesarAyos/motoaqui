@@ -219,6 +219,7 @@ async function getCurrentLocation() {
       
 👤 *Pasajero:* ${userInfo.nombre}  
 📧 *Contacto:* ${userInfo.email}  
+📧 *Contacto:* ${userInfo.telefono}  
 👥 *Pasajeros:* ${formData.pasajeros}  
 
 📍 *Punto de recogida:*  
