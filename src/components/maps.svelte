@@ -22,8 +22,10 @@
 
   let user = null;
   let userInfo = {
-    nombre: "",
+    nombre: "Usuario",
     email: "",
+    telefono: "",
+    foto: "",
   };
 
   async function checkLocationPermission() {
@@ -46,8 +48,7 @@
 
         return status.state === "granted";
       }
-
-      return true; // Suponemos acceso si no hay soporte para navigator.permissions
+      return true;
     } catch (e) {
       console.error("Error al verificar permisos:", e);
       return false;
@@ -160,15 +161,17 @@
     user = session.user;
     userInfo.email = user.email;
 
-    const { data: userData } = await supabase
+    const { data: userData, error } = await supabase
       .from("registro_clientes")
-      .select("primernombre, primerapellido, telefono")
+      .select("primernombre, primerapellido, telefono, foto")
       .eq("correo", user.email)
-      .single();
+      .maybeSingle();
 
     if (userData) {
       userInfo.nombre = `${userData.primernombre} ${userData.primerapellido}`;
-      userInfo.telefono = userData.telefono; // Añade esta línea
+      userInfo.telefono = userData.telefono;
+
+      
     }
 
     const L = (await import("leaflet")).default;
@@ -238,7 +241,7 @@
       
 👤 *Pasajero:* ${userInfo.nombre}  
 📧 *Contacto:* ${userInfo.email}  
-${userInfo.telefono ? `📱 *Teléfono:* ${userInfo.telefono}\n` : ''} 
+${userInfo.telefono ? `📱 *Teléfono:* ${userInfo.telefono}\n` : ""}
 👥 *Pasajeros:* ${formData.pasajeros}  
 
 📍 *Punto de recogida:*  
@@ -276,40 +279,47 @@ Ver en mapa: https://www.google.com/maps?q=${userLocation.lat},${userLocation.ln
   }
 </script>
 
+<div class="user-profile">
+  {#if userInfo.foto}
+    <img
+      src={userInfo.foto}
+      alt="Foto de perfil"
+      class="user-avatar"
+      on:error={(e) => {
+        console.error("Error cargando imagen:", e);
+        userInfo.foto = null;
+      }}
+    />
+  {:else}
+    <div class="default-avatar">
+      {userInfo.nombre
+        ? userInfo.nombre
+            .split(" ")
+            .map((n) => n[0])
+            .join("")
+        : ""}
+    </div>
+  {/if}
+
+  <div class="user-greeting">
+    <span class="welcome-text">Bienvenido</span>
+    <span class="user-fullname">{userInfo.nombre}</span>
+  </div>
+</div>
+
 <main class="container py-4">
   {#if showConfirmationModal}
     <div
       class="modal-backdrop show d-block"
-      style="
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.5);
-      z-index: 1040;
-    "
+      style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1040;"
     ></div>
     <div
       class="modal show d-block"
-      style="
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 1050;
-    "
+      style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1050;"
     >
       <div
         class="modal-content"
-        style="
-        background: white;
-        padding: 20px;
-        border-radius: 5px;
-        max-width: 500px;
-        margin: 0 auto;
-        text-align: center;
-      "
+        style="background: white; padding: 20px; border-radius: 5px; max-width: 500px; margin: 0 auto; text-align: center;"
       >
         <div style="color: #28a745; font-size: 3rem; margin-bottom: 1rem;">
           ✓
@@ -469,7 +479,7 @@ Ver en mapa: https://www.google.com/maps?q=${userLocation.lat},${userLocation.ln
   </div>
 </main>
 
-<style>
+<!-- <style>
   #map {
     width: 100%;
     height: 100%;
@@ -486,9 +496,91 @@ Ver en mapa: https://www.google.com/maps?q=${userLocation.lat},${userLocation.ln
     border-radius: 0.25rem 0.25rem 0 0 !important;
   }
 
+  .user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.profile-pic, .default-profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.default-profile-pic {
+  background-color: #3388ff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.welcome {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.user-name {
+  font-weight: bold;
+}
+
   @media (max-width: 767.98px) {
     #map {
       min-height: 300px;
     }
+  }
+</style> -->
+
+<style>
+  .user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    margin-bottom: 20px;
+  }
+
+  .user-avatar,
+  .default-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e0e0e0;
+  }
+
+  .default-avatar {
+    background: #3388ff;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .user-greeting {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+
+  .welcome-text {
+    font-size: 0.8rem;
+    color: #666;
+  }
+
+  .user-fullname {
+    font-weight: 600;
+    font-size: 1rem;
   }
 </style>

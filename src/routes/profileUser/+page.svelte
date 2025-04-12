@@ -1,45 +1,6 @@
 <script>
   import Maps from "../../components/maps.svelte";
-  import { supabase } from "../../components/supabase.js";
-  import { onMount } from "svelte";
-  
-
-  let user = "";
-  let userName = "";
-  let ultimaCarrera = {};
-  let loading = true;
-
-  onMount(async () => {
-    try {
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError || !session?.user) {
-        window.location.href = "/loginUser";
-        return;
-      }
-
-      user = session.user;
-      
-      const { data, error } = await supabase
-        .from("registro_clientes")
-        .select("primernombre, primerapellido")
-        .eq("id", user.id)
-        .single();
-
-      if (error) {
-        console.error("Error fetching user data:", error.message);
-        userName = user.email; // fallback to email
-      } else {
-        userName = data.primernombre;
-        user = data.primerapellido;
-      }
-    } catch (e) {
-      console.error("Unexpected error:", e);
-      window.location.href = "/loginUser";
-    } finally {
-      loading = false;
-    }
-  });
+ 
 </script>
 
 
@@ -66,14 +27,6 @@
    <li> <strong>Ten un feliz viaje </strong></li>
   </ol>
 </div>
-
-{#if loading}
-  <div class="text-center text-white">Cargando...</div>
-{:else}
-  <div class="container d-flex justify-content-end m-2">
-    <button type="button" class="btn btn-primary"><strong> Bienvenido {userName}</strong></button>
-  </div>
-{/if}
 
 
 
