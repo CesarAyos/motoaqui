@@ -3,6 +3,13 @@
  
 </script>
 
+<header class="app-header text-center py-4">
+  <div class="container">
+    <h1 class="app-title">Clientes Rapiditos Colón</h1>
+    <p class="app-subtitle">Gestión profesional de clientes</p>
+  </div>
+</header>
+
 
 <div
   class="alert alert-primary alert-dismissible fade show"
@@ -33,3 +40,21 @@
 <div>
   <Maps />
 </div>
+
+
+<style>
+  .app-header {
+  background: linear-gradient(135deg, #2c3e50, #3498db);
+  color: white;
+}
+
+.app-title {
+  font-weight: 700;
+  font-size: 2.5rem;
+}
+
+.app-subtitle {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+</style>

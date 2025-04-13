@@ -176,14 +176,7 @@
     max-width: 800px;
   }
 
-  .trust-img {
-    transition: transform 0.3s ease;
-    max-width: 100%;
-  }
-
-  .trust-img:hover {
-    transform: scale(1.05);
-  }
+  
 
   .app-footer {
     background: #2c3e50;

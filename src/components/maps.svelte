@@ -479,68 +479,8 @@ Ver en mapa: https://www.google.com/maps?q=${userLocation.lat},${userLocation.ln
   </div>
 </main>
 
-<!-- <style>
-  #map {
-    width: 100%;
-    height: 100%;
-    min-height: 400px;
-    border-radius: 0.25rem 0.25rem 0 0;
-  }
-
-  .card {
-    border: none;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-  }
-
-  .card-header {
-    border-radius: 0.25rem 0.25rem 0 0 !important;
-  }
-
-  .user-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.profile-pic, .default-profile-pic {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.default-profile-pic {
-  background-color: #3388ff;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-}
-
-.user-details {
-  display: flex;
-  flex-direction: column;
-}
-
-.welcome {
-  font-size: 0.8rem;
-  color: #666;
-}
-
-.user-name {
-  font-weight: bold;
-}
-
-  @media (max-width: 767.98px) {
-    #map {
-      min-height: 300px;
-    }
-  }
-</style> -->
-
 <style>
+
   .user-profile {
     display: flex;
     align-items: center;
