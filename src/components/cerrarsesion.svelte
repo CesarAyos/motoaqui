@@ -7,7 +7,7 @@
       if (error) throw error;
       window.location.href = "/"; // Redirige a la página principal
     } catch (error) {
-      console.error("Error al cerrar sesión:", error);
+      console.error(error)
       alert("Ocurrió un error al cerrar sesión");
     }
   }

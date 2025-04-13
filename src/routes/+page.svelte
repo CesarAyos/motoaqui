@@ -35,17 +35,6 @@
               </div>
             </div>
             
-            <!-- Web Version -->
-            <div class="col-md-6 col-lg-5 mb-4">
-              <div class="download-card p-4 h-100">
-                <div class="qr-container mb-3">
-                  <QRGenerator text="https://clientesrapiditoscolon.vercel.app/" />
-                </div>
-                <h3 class="mt-3 mb-3">Versión Web</h3>
-                <p>Para dispositivos no Android</p>
-                <a href="https://clientesrapiditoscolon.vercel.app/" class="btn btn-outline-primary mt-2">Acceder a la web</a>
-              </div>
-            </div>
           </div>
         </div>
       </div>
