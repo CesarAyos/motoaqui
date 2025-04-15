@@ -170,8 +170,6 @@
     if (userData) {
       userInfo.nombre = `${userData.primernombre} ${userData.primerapellido}`;
       userInfo.telefono = userData.telefono;
-
-      
     }
 
     const L = (await import("leaflet")).default;
@@ -304,6 +302,7 @@ Ver en mapa: https://www.google.com/maps?q=${userLocation.lat},${userLocation.ln
   <div class="user-greeting">
     <span class="welcome-text">Bienvenido</span>
     <span class="user-fullname">{userInfo.nombre}</span>
+    <span><a href="/sugerencias">Realizar sugerencia</a></span>
   </div>
 </div>
 
@@ -480,7 +479,6 @@ Ver en mapa: https://www.google.com/maps?q=${userLocation.lat},${userLocation.ln
 </main>
 
 <style>
-
   .user-profile {
     display: flex;
     align-items: center;
