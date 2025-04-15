@@ -1,108 +1,119 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
-    import { supabase } from '../../components/supabase.js';
-    
-    // Variables de estado
-    let sugerencia = '';
-    let tipo = 'sugerencia';
-    let isLoading = false; // Para el estado de envío del formulario
-    let isLoadingCliente = true; // Para la carga inicial de datos del cliente
-    let successMessage = '';
-    let errorMessage = '';
-    
-    // Datos del cliente
-    let clienteInfo = {
-      primernombre: '',
-      primerapellido: '',
-      telefono: ''
-    };
-  
-    onMount(async () => {
-      await cargarDatosCliente();
-    });
-  
-    async function cargarDatosCliente() {
-      isLoadingCliente = true;
-      errorMessage = '';
-      
-      try {
-        // 1. Obtener usuario autenticado
-        const { data: { user }, error: userError } = await supabase.auth.getUser();
-        if (userError || !user) {
-          errorMessage = 'Debes iniciar sesión para enviar sugerencias';
-          isLoadingCliente = false;
-          return;
-        }
+  import { onMount } from "svelte";
+  import { supabase } from "../../components/supabase.js";
+  import Cerrarsesion from "../../components/cerrarsesion.svelte";
 
-        // 2. Intentar obtener datos del cliente
-        const { data, error } = await supabase
-          .from('registro_clientes')
-          .select('primernombre, primerapellido, telefono')
-          .eq('user_id', user.id)
-          .maybeSingle(); // Usamos maybeSingle para manejar 0 resultados
+  // Variables de estado
+  let sugerencia = "";
+  let tipo = "sugerencia";
+  let isLoading = false; // Para el estado de envío del formulario
+  let isLoadingCliente = true; // Para la carga inicial de datos del cliente
+  let successMessage = "";
+  let errorMessage = "";
 
-        if (error) throw error;
+  // Datos del cliente
+  let clienteInfo = {
+    primernombre: "",
+    primerapellido: "",
+    telefono: "",
+  };
 
-        // 3. Asignar datos o valores por defecto
-        clienteInfo = data ? {
-          primernombre: data.primernombre || '',
-          primerapellido: data.primerapellido || '',
-          telefono: data.telefono || ''
-        } : {
-          primernombre: '',
-          primerapellido: '',
-          telefono: ''
-        };
+  onMount(async () => {
+    await cargarDatosCliente();
+  });
 
-      } catch (err) {
-        console.error('Error cargando datos del cliente:', err);
-        errorMessage = 'Error al cargar tu información de cliente';
-      } finally {
+  async function cargarDatosCliente() {
+    isLoadingCliente = true;
+    errorMessage = "";
+
+    try {
+      // 1. Obtener usuario autenticado
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+      if (userError || !user) {
+        errorMessage = "Debes iniciar sesión para enviar sugerencias";
         isLoadingCliente = false;
-      }
-    }
-  
-    async function enviarSugerencia() {
-      if (!sugerencia.trim()) {
-        errorMessage = 'Por favor escribe tu sugerencia o queja';
         return;
       }
-      
-      isLoading = true;
-      errorMessage = '';
-      successMessage = '';
-      
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        
-        if (!user) {
-          throw new Error('Usuario no autenticado');
-        }
-        
-        const { error } = await supabase
-          .from('sugerencias_clientes')
-          .insert({
-            cliente_id: user.id,
-            primernombre: clienteInfo.primernombre,
-            primerapellido: clienteInfo.primerapellido,
-            telefono: clienteInfo.telefono,
-            sugerencia: sugerencia.trim(),
-            tipo: tipo
-          });
-          
-        if (error) throw error;
-        
-        successMessage = '¡Gracias por tu feedback! Hemos recibido tu mensaje.';
-        sugerencia = '';
-        tipo = 'sugerencia';
-      } catch (err) {
-        console.error('Error enviando sugerencia:', err);
-        errorMessage = 'Hubo un error al enviar tu mensaje. Por favor intenta nuevamente.';
-      } finally {
-        isLoading = false;
-      }
+
+      // 2. Intentar obtener datos del cliente
+      const { data, error } = await supabase
+        .from("registro_clientes")
+        .select("primernombre, primerapellido, telefono")
+        .eq("user_id", user.id)
+        .maybeSingle(); // Usamos maybeSingle para manejar 0 resultados
+
+      if (error) throw error;
+
+      // 3. Asignar datos o valores por defecto
+      clienteInfo = data
+        ? {
+            primernombre: data.primernombre || "",
+            primerapellido: data.primerapellido || "",
+            telefono: data.telefono || "",
+          }
+        : {
+            primernombre: "",
+            primerapellido: "",
+            telefono: "",
+          };
+    } catch (err) {
+      console.error("Error cargando datos del cliente:", err);
+      errorMessage = "Error al cargar tu información de cliente";
+    } finally {
+      isLoadingCliente = false;
     }
+  }
+
+  async function enviarSugerencia() {
+    if (!sugerencia.trim()) {
+      errorMessage = "Por favor escribe tu sugerencia o queja";
+      return;
+    }
+
+    isLoading = true;
+    errorMessage = "";
+    successMessage = "";
+
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        throw new Error("Usuario no autenticado");
+      }
+
+      const { error } = await supabase.from("sugerencias_clientes").insert({
+        cliente_id: user.id,
+        primernombre: clienteInfo.primernombre,
+        primerapellido: clienteInfo.primerapellido,
+        telefono: clienteInfo.telefono,
+        sugerencia: sugerencia.trim(),
+        tipo: tipo,
+      });
+
+      if (error) throw error;
+
+      successMessage = "¡Gracias por tu feedback! Hemos recibido tu mensaje.";
+      sugerencia = "";
+      tipo = "sugerencia";
+    } catch (err) {
+      console.error("Error enviando sugerencia:", err);
+      errorMessage =
+        "Hubo un error al enviar tu mensaje. Por favor intenta nuevamente.";
+    } finally {
+      isLoading = false;
+    }
+  }
 </script>
+
+<div class="p-2">
+<Cerrarsesion/>
+</div>
+
 
 <div class="container mt-5">
   <div class="row justify-content-center">
@@ -120,7 +131,6 @@
               </div>
               <p>Cargando tu información...</p>
             </div>
-          
           {:else}
             {#if successMessage}
               <div class="alert alert-success">
@@ -172,7 +182,8 @@
         {#if !isLoadingCliente && clienteInfo.primernombre}
           <div class="card-footer text-muted small">
             Enviando como: {clienteInfo.primernombre}
-            {clienteInfo.primerapellido} {clienteInfo.telefono ? `(${clienteInfo.telefono})` : ''}
+            {clienteInfo.primerapellido}
+            {clienteInfo.telefono ? `(${clienteInfo.telefono})` : ""}
           </div>
         {/if}
       </div>
