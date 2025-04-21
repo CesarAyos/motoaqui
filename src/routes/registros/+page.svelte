@@ -129,56 +129,58 @@
 
   const submitForm = async () => {
     isLoading = true;
+    errorMessage = "";
+    
     try {
-      const { data, error: authError } = await supabase.auth.signUp({
-      email: client.correo,
-      password: client.contraseña,
-      options: {
-        data: {
-          primernombre: client.primernombre,
-          primerapellido: client.primerapellido,
-          cedula: client.cedula
-        }
+      // 1. Verificar si el correo o cédula ya existen
+      const { data: existingUser, error: checkError } = await supabase
+        .rpc('check_existing_client', {
+          p_correo: client.correo,
+          p_cedula: client.cedula
+        });
+      
+      if (checkError) throw checkError;
+      if (existingUser.exists) {
+        throw new Error(existingUser.message || 'El correo o cédula ya están registrados');
       }
-    });
 
-      if (authError) throw authError;
+      // 2. Llamar a la función de registro completo
+      const { data, error: rpcError } = await supabase.rpc('register_complete_client', {
+        p_email: client.correo,
+        p_password: client.contraseña,
+        p_primernombre: client.primernombre,
+        p_segundonombre: client.segundonombre || null,
+        p_primerapellido: client.primerapellido,
+        p_segundoapellido: client.segundoapellido || null,
+        p_telefono: client.telefono,
+        p_edad: client.edad,
+        p_ciudad: client.ciudad,
+        p_cedula: client.cedula,
+        p_sector: client.sector,
+        p_sanguineo: client.sanguineo,
+        p_foto_url: client.foto,
+        p_cedula_foto_url: client.cedula_foto
+      });
 
-      // 2. Guardar datos en la tabla 'clientes'
-      const { data: dbData, error: dbError } = await supabase
-        .from('registro_clientes')
-        .insert([{
-          user_id: data.user.id,
-          primernombre: client.primernombre,
-          segundonombre: client.segundonombre,
-          primerapellido: client.primerapellido,
-          segundoapellido: client.segundoapellido,
-          telefono: client.telefono,
-          edad: client.edad,
-          ciudad: client.ciudad,
-          correo: client.correo,
-          cedula: client.cedula,
-          sector: client.sector,
-          sanguineo: client.sanguineo,
-          foto: client.foto, // URL de la foto de rostro
-          cedula_foto: client.cedula_foto, // URL de la foto de cédula
-         
-        }]);
-
-      if (dbError) throw dbError;
+      if (rpcError) throw rpcError;
 
       // 3. Redirigir a página de éxito
       window.location.href = '/';
+      
     } catch (error) {
       errorMessage = error.message || "Error en el registro. Intenta nuevamente.";
-      if (error.message.includes('already registered')) {
-        errorMessage = "Este correo ya está registrado. Serás redirigido al login...";
+      console.error("Registration error:", error);
+      
+      if (error.message.includes('already registered') || 
+          error.message.includes('ya están registrados')) {
+        errorMessage = "Este correo o cédula ya están registrados. Serás redirigido al login...";
         setTimeout(() => window.location.href = '/login', 3000);
       }
     } finally {
       isLoading = false;
     }
   };
+
 </script>
 
 <div class="form-wrapper">
