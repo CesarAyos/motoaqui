@@ -1,148 +1,178 @@
 <script>
-    import { supabase } from "../components/supabase.js";
-    import { onMount } from "svelte";
-  
-    let email = "";
-    let password = "";
-    let errorMessage = "";
-  
-    const handleLogin = async () => {
+  import { supabase } from "../components/supabase.js";
+  import { onMount } from "svelte";
+
+  let email = "";
+  let password = "";
+  let errorMessage = "";
+
+  const handleLogin = async () => {
       const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+          email,
+          password,
       });
-  
+
       if (error) {
-        errorMessage = "Error al iniciar sesión: " + error.message;
+          errorMessage = "Error al iniciar sesión: " + error.message;
       } else {
-        // Redirigir al perfil después de iniciar sesión
-        window.location.href = "/profileUser";
+          window.location.href = "/profileUser";
       }
-    };
-  
-    onMount(async () => {
+  };
+
+  onMount(async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session && session.user) {
-        window.location.href = "/profileUser";
+          window.location.href = "/profileUser";
       }
-    });
-  </script>
-  
-  <section class="vh-100 gradient-custom">
-    <div class="container py-5 h-100">
-      <div class="row d-flex justify-content-center align-items-center h-100">
-        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-          <div class="card bg-dark text-white" style="border-radius: 1rem; border: none; box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.6);">
-            <div class="card-body p-5 text-center">
-              <div class="mb-4">
-                <h3 class="fw-bold mb-4 text-uppercase">¿Listo para viajar?</h3>
-                <p class="text-white-50 mb-4">Ingresa tus credenciales para continuar</p>
-              </div>
-  
-              <form on:submit|preventDefault={handleLogin}>
-                <!-- Email input -->
-                <div class="form-outline form-white mb-4">
-                  <input
-                    type="email"
-                    id="typeEmailX"
-                    bind:value={email}
-                    class="form-control form-control-lg"
-                    placeholder=" "
-                  />
-                  <label class="form-label" for="typeEmailX">Correo electrónico</label>
-                </div>
-  
-                <!-- Password input -->
-                <div class="form-outline form-white mb-4">
-                  <input
-                    type="password"
-                    id="typePasswordX"
-                    bind:value={password}
-                    class="form-control form-control-lg"
-                    placeholder=" "
-                  />
-                  <label class="form-label" for="typePasswordX">Contraseña</label>
-                </div>
+  });
+</script>
 
-                <button
-                  type="submit"
-                  class="btn btn-outline-light btn-lg px-5 w-100"
-                >
-                  Ingresar
-                </button>
-  
-                <!-- Mostrar mensaje de error -->
-                {#if errorMessage}
-                  <div class="alert alert-danger mt-4 alert-dismissible fade show" role="alert">
-                    {errorMessage}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>
-                {/if}
-              </form>
-  
-              <div class="mt-4">
-                <p class="mb-0">¿No tienes una cuenta? <a href="/registros" class="text-white-50 fw-bold">Regístrate</a></p>
-              </div>
-            </div>
+<div class="wrapper">
+  <div class="container main-card">
+      <img src="/favicon.png" alt="icono" class="img-fluid logo" />
+      <h1 class="title">¡Bienvenido a <span>Rapiditos Colón</span>!</h1>
+      <p class="subtitle">Tu solución de transporte rápido y confiable</p>
+
+
+      <form on:submit|preventDefault={handleLogin} class="login-form">
+          <div class="form-group">
+              <label for="email">Correo electrónico</label>
+              <input type="email" id="email" bind:value={email} required />
           </div>
-        </div>
-      </div>
-    </div>
-  </section>
+
+          <div class="form-group">
+              <label for="password">Contraseña</label>
+              <input type="password" id="password" bind:value={password} required />
+          </div>
+
+          <button type="submit" class="action-btn driver-btn">
+              Ingresar
+              <div class="hover-effect"></div>
+          </button>
+
+          {#if errorMessage}
+              <div class="alert alert-danger">{errorMessage}</div>
+          {/if}
+      </form>
+
+      <p class="register-link">¿No tienes cuenta? <a href="/registros">Regístrate</a></p>
+
+    
+  </div>
+</div>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+  :root {
+      --primary-blue: #018efa;
+      --primary-orange: #f4680a;
+      --secondary-blue: #5ab0ff;
+      --secondary-orange: #ff8c42;
+      --white: #ffffff;
+      --light-gray: rgba(255, 255, 255, 0.8);
+  }
+
   
-  <style>
-    .gradient-custom {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
-    
-    .card {
-      backdrop-filter: blur(10px);
-      background-color: rgba(0, 0, 0, 0.5) !important;
-    }
-    
-    .form-outline {
-      position: relative;
-    }
-    
-    .form-outline input {
-      background: transparent;
+
+  .wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+  }
+
+  .main-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      border-radius: 24px;
+      padding: 2rem;
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
+  }
+
+  .logo {
+      width: 100px;
+      margin-bottom: 1rem;
+  }
+
+  .title {
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--white);
+  }
+
+  .subtitle {
+      color: var(--light-gray);
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+  }
+
+  .form-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1rem;
+  }
+
+  .form-group label {
+      font-size: 0.9rem;
+      color: var(--white);
+  }
+
+  .form-group input {
+      padding: 0.8rem;
+      border-radius: 10px;
+      border: none;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--white);
+      font-size: 1rem;
+  }
+
+  .action-btn {
+      display: inline-block;
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 50px;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+  }
+
+  .driver-btn {
+      background: linear-gradient(45deg, var(--primary-blue), var(--secondary-blue));
       color: white;
-      border: 1px solid #6c757d;
-      transition: all 0.3s;
-    }
-    
-    .form-outline input:focus {
-      border-color: #fff;
-      box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25);
-    }
-    
-    .form-outline label {
-      position: absolute;
-      top: 12px;
-      left: 15px;
-      color: #adb5bd;
-      transition: all 0.3s;
-      pointer-events: none;
-    }
-    
-    .form-outline input:focus + label,
-    .form-outline input:not(:placeholder-shown) + label {
-      top: -10px;
-      left: 10px;
-      font-size: 0.8rem;
-      background-color: rgba(0, 0, 0, 0.7);
-      padding: 0 5px;
-      color: #fff;
-    }
-    
-    .btn-outline-light:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-    }
-    
-    .alert-danger {
-      background-color: rgba(220, 53, 69, 0.2);
-      border-color: rgba(220, 53, 69, 0.3);
-      color: #fff;
-    }
-  </style>
-  
+  }
+
+ 
+
+  .action-btn:hover .hover-effect {
+      opacity: 1;
+  }
+
+  .register-link {
+      margin-top: 1rem;
+      color: var(--light-gray);
+  }
+
+ 
+
+ 
+
+  @media (max-width: 768px) {
+      .title {
+          font-size: 1.8rem;
+      }
+
+      .subtitle {
+          font-size: 0.9rem;
+      }
+
+      .action-btn {
+          font-size: 0.9rem;
+      }
+  }
+</style>
